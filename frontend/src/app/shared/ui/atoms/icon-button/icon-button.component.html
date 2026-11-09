@@ -1,0 +1,29 @@
+<button type="button"
+      class="icon-btn"
+      [class.icon-btn--sm]="size() === 'sm'"
+      [class.icon-btn--lg]="size() === 'lg'"
+      [class.icon-anim-rotate]="animation() === 'rotate'"
+      [class.icon-anim-grow]="animation() === 'grow'"
+      [class.icon-anim-none]="animation() === 'none'"
+      [class.icon-btn--ghost]="variant() === 'ghost'"
+      [class.icon-btn--avatar]="variant() === 'avatar'"
+      [class.icon-btn--close]="variant() === 'close'"
+      [class.icon-btn--close-ghost]="variant() === 'close-ghost'"
+      [class.icon-btn--close-soft]="variant() === 'close-soft'"
+      [class.icon-btn--hanging-close]="variant() === 'hanging-close'"
+      [attr.title]="resolvedTitle || null"
+      [attr.aria-label]="resolvedAriaLabel || null"
+      [disabled]="disabled()"
+      (click)="!disabled() && clicked.emit($event)">
+      @if (isCloseVariant) {
+        <span class="close blades heavy" aria-hidden="true"></span>
+      } @else if (icon()) {
+        <i [class]="resolvedIcon" aria-hidden="true"></i>
+      } @else {
+        <ng-content></ng-content>
+      }
+      @if (badge() && badge() > 0) {
+        <span class="icon-btn__badge">{{ badge() > 9 ? '9+' : badge() }}</span>
+      }
+    </button>
+

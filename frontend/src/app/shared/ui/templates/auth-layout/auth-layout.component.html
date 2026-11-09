@@ -1,0 +1,45 @@
+<div class="auth-layout-container">
+  <!-- Left Side: Decorative / Branding -->
+  <div class="auth-layout-banner">
+    <div class="banner-content">
+      <ng-content select="[slot=banner]"></ng-content>
+    </div>
+    
+    <!-- Abstract Glassmorphism Shapes -->
+    <div class="banner-shape shape-1"></div>
+    <div class="banner-shape shape-2"></div>
+    <div class="banner-overlay"></div>
+  </div>
+
+  <!-- Right Side: Forms and Footer -->
+  <div class="auth-layout-main">
+    <app-scroll-overlay class="so-block w-full h-full" [skipTableDetection]="true">
+      <div class="auth-scroll-content">
+        
+        <!-- Slot for top navigation (like Go Back button) -->
+        <div class="auth-top-nav">
+          <ng-content select="[slot=top-nav]"></ng-content>
+        </div>
+
+        <div class="auth-form-wrapper">
+          <div class="auth-card">
+            <!-- Header (Logo, title) -->
+            <div class="auth-header">
+              <ng-content select="[slot=header]"></ng-content>
+            </div>
+
+            <!-- Form Content -->
+            <div class="auth-content">
+              <ng-content></ng-content>
+            </div>
+          </div>
+        </div>
+
+        <!-- External Footer at the bottom of the scroll area -->
+        <div class="auth-footer-external">
+          <ng-content select="[slot=footer]"></ng-content>
+        </div>
+      </div>
+    </app-scroll-overlay>
+  </div>
+</div>

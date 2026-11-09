@@ -1,0 +1,151 @@
+name: Atomic governance
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Security boundary: the repository ruleset must require this workflow from the
+# protected branch and must pin/review the Atomic verifier. A workflow supplied
+# by the same pull request cannot prove that it or its atomicRef was not downgraded.
+jobs:
+  atomic-governance:
+    runs-on: ubuntu-latest
+    env:
+      ATOMIC_UI_ROOT: ${{ github.workspace }}/atomic-source
+
+    steps:
+      - name: Checkout consumer
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: consumer
+          persist-credentials: false
+
+      - name: Bootstrap Atomic contract as untrusted data
+        id: atomic-contract
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          function fail(message) {
+            throw new Error(`Atomic contract rejected: ${message}`);
+          }
+
+          const workspace = process.env.GITHUB_WORKSPACE;
+          const output = process.env.GITHUB_OUTPUT;
+          if (!workspace || !output) fail('runner paths are unavailable');
+
+          const consumerRoot = path.resolve(workspace, 'consumer');
+          const manifestPath = path.join(consumerRoot, 'docs', 'atomic-provenance.json');
+          for (const candidate of [
+            consumerRoot,
+            path.join(consumerRoot, 'docs'),
+            manifestPath,
+          ]) {
+            const stat = fs.lstatSync(candidate);
+            if (stat.isSymbolicLink()) fail(`symbolic link is not allowed: ${candidate}`);
+          }
+          if (!fs.lstatSync(consumerRoot).isDirectory()) fail('consumer root is not a directory');
+          if (!fs.lstatSync(path.dirname(manifestPath)).isDirectory()) fail('docs is not a directory');
+          if (!fs.lstatSync(manifestPath).isFile()) fail('provenance manifest is not a regular file');
+
+          let contract;
+          try {
+            contract = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+          } catch (error) {
+            fail(`invalid provenance JSON: ${error.message}`);
+          }
+          if (!contract || typeof contract !== 'object' || Array.isArray(contract)) {
+            fail('provenance root must be an object');
+          }
+          if (contract.atomicRemote !== 'archware/-Atomic-UI') {
+            fail('atomicRemote must be archware/-Atomic-UI');
+          }
+          if (
+            typeof contract.atomicRef !== 'string' ||
+            !/^(?:[0-9a-f]{40}|[0-9a-f]{64})$/.test(contract.atomicRef)
+          ) {
+            fail('atomicRef must be one complete lowercase Git object ID');
+          }
+
+          const packageRoot = contract.packageRoot;
+          if (
+            typeof packageRoot !== 'string' ||
+            packageRoot.length === 0 ||
+            packageRoot.length > 512 ||
+            packageRoot !== packageRoot.trim() ||
+            /[\u0000-\u001f\u007f]/.test(packageRoot) ||
+            /[*?[\\]/.test(packageRoot) ||
+            packageRoot.startsWith(':') ||
+            path.posix.isAbsolute(packageRoot) ||
+            path.win32.isAbsolute(packageRoot) ||
+            !/^[A-Za-z0-9._/-]+$/.test(packageRoot)
+          ) {
+            fail('packageRoot has an unsafe representation');
+          }
+          const segments = packageRoot.split('/');
+          if (
+            segments.some((segment) => segment === '' || segment === '..') ||
+            (packageRoot !== '.' && segments.includes('.')) ||
+            path.posix.normalize(packageRoot) !== packageRoot
+          ) {
+            fail('packageRoot is not a canonical relative path');
+          }
+
+          const packagePath = path.resolve(consumerRoot, ...segments);
+          const relativePackagePath = path.relative(consumerRoot, packagePath);
+          if (
+            relativePackagePath === '..' ||
+            relativePackagePath.startsWith(`..${path.sep}`) ||
+            path.isAbsolute(relativePackagePath)
+          ) {
+            fail('packageRoot escapes the consumer checkout');
+          }
+          let current = consumerRoot;
+          for (const segment of segments) {
+            if (segment === '.') continue;
+            current = path.join(current, segment);
+            const stat = fs.lstatSync(current);
+            if (stat.isSymbolicLink()) fail(`packageRoot traverses a symbolic link: ${current}`);
+          }
+          if (!fs.lstatSync(packagePath).isDirectory()) fail('packageRoot is not a directory');
+
+          fs.appendFileSync(
+            output,
+            `ref=${contract.atomicRef}\npackage-root=${packageRoot}\n`,
+            { encoding: 'utf8' },
+          );
+          NODE
+
+      - name: Checkout Atomic source of truth
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: archware/-Atomic-UI
+          ref: ${{ steps.atomic-contract.outputs.ref }}
+          path: atomic-source
+          persist-credentials: false
+
+      - name: Enforce policy with trusted Atomic gate
+        shell: bash
+        run: |
+          node "$ATOMIC_UI_ROOT/governance/consumer/check-atomic-provenance.mjs" --consumer-root="${{ github.workspace }}/consumer"
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: consumer/.node-version
+          cache: npm
+          cache-dependency-path: consumer/${{ steps.atomic-contract.outputs.package-root }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: consumer/${{ steps.atomic-contract.outputs.package-root }}
+        run: npm ci
+
+      - name: Consumer verification
+        working-directory: consumer/${{ steps.atomic-contract.outputs.package-root }}
+        run: npm run check

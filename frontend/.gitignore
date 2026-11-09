@@ -1,0 +1,60 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/target/
+/src-tauri/target/
+/src-tauri/admin-recovery/target/
+/build/
+/ejecutables/*.exe
+/tmp
+/out-tsc
+/bazel-out
+
+# Recuperador administrativo generado fuera del flujo de revisión
+/HRA-Recuperacion-Administrativa-*.exe
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Credenciales y configuracion local - NO COMMITEAR
+.env
+.env.local
+.env.*.local
+!.env.example
+src-tauri/db.json
+
+# Metadatos de compilacion generados
+/src/generated/build-info.ts

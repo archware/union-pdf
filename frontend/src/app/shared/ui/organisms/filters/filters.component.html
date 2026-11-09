@@ -1,0 +1,26 @@
+<app-panel title="Filtros" icon="🔍" variant="default" padding="md" gridColumns="repeat(auto-fit, minmax(140px, 1fr))"
+  gridGap="var(--space-4)">
+  <div class="filter-group">
+    <label class="filter-label" for="filter-date-start">Fecha Inicio</label>
+    <input type="date" id="filter-date-start" class="form-input filter-date" [ngModel]="dateStart"
+      (ngModelChange)="dateStartChange.emit($event)">
+  </div>
+  <div class="filter-group">
+    <label class="filter-label" for="filter-date-end">Fecha Fin</label>
+    <input type="date" id="filter-date-end" class="form-input filter-date" [ngModel]="dateEnd" (ngModelChange)="dateEndChange.emit($event)">
+  </div>
+  <div class="filter-group">
+    <label class="filter-label" for="filter-status">Estado</label>
+    <select id="filter-status" class="form-select" [ngModel]="status" (ngModelChange)="statusChange.emit($event)">
+      <option value="">Todos</option>
+      <option value="Activo">Activo</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Inactivo">Inactivo</option>
+    </select>
+  </div>
+  <div class="filter-group filter-action">
+    <span class="filter-label" aria-hidden="true">&nbsp;</span>
+    <button type="button" class="filter-btn" (click)="onFilter()" (keydown.enter)="onFilter()"
+      (keydown.space)="onFilter()">🔍 Filtrar</button>
+  </div>
+</app-panel>

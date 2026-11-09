@@ -1,0 +1,89 @@
+/* ============================================
+   FILTROS - Estilos específicos de los campos
+   (El contenedor ahora es manejado por PanelComponent)
+   ============================================ */
+
+/* Host styling */
+:host {
+  display: block;
+  max-width: 900px;
+  margin-bottom: var(--space-6);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.filter-action {
+  justify-content: flex-end;
+}
+
+.filter-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-color-secondary);
+}
+
+/* Input tipo fecha */
+.filter-date {
+  min-width: 140px;
+}
+
+.filter-date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: var(--calendar-icon-filter, none);
+  opacity: 0.6;
+  transition: opacity 150ms ease;
+}
+
+.filter-date::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Botón filtrar */
+.filter-btn {
+  height: var(--control-height);
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 200ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  width: 100%;
+}
+
+.filter-btn:hover {
+  background: var(--button-primary-bg-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================
+   DARK MODE - Solo ajustes visuales específicos
+   que no pueden manejarse con tokens
+   ============================================ */
+:host-context(.dark) .filter-date::-webkit-calendar-picker-indicator,
+:host-context([data-theme="dark"]) .filter-date::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+:host-context(.dark) .filter-select,
+:host-context([data-theme="dark"]) .filter-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4L6 8L10 4' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+}
+
+/* 
+ * El botón hover usa --button-primary-bg-hover que ya está definido
+ * con valores apropiados para dark mode.
+ */

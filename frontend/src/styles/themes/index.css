@@ -1,0 +1,422 @@
+/* =============================================================================
+   SISTEMA DE TEMAS - ARCHIVO PRINCIPAL
+   =============================================================================
+
+   🚀 GUÍA RÁPIDA DE PERSONALIZACIÓN PARA NUEVOS PROYECTOS:
+   ──────────────────────────────────────────────────────────────────────────────
+
+   1. Copia esta carpeta "themes" a tu nuevo proyecto
+   2. Abre `_tokens-brand.css`
+   3. Cambia los colores de --brand-primary-* y --brand-secondary-*
+   4. ¡Listo! El sistema se adapta automáticamente
+
+   📖 ESTRUCTURA DE ARCHIVOS:
+   ├── _tokens-primitives.css  → Colores base universales (NO modificar)
+   ├── _tokens-brand-pdf.css       → Colores de marca (✏️ MODIFICAR POR PROYECTO)
+   ├── _tokens-semantic.css    → Variables semánticas light/dark (NO modificar)
+   ├── _tokens-components.css  → Tokens de componentes UI (Personalizar si necesitas)
+   └── index.css               → Este archivo (punto de entrada)
+
+   💡 TIPS:
+   - Usa https://uicolors.app para generar escalas de color
+   - El tema se activa con data-theme="light|dark" en el <html>
+   - También soporta la clase .dark para compatibilidad con Tailwind
+
+   📅 Última actualización: Diciembre 2025
+   ============================================================================= */
+
+/* === IMPORTACIONES EN ORDEN === */
+@import './_fonts.css';
+@import './_tokens-primitives.css';
+@import './_tokens-brand-pdf.css';
+@import './_tokens-semantic.css';
+@import './_tokens-components.css';
+@import './_buttons.css';
+@import './_forms.css';
+@import './_utilities.css';
+
+/* =============================================================================
+   ESTILOS BASE GLOBALES
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family-base);
+  background-color: var(--surface-ground);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-heading);
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-family-mono);
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* =============================================================================
+   TRANSICIÓN DE TEMA — SISTEMA DUAL
+   ─────────────────────────────────────────────────────────────────────────────
+   1. View Transitions API (Chrome/Edge/Safari ≥ 2024):
+      Zoom — el nuevo tema se expande desde el centro de la pantalla.
+   2. Fallback CSS (Firefox + resto):
+      Transición rápida solo en superficies estructurales (no en *todo* el DOM).
+   ============================================================================= */
+
+/* ── 1. View Transitions API ────────────────────────────────────────────── */
+
+/* El tema antiguo se desvanece y encoge ligeramente */
+::view-transition-old(root) {
+  animation: 350ms cubic-bezier(0.4, 0, 0.2, 1) both theme-zoom-out;
+  z-index: 1;
+}
+
+/* El nuevo tema entra expandiéndose desde el centro */
+::view-transition-new(root) {
+  z-index: 2;
+  animation: 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both theme-zoom-in;
+}
+
+@keyframes theme-zoom-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(1.05); }
+}
+
+@keyframes theme-zoom-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Movimiento reducido → cross-fade simple (accesibilidad) */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 150ms;
+    animation-name: theme-fade;
+  }
+
+  @keyframes theme-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+}
+
+/* ── 2. Fallback CSS (navegadores sin VT API) ────────────────────────────── */
+/* Solo superficies estructurales — evita transicionar cada nodo del DOM */
+html.theme-transitioning,
+html.theme-transitioning body,
+html.theme-transitioning header,
+html.theme-transitioning nav,
+html.theme-transitioning main,
+html.theme-transitioning aside,
+html.theme-transitioning footer,
+html.theme-transitioning [class*="card"],
+html.theme-transitioning [class*="panel"],
+html.theme-transitioning [class*="surface"],
+html.theme-transitioning [class*="sidebar"],
+html.theme-transitioning [class*="topbar"] {
+  transition:
+    background-color 200ms ease-out,
+    border-color 200ms ease-out,
+    color 200ms ease-out !important;
+}
+
+/* Aplicar colores base al body.
+   SIN !important A PROPÓSITO: este archivo es la base del sistema de temas y
+   debe poder ser afinado por la hoja global de cada consumidor (por ejemplo,
+   body → var(--surface-section) como pinta la referencia). Un !important aquí
+   convertía la base en un candado que ninguna capa posterior podía gobernar. */
+html,
+body {
+  background-color: var(--surface-ground);
+  color: var(--text-color);
+}
+
+html {
+  /* Breakpoints del sistema de diseño:
+     Mobile:  < 640px
+     Tablet:  640px – 1024px
+     Desktop: > 1024px
+  */
+}
+
+/* Evita que el contenido siga reduciéndose por debajo del ancho mínimo móvil.
+   A < 320px el navegador mostrará scroll horizontal en lugar de comprimir todo. */
+body {
+  min-width: 320px;
+}
+
+/* =============================================================================
+   WCAG 2.1 AA — FOCO VISIBLE
+   Garantiza un indicador de foco consistente para navegación por teclado.
+   :focus-visible solo se activa con teclado, no con clic (UX limpio).
+   ============================================================================= */
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm, 2px);
+}
+
+/* Elimina el outline del navegador en clics, manteniéndolo solo para teclado */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =============================================================================
+   ACCESIBILIDAD — PREFERS-REDUCED-MOTION
+   Respeta la preferencia del sistema operativo: usuarios con vestibular
+   disorders, epilepsia u otras condiciones solicitan menos movimiento.
+   ============================================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =============================================================================
+   SCROLLBAR PERSONALIZADA
+   ============================================================================= */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* =============================================================================
+   ACCESIBILIDAD - FOCUS VISIBLE
+   ============================================================================= */
+
+/* Focus visible para accesibilidad (solo con teclado) */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Remover outline por defecto */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Link focus */
+a:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* =============================================================================
+   SELECCIÓN DE TEXTO
+   ============================================================================= */
+
+::selection {
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+}
+
+::-moz-selection {
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+}
+
+/* =============================================================================
+   UTILIDADES DE TEMA
+   ============================================================================= */
+
+/* Forzar tema claro en un elemento específico */
+.force-light {
+  color-scheme: light;
+}
+
+.force-light,
+.force-light * {
+  --surface-ground: var(--gray-100) !important;
+  --surface-background: var(--gray-0) !important;
+  --text-color: var(--gray-900) !important;
+}
+
+/* Forzar tema oscuro en un elemento específico */
+.force-dark {
+  color-scheme: dark;
+}
+
+.force-dark,
+.force-dark * {
+  --surface-ground: #0a0a0a !important;
+  --surface-background: #141414 !important;
+  --text-color: var(--gray-100) !important;
+}
+
+/* =============================================================================
+   CLASES DE UTILIDAD PARA COLORES
+   ============================================================================= */
+
+/* Colores de texto */
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.text-muted {
+  color: var(--text-color-muted) !important;
+}
+
+.text-brand {
+  color: var(--primary-color) !important;
+}
+
+.text-brand-secondary {
+  color: var(--secondary-color) !important;
+}
+
+.text-success {
+  color: var(--success-color-text) !important;
+}
+
+.text-warning {
+  color: var(--warning-color-text) !important;
+}
+
+.text-danger {
+  color: var(--danger-color-text) !important;
+}
+
+.text-info {
+  color: var(--info-color-text) !important;
+}
+
+/* Colores de fondo */
+.bg-ground {
+  background-color: var(--surface-ground) !important;
+}
+
+.bg-surface {
+  background-color: var(--surface-background) !important;
+}
+
+.bg-section {
+  background-color: var(--surface-section) !important;
+}
+
+.bg-elevated {
+  background-color: var(--surface-elevated) !important;
+}
+
+.bg-brand {
+  background-color: var(--primary-color) !important;
+}
+
+.bg-brand-light {
+  background-color: var(--primary-color-lighter) !important;
+}
+
+.bg-brand-secondary {
+  background-color: var(--secondary-color) !important;
+}
+
+.bg-success {
+  background-color: var(--success-color-lighter) !important;
+}
+
+.bg-warning {
+  background-color: var(--warning-color-lighter) !important;
+}
+
+.bg-danger {
+  background-color: var(--danger-color-lighter) !important;
+}
+
+.bg-info {
+  background-color: var(--info-color-lighter) !important;
+}
+
+/* Colores de borde */
+.border-default {
+  border-color: var(--border-color) !important;
+}
+
+.border-light {
+  border-color: var(--border-color-light) !important;
+}
+
+.border-strong {
+  border-color: var(--border-color-strong) !important;
+}
+
+.border-brand {
+  border-color: var(--primary-color) !important;
+}
+
+.border-success {
+  border-color: var(--success-color) !important;
+}
+
+.border-warning {
+  border-color: var(--warning-color) !important;
+}
+
+.border-danger {
+  border-color: var(--danger-color) !important;
+}
+
+.border-info {
+  border-color: var(--info-color) !important;
+}

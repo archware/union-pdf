@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.hra.gob.pe/desktop/ipc/v1/respuesta-sistema-v1.schema.json",
+  "title": "RespuestaSistemaV1",
+  "description": "Envoltorio canónico de respuesta IPC de escritorio en español y camelCase.",
+  "type": "object",
+  "required": [
+    "versionContrato",
+    "identificadorSolicitud",
+    "correcto",
+    "datos",
+    "error",
+    "metadatos"
+  ],
+  "properties": {
+    "versionContrato": {
+      "type": "string",
+      "const": "hra.desktop.respuesta-sistema.v1"
+    },
+    "identificadorSolicitud": {
+      "type": "string"
+    },
+    "correcto": {
+      "type": "boolean"
+    },
+    "datos": {},
+    "error": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/errorSistema" }
+      ]
+    },
+    "metadatos": {
+      "$ref": "#/$defs/metadatosSistema"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "errorSistema": {
+      "type": "object",
+      "required": [
+        "codigo",
+        "categoria",
+        "reintentable",
+        "claveMensaje",
+        "parametrosMensaje",
+        "etapa"
+      ],
+      "properties": {
+        "codigo": { "type": "string" },
+        "categoria": { "type": "string" },
+        "reintentable": { "type": "boolean" },
+        "claveMensaje": { "type": "string" },
+        "parametrosMensaje": { "type": "object" },
+        "etapa": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "metadatosSistema": {
+      "type": "object",
+      "required": [
+        "duracionMs",
+        "etapaOperacion"
+      ],
+      "properties": {
+        "duracionMs": { "type": "number", "minimum": 0 },
+        "etapaOperacion": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,8 @@
+/target/
+src-tauri/target/
+node_modules/
+dist/
+.angular/
+*.log
+!.agent/tauri.conf.historial.log
+nul

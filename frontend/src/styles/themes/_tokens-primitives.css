@@ -1,0 +1,335 @@
+/* =============================================================================
+   TOKENS PRIMITIVOS - Colores Base Universales
+   =============================================================================
+   ⚠️ ESTOS COLORES SON CONSTANTES - NO MODIFICAR ENTRE PROYECTOS
+   Representan valores de color puros sin contexto semántico
+
+   📅 Última actualización: Diciembre 2025
+   ============================================================================= */
+
+:root {
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE GRISES NEUTRAL
+     ───────────────────────────────────────────────────────────────────────── */
+   --gray-0: #FFFFFF;
+   --gray-50: #F9FAFB;
+   --gray-75: #efeff4;
+   /* iOS Light Gray - Surface Ground */
+   --gray-100: #F3F4F6;
+   --gray-200: #E5E7EB;
+   --gray-300: #D1D5DB;
+   --gray-400: #9CA3AF;
+   --gray-500: #6B7280;
+   --gray-600: #4B5563;
+   --gray-700: #374151;
+   --gray-800: #1F2937;
+   --gray-900: #111827;
+   --gray-950: #030712;
+   --gray-1000: #000000;
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     COLORES iOS SYSTEM (Para estados semánticos)
+     ───────────────────────────────────────────────────────────────────────── */
+   --ios-green: #34C759;
+   --ios-green-dark: #30D158;
+   --ios-orange: #FF9500;
+   --ios-orange-dark: #FF9F0A;
+   --ios-red: #FF3B30;
+   --ios-red-dark: #FF453A;
+   --ios-blue: #007AFF;
+   --ios-blue-dark: #0A84FF;
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     TIPOGRAFÍA (Carga 100 % local vía _fonts.css)
+     ───────────────────────────────────────────────────────────────────────── */
+   --font-family-base: 'Open Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+   --font-family-heading: 'Quicksand', 'Open Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+   --font-family-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     COLORES SEMÁNTICOS FIJOS (Estados del sistema)
+     ───────────────────────────────────────────────────────────────────────── */
+
+   /* 🔴 Rojo - Errores, Peligro, Eliminación */
+   --red-50: #FEF2F2;
+   --red-100: #FEE2E2;
+   --red-200: #FECACA;
+   --red-300: #FCA5A5;
+   --red-400: #F87171;
+   --red-500: #EF4444;
+   --red-600: #DC2626;
+   --red-700: #B91C1C;
+   --red-800: #991B1B;
+   --red-900: #7F1D1D;
+
+   /* 🟢 Verde - Éxito, Confirmación, Activo */
+   --green-50: #F0FDF4;
+   --green-100: #DCFCE7;
+   --green-200: #BBF7D0;
+   --green-300: #86EFAC;
+   --green-400: #4ADE80;
+   --green-500: #22C55E;
+   --green-600: #16A34A;
+   --green-700: #15803D;
+   --green-800: #166534;
+   --green-900: #14532D;
+
+   /* 🟡 Amarillo - Advertencia, Precaución */
+   --yellow-50: #FEFCE8;
+   --yellow-100: #FEF9C3;
+   --yellow-200: #FEF08A;
+   --yellow-300: #FDE047;
+   --yellow-400: #FACC15;
+   --yellow-500: #EAB308;
+   --yellow-600: #CA8A04;
+   --yellow-700: #A16207;
+   --yellow-800: #854D0E;
+   --yellow-900: #713F12;
+
+   /* 🟠 Naranja - Alerta, Atención */
+   --orange-50: #FFF7ED;
+   --orange-100: #FFEDD5;
+   --orange-200: #FED7AA;
+   --orange-300: #FDBA74;
+   --orange-400: #FB923C;
+   --orange-500: #F97316;
+   --orange-600: #EA580C;
+   --orange-700: #C2410C;
+   --orange-800: #9A3412;
+   --orange-900: #7C2D12;
+
+   /* 🔵 Azul - Información, Enlaces */
+   --blue-50: #EFF6FF;
+   --blue-100: #DBEAFE;
+   --blue-200: #BFDBFE;
+   --blue-300: #93C5FD;
+   --blue-400: #60A5FA;
+   --blue-500: #3B82F6;
+   --blue-600: #2563EB;
+   --blue-700: #1D4ED8;
+   --blue-800: #1E40AF;
+   --blue-900: #1E3A8A;
+
+   /* 🩵 Cyan/Sky - Info secundaria */
+   --sky-50: #F0F9FF;
+   --sky-100: #E0F2FE;
+   --sky-200: #BAE6FD;
+   --sky-300: #7DD3FC;
+   --sky-400: #38BDF8;
+   --sky-500: #0EA5E9;
+   --sky-600: #0284C7;
+   --sky-700: #0369A1;
+   --sky-800: #075985;
+   --sky-900: #0C4A6E;
+
+   /* 💜 Púrpura - Especial, Premium */
+   --purple-50: #FAF5FF;
+   --purple-100: #F3E8FF;
+   --purple-200: #E9D5FF;
+   --purple-300: #D8B4FE;
+   --purple-400: #C084FC;
+   --purple-500: #A855F7;
+   --purple-600: #9333EA;
+   --purple-700: #7C3AED;
+   --purple-800: #6B21A8;
+   --purple-900: #581C87;
+
+   /* 🩷 Rosa - Destacado, Marketing */
+   --pink-50: #FDF2F8;
+   --pink-100: #FCE7F3;
+   --pink-200: #FBCFE8;
+   --pink-300: #F9A8D4;
+   --pink-400: #F472B6;
+   --pink-500: #EC4899;
+   --pink-600: #DB2777;
+   --pink-700: #BE185D;
+   --pink-800: #9D174D;
+   --pink-900: #831843;
+
+   /* 🩵 Teal - Complementario */
+   --teal-50: #F0FDFA;
+   --teal-100: #CCFBF1;
+   --teal-200: #99F6E4;
+   --teal-300: #5EEAD4;
+   --teal-400: #2DD4BF;
+   --teal-500: #14B8A6;
+   --teal-600: #0D9488;
+   --teal-700: #0F766E;
+   --teal-800: #115E59;
+   --teal-900: #134E4A;
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE TAMAÑOS DE ICONOS
+     ───────────────────────────────────────────────────────────────────────── */
+   --icon-xs: 0.75rem;
+   /* 12px */
+   --icon-sm: 1rem;
+   /* 16px */
+   --icon-md: 1.5rem;
+   /* 24px */
+   --icon-lg: 2rem;
+   /* 32px */
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE ESPACIADO (Margin, Padding, Gap)
+     Diseño por eliminación - solo estas opciones
+     ───────────────────────────────────────────────────────────────────────── */
+   --space-1: 0.25rem;
+   /* 4px  - Micro spacing */
+   --space-2: 0.5rem;
+   /* 8px  - Tight spacing */
+   --space-3: 0.75rem;
+   /* 12px - Compact spacing */
+   --space-4: 1rem;
+   /* 16px - Default spacing */
+   --space-5: 1.5rem;
+   /* 24px - Comfortable spacing */
+   --space-6: 2rem;
+   /* 32px - Loose spacing */
+   --space-7: 2.5rem;
+   /* 40px - Comfortable section spacing */
+   --space-8: 3rem;
+   /* 48px - Section spacing */
+   --space-9: 3.5rem;
+   /* 56px - Large spacing */
+   --space-10: 4rem;
+   /* 64px - Large section spacing */
+   --space-11: 2.75rem;
+   /* 44px - Component sizes (buttons, menu items) */
+   /* AVISO: este valor NO respeta el orden de la escala —es menor que el 8, el 9
+      y el 10— porque no es un espacio: es el objetivo tactil minimo de WCAG
+      2.5.5, que entro aqui por no haber donde ponerlo. Se conserva por
+      compatibilidad; lo nuevo usa --touch-target-min. Capitulo 10. */
+   --touch-target-min: 3rem;
+   /* 48px - Objetivo tactil minimo. Es un TAMAÑO, no un espacio.
+      Elevado de 2.75rem (44px) a 3rem (48px) por F3-ATOMIC-ADR-20260825. WCAG
+      2.5.5 pide 44 y la guia de Apple 44pt, pero Material Design exige 48dp y
+      la Ley E (apartado 8.6) prohibe que un objetivo tactil quede por debajo de
+      kMinInteractiveDimension, que vale 48.0. Subir cumple los tres listones;
+      44 solo cumplia dos. El capitulo 10 dejo escrito este procedimiento: sube
+      el objetivo tactil y no se mueve ni un margen. --space-11 conserva 2.75rem
+      para quien dependa del valor anterior. */
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE PESO TIPOGRÁFICO
+
+     Cuatro pasos gobernados sobre las familias locales cargadas en `_fonts.css`
+     (`'Open Sans'` para cuerpo/controles y `'Quicksand'` para encabezados/títulos,
+     servidas desde `./fonts/*.woff2` bajo `font-src 'self'`, con respaldo en
+     `system-ui` / `Segoe UI`).
+
+     La escala de uso en componentes mantiene cuatro pasos semánticos (400, 600,
+     700 y 800) para evitar pesos intermedios arbitrarios en hojas de estilo.
+     Capítulo 13.
+     ───────────────────────────────────────────────────────────────────────── */
+   --font-weight-body: 400;
+   /* Texto corrido. */
+   --font-weight-emphasis: 600;
+   /* Etiquetas, cabeceras de tabla, cifras que hay que leer primero. */
+   --font-weight-title: 700;
+   /* Titulos. */
+   --font-weight-display: 800;
+   /* Lo que grita: cifras de cabecera, etiquetas en mayusculas. Se declara 800 y
+      no 900 porque la cara que dibuja es la misma —Black— y 800 deja sitio por
+      arriba si algun dia se carga una familia con mas grados. */
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE TAMAÑOS DE FUENTE
+     ───────────────────────────────────────────────────────────────────────── */
+   --text-xs: 0.75rem;
+   /* 12px */
+   --text-2xs: 0.6875rem;
+   /* 11px */
+   --text-sm: 0.875rem;
+   /* 14px */
+   --text-md: 1rem;
+   /* 16px */
+   --text-lg: 1.125rem;
+   /* 18px */
+   --text-xl: 1.25rem;
+   /* 20px */
+   --text-2xl: 1.5rem;
+   /* 24px */
+   --text-3xl: 2rem;
+   /* 32px */
+   --text-4xl: 2.5rem;
+   /* 40px */
+
+   --letter-spacing-wide: 0.05em;
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE BORDER RADIUS
+     ───────────────────────────────────────────────────────────────────────── */
+   --radius-sm: 0.25rem;
+   /* 4px */
+   --radius-md: 0.5rem;
+   /* 8px */
+   --radius-lg: 0.75rem;
+   /* 12px */
+   --radius-xl: 1rem;
+   /* 16px */
+
+   /* Elevaciones (profundidad de sombra), en px logicos. No son una medida de
+      texto: no escalan con la preferencia tipografica. Un elemento interactivo
+      primario descansa un peldano por encima de la superficie; una tarjeta,
+      medio. Consumidas en Flutter como AtomicElevaciones (F3-DART-BRIDGE). */
+   --elevation-tarjeta: 1px;
+   /* 1px - reposo de una tarjeta sobre la superficie */
+   --elevation-boton: 2px;
+   /* 2px - accion primaria, un peldano por encima */
+   --elevation-boton-activo: 4px;
+   /* 4px - accion primaria mientras se pulsa */
+    --radius-full: 9999px;
+    --border-width-thin: 0.0625rem;
+    --border-width-medium: 0.125rem;
+    --border-width-thick: 0.1875rem;
+   /* Full rounded */
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE TAMAÑOS DE AVATAR
+     ───────────────────────────────────────────────────────────────────────── */
+   --avatar-xs: 1.5rem;
+   /* 24px */
+   --avatar-sm: 2rem;
+   /* 32px */
+   --avatar-md: 2.5rem;
+   /* 40px */
+   --avatar-lg: 3rem;
+   /* 48px */
+   --avatar-xl: 4rem;
+   /* 64px */
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ESCALA DE ALTURAS DE CONTROL (Buttons, Inputs)
+     ───────────────────────────────────────────────────────────────────────── */
+   --control-height-xs: 1.5rem;
+   /* 24px - Chips, mini buttons */
+   --control-height-sm: 2rem;
+   /* 32px - Compact inputs */
+   --control-height-md: 2.875rem;
+   /* 46px - Default (actual --control-height) */
+   --control-height-lg: 3.5rem;
+   /* 56px - Prominent CTAs */
+   --checkbox-size: var(--space-5);
+   --checkbox-icon-size: var(--text-sm);
+
+   /* ─────────────────────────────────────────────────────────────────────────
+      ETIQUETA DE CAMPO (Input, Select, Select2, Textarea, Datepicker, ...)
+      Un solo contrato tipografico para la etiqueta superior y la flotante.
+      Peso 700 (--font-weight-title) en la etiqueta superior, igual que el formulario de referencia;
+      la flotante elevada conserva 600 (--font-weight-emphasis).
+      ───────────────────────────────────────────────────────────────────────── */
+   --field-label-font-size: var(--text-sm);
+   --field-label-font-weight: var(--font-weight-title);
+   --field-label-line-height: 1.25;
+   --field-label-gap: var(--space-1);
+   /* Separacion entre etiqueta superior y control. */
+   --field-label-inset: var(--space-3);
+   /* Sangria horizontal de la etiqueta flotante dentro del control. */
+   --field-label-padding: 0 var(--space-2);
+   /* Recorte del borde bajo la etiqueta flotante. */
+   --field-label-floated-font-size: var(--text-xs);
+   --field-label-floated-font-weight: var(--font-weight-emphasis);
+   --field-label-duration: 200ms;
+}

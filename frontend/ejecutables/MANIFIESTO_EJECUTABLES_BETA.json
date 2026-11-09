@@ -1,0 +1,33 @@
+{
+  "versionEsquema": 1,
+  "proyecto": "base_tauri_angular",
+  "generadoEnUtc": "2026-08-23T02:56:31Z",
+  "canalEntrega": "Beta",
+  "soloControlCalidad": true,
+  "listoParaProduccion": false,
+  "tipoPromocion": "renombrado_sin_recompilacion",
+  "configuracionBetaAplicableEnProximaCompilacion": true,
+  "reciboPromocion": {
+    "integridadVerificada": true,
+    "identidadFuente": "artefactos-qa-verificados-20260820",
+    "tipoPromocion": "copia-verificada-y-renombrado"
+  },
+  "artefactos": [
+    {
+      "archivo": "HRA-Modulo-Operativo-Tauri-Aplicacion-1.6.1-Beta.exe",
+      "funcion": "aplicacion",
+      "version": "1.6.1",
+      "tamanoBytes": 19262976,
+      "sha256": "223425449C1D3F0B155DA2C9D4BDC3755EDF75145E2816DEBB54E801761B54E0",
+      "authenticode": "NotSigned"
+    },
+    {
+      "archivo": "HRA-Modulo-Operativo-Tauri-Recuperacion-Administrativa-1.6.1-Beta.exe",
+      "funcion": "recuperacion_administrativa",
+      "version": "1.6.1",
+      "tamanoBytes": 424960,
+      "sha256": "8715D8D4F29C9349A3BC702E9766EDCAA9FFAFA41441B10DDB471DDED78B800F",
+      "authenticode": "NotSigned"
+    }
+  ]
+}

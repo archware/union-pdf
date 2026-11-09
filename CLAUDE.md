@@ -1,0 +1,78 @@
+# Guía de Operación y Compilación para Agentes (CLAUDE / HERMES / COPILOT)
+
+> **DIRECTIVAS TÉCNICAS INMEDIATAS Y VINCULANTES**
+
+Si el usuario solicita: *"compila"*, *"construye el proyecto"*, *"genera el ejecutable"* o pregunta *"dónde se guarda el exe"*, ejecuta la siguiente respuesta y comando de inmediato:
+
+---
+
+<!-- regla-exito-compilacion:v1 -->
+## Regla de éxito de compilación (prueba de frescura obligatoria)
+
+1. **Un "éxito" de compilación solo vale si cita la salida literal y completa del script de frescura**: el bloque que va de `===== INICIO PRUEBA DE FRESCURA` a `===== FIN PRUEBA DE FRESCURA =====`, generado por `scripts/probar-compilacion.ps1` (PowerShell) o `scripts/probar-compilacion.sh` (POSIX), con la línea `RESULTADO` en `EXITO` y `codigo_salida_prueba` en `0`. Sin ese bloque pegado tal cual, la compilación NO está demostrada: no digas "compiló", "el .exe es válido" ni cites un `.exe` anterior como prueba.
+2. **Toda discrepancia es un FALLO y no se explica.** Si el script devuelve código distinto de 0, o muestra un `.exe` anterior al inicio de la compilación, un `.exe` inexistente, o un hash sin cambio pese a cambios de fuente, reporta `FALLO` con la salida literal. Está prohibido racionalizarlo ("reloj mal configurado", "el .exe de ayer es válido", "caché", "zona horaria"). No reinterpretes fechas ni hashes.
+3. **Prohibido editar `src-tauri/tauri.conf.json` ante un error de compilación**: reporta el error literal y DETENTE. El archivo está protegido por un hash canónico (`.agent/tauri.conf.json.sha256`) que verifican `scripts/verificar-todo.*` (paso 0) y el hook `pre-commit`. Si el candado falla, restaura con `git checkout HEAD -- src-tauri/tauri.conf.json` y reporta. Solo el usuario puede autorizar un cambio legítimo, mediante `node scripts/verificar-tauri-conf.mjs --actualizar --motivo "..."`.
+4. **Nunca fabriques, copies, resumas ni edites esa salida**, ni crees scripts ad-hoc que imiten su formato.
+5. **PROHIBIDO `cargo tauri build`, `cargo tauri dev`, `npx tauri` y `npm run tauri`.** El CLI de Tauri instalado en esta estacion es **v2** (tauri-cli 2.x), pero el proyecto usa el runtime **v1.5**. El CLI v2 rechaza el `tauri.conf.json` v1 con errores falsos ("devPath, distDir, package y tauri no permitidos", "identifier requerido"). **Ese error NO indica que el archivo este mal**: indica que usaste el CLI equivocado. No lo "arregles": no edites `tauri.conf.json`, no lo recrees y no migres a v2. Para compilar usa SOLO `npm run build` (desde la raiz) o `powershell -ExecutionPolicy Bypass -File scripts/probar-compilacion.ps1`; el binario sale de `cargo build --release` y NO requiere el CLI de Tauri.
+6. **Distinción obligatoria ante fallos y Protocolo de Pensamiento Profundo y Reparación estilo Codex:**
+   - **Caso A — Bloqueo de infraestructura o candado (DETENERSE):** Si falla el candado de `tauri.conf.json` (código 5), el archivo `pdf-tool.exe` está bloqueado en memoria por un proceso en ejecución o falta una herramienta del sistema (`rustc`, `node`, `cargo`), reporta la salida literal una sola vez y **DETÉN** el trabajo inmediatamente sin tocar `tauri.conf.json`.
+   - **Caso B — Error de compilación o tests en código fuente (DIAGNOSTICAR Y REPARAR):** Si el fallo proviene del código fuente en `tsc`, `ng build`, `cargo check`, `cargo build`, `vitest` o `pytest`, aplica el **Protocolo de Pensamiento Profundo y Reparación estilo Codex**: (a) **PROHIBIDO** repetir el mismo comando de compilación sin haber editado antes el código; (b) usa `read_file` / `search_files` para leer las líneas exactas del archivo indicado por el compilador y revisar las firmas/tipos en los contratos o archivos importados; (c) formula explícitamente tu análisis antes de editar (**Causa raíz**, **Archivos afectados** y **Cambio mínimo quirúrgico**); y (d) aplica la corrección con `patch` o `write_file` y vuelve a ejecutar la verificación hasta obtener `RESULTADO : EXITO`. Una vez que `npm run build` o `probar-compilacion` termina en `EXITO`, la compilación está hecha: detente inmediatamente y no ejecutes ningún otro comando de compilación después.
+7. **El terminal es Git Bash y CONSERVA el directorio entre comandos.** Nunca uses `cd ..` ni rutas relativas: cada `cd ..` se acumula y te saca del repositorio (en una sesion real acabaste en `...\source\repos` y `...\source`, y `npm run build` fallo con `ENOENT package.json`). Empieza SIEMPRE con ruta absoluta: `cd /c/Users/cotaha/source/repos/pdf-tool && npm run build`. Un `.ps1` no se ejecuta con `./scripts/x.ps1` (bash falla con `syntax error`): usa `powershell -ExecutionPolicy Bypass -File "C:\Users\cotaha\source\repos\pdf-tool\scripts\verificar-todo.ps1"`.
+<!-- /regla-exito-compilacion:v1 -->
+
+## 📍 1. Dónde se Guarda el Ejecutable (.exe)
+
+El binario físico de lanzamiento se genera exclusivamente en:
+```text
+C:\Users\cotaha\source\repos\pdf-tool\src-tauri\target\release\union-pdf.exe
+```
+
+---
+
+## 🚀 2. Cómo Compilar el Proyecto (Comandos Rápidos desde la Raíz)
+
+No necesitas navegar por subcarpetas ni buscar scripts. Ejecuta **cualquiera** de estos comandos directamente en la raíz:
+
+- **Comando NPM estándar (Recomendado):**
+  ```bash
+  npm run build
+  ```
+- **Comando Cargo (Workspace raíz):**
+  ```bash
+  cargo build --release
+  ```
+- **Comando Windows Batch:**
+  ```cmd
+  build.bat
+  ```
+- **Comando PowerShell Canónico:**
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File scripts/verificar-todo.ps1
+  # O simplemente:
+  .\build.ps1
+  ```
+- **Comando Git Bash / POSIX:**
+  ```bash
+  ./build-exe.sh
+  ```
+
+---
+
+## 🚫 3. PROHIBICIÓN ABSOLUTA: NUNCA Modificar `tauri.conf.json`
+
+1. **El proyecto está anclado en Tauri v1.5** (`tauri = "1.5"` en `src-tauri/Cargo.toml`).
+2. **NUNCA** modifiques el esquema de `src-tauri/tauri.conf.json` a Tauri v2 ni muevas `identifier` a la raíz ni borres campos de empaquetado.
+3. **Trampa típica de error falso:**
+   - Si ejecutas `cargo build` dentro de `src-tauri` sin haber compilado antes el frontend, Tauri fallará indicando: `distDir does not exist` o error en `tauri.conf.json`.
+   - **ESTO NO SIGNIFICA QUE `tauri.conf.json` ESTÉ MAL.**
+   - Significa únicamente que falta compilar el frontend Angular (`cd frontend && npm run build`).
+   - La compuerta canónica `scripts/verificar-todo.ps1` (o `npm run build` en la raíz) resuelve esto automáticamente limpiando y compilando el frontend antes de compilar Rust.
+
+---
+
+## 🛡️ 4. Axiomas Doctrinales Vinculantes
+
+1. **Axioma 1 (Verificación Binaria Real):** Solo reporta éxito si el binario `src-tauri/target/release/union-pdf.exe` existe físicamente y tiene tamaño `> 0 bytes`.
+2. **Axioma 8 (Respeto al Esquema Fijado):** No intentes actualizar dependencias ni transformar esquemas estructurales.
+3. **Axioma 9 (Prohibición de Mocks Falsos):** No inventes stubs falsos ni inviertas aserciones de pruebas unitarias (`cargo test` debe pasar 100% legítimamente).
+4. **Doctrina Sombra (Autoría Estricta y Cero Rastros de IA en Git):** Cuando el dueño autorice ejecutar `git commit` o generar scripts de control de versiones, toda operación se registra exclusivamente a nombre de `archware` con el correo `havel363@gmail.com` (`GIT_AUTHOR_NAME="archware"`, `GIT_AUTHOR_EMAIL="havel363@gmail.com"`, `GIT_COMMITTER_NAME="archware"`, `GIT_COMMITTER_EMAIL="havel363@gmail.com"`). Queda terminantemente prohibido usar nombres de modelos o asistentes (`Claude`, `AI`, `Assistant`, `Copilot`, `Gemini`, `Hermes`, etc.) como autor/committer o agregar etiquetas `Co-authored-by:` / `Generated-by:` en el cuerpo del commit. Emplea Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`, `docs:`) fríos, técnicos y en minúsculas, ejecutando o entregando los comandos directamente sin explicaciones. La mención de transparencia sobre co-ingeniería con IA Agéntica en la interfaz gráfica (`<app-about-dialog>`) se conserva intacta.

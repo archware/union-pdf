@@ -1,0 +1,290 @@
+<ng-template #aboutBody>
+  <div class="about-surface">
+    <!-- Cabecera de identidad de la aplicacion -->
+    <header class="about-hero">
+      <div class="about-box about-hero__emblem" aria-hidden="true">
+        @if (logoImageUrl()) {
+          <img class="about-hero__logo-img" [src]="logoImageUrl()" [alt]="appName()" />
+        } @else {
+          <i [class]="resolvedLogoIcon" class="about-hero__logo-icon"></i>
+        }
+      </div>
+
+      <div class="about-col about-hero__identity">
+        <div class="about-between about-hero__title-row">
+          <h4 class="about-hero__app-name">{{ appName() }}</h4>
+          <div class="about-row about-hero__badges">
+            @if (version()) {
+              <app-chip variant="primary" size="sm">{{ version() }}</app-chip>
+            }
+            @if (environment()) {
+              <app-chip variant="success" size="sm">{{ environment() }}</app-chip>
+            }
+            @if (runtimeInfo()) {
+              <app-chip variant="info" size="sm">{{ runtimeInfo() }}</app-chip>
+            }
+          </div>
+        </div>
+
+        @if (appSubtitle()) {
+          <p class="about-hero__subtitle">{{ appSubtitle() }}</p>
+        }
+
+        @if (appDescription()) {
+          <p class="about-hero__description">{{ appDescription() }}</p>
+        }
+      </div>
+    </header>
+
+    <!-- Bloque destacado de autoria principal y co-ingenieria IA -->
+    <section class="about-author-card" aria-label="Autoría y arquitectura del software">
+      <div class="about-row about-author-card__main">
+        <div class="about-box about-author-card__avatar" aria-hidden="true">
+          <i class="fa-solid fa-user-tie"></i>
+        </div>
+
+        <div class="about-col about-author-card__info">
+          <span class="about-eyebrow about-author-card__eyebrow">Autoría y Dirección Técnica</span>
+          <strong class="about-heading about-author-card__name">{{ authorName() }}</strong>
+          @if (authorRole()) {
+            <span class="about-meta about-author-card__role">{{ authorRole() }}</span>
+          }
+        </div>
+
+        @if (githubHandle()) {
+          <div class="about-author-card__github">
+            @if (githubUrl()) {
+              <a
+                class="about-pill about-github-pill"
+                [href]="githubUrl()"
+                target="_blank"
+                rel="noopener noreferrer"
+                [attr.aria-label]="'Perfil de GitHub ' + githubHandle()"
+              >
+                <i class="fa-brands fa-github" aria-hidden="true"></i>
+                <span>{{ githubHandle() }}</span>
+                <i class="fa-solid fa-arrow-up-right-from-square about-meta about-pill__ext" aria-hidden="true"></i>
+              </a>
+            } @else {
+              <span class="about-pill about-github-pill">
+                <i class="fa-brands fa-github" aria-hidden="true"></i>
+                <span>{{ githubHandle() }}</span>
+              </span>
+            }
+          </div>
+        }
+      </div>
+
+      @if (aiDisclosure()) {
+        <div class="about-ai-banner" role="note" aria-label="Declaración de co-ingeniería con IA">
+          <div class="about-ai-banner__icon" aria-hidden="true">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          </div>
+          <p class="about-ai-banner__text">{{ aiDisclosure() }}</p>
+        </div>
+      }
+    </section>
+
+    <!-- Lista estructurada de creditos -->
+    @if (credits().length > 0) {
+      <section class="about-section" aria-label="Créditos y reconocimientos">
+        <h5 class="about-eyebrow about-section__title">
+          <i class="fa-solid fa-award" aria-hidden="true"></i>
+          <span>Créditos del Sistema</span>
+        </h5>
+
+        <div class="about-credits-grid" role="list">
+          @for (credit of credits(); track credit.label) {
+            <div class="about-credit-item" role="listitem">
+              @if (credit.imageUrl) {
+                <div class="about-box about-credit-item__icon" aria-hidden="true">
+                  <img class="about-credit-item__img" [src]="credit.imageUrl" [alt]="credit.label" />
+                </div>
+              } @else if (credit.icon) {
+                <div class="about-box about-credit-item__icon" aria-hidden="true">
+                  <i [class]="resolveIconClass(credit.icon)"></i>
+                </div>
+              }
+              <div class="about-col about-credit-item__body">
+                @if (credit.bannerImageUrl) {
+                  <img class="about-credit-item__banner" [src]="credit.bannerImageUrl" [alt]="credit.value" />
+                }
+                <div class="about-between about-credit-item__header">
+                  <span class="about-meta about-credit-item__label">{{ credit.label }}</span>
+                  @if (credit.badge) {
+                    <app-chip variant="secondary" size="sm">{{ credit.badge }}</app-chip>
+                  }
+                </div>
+                <strong class="about-credit-item__value">{{ credit.value }}</strong>
+                @if (credit.subtext) {
+                  <span class="about-meta about-credit-item__subtext">{{ credit.subtext }}</span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Insignias del stack tecnologico -->
+    @if (techStack().length > 0) {
+      <section class="about-section" aria-label="Stack tecnológico">
+        <h5 class="about-eyebrow about-section__title">
+          <i class="fa-solid fa-microchip" aria-hidden="true"></i>
+          <span>Stack Tecnológico</span>
+        </h5>
+
+        <div class="about-row about-tech-list" role="list">
+          @for (tech of techStack(); track tech.label) {
+            <div class="about-tech-list__item" role="listitem">
+              <app-chip [variant]="resolveChipVariant(tech.variant)" size="sm">
+                @if (tech.icon) {
+                  <i [class]="resolveIconClass(tech.icon)" class="about-tech-chip__icon" aria-hidden="true"></i>
+                }
+                <span>{{ tech.label }}</span>
+              </app-chip>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Enlaces verificados -->
+    @if (links().length > 0) {
+      <section class="about-section" aria-label="Enlaces y repositorios">
+        <h5 class="about-eyebrow about-section__title">
+          <i class="fa-solid fa-compass" aria-hidden="true"></i>
+          <span>Enlaces y Recursos</span>
+        </h5>
+
+        <div class="about-row about-links-list">
+          @for (link of links(); track link.url) {
+            <a
+              class="about-pill about-link-pill"
+              [href]="link.url"
+              [attr.target]="link.external === false ? null : '_blank'"
+              [attr.rel]="link.external === false ? null : 'noopener noreferrer'"
+            >
+              <i [class]="resolveIconClass(link.icon, 'fa-solid fa-globe')" aria-hidden="true"></i>
+              <span>{{ link.label }}</span>
+              @if (link.external !== false) {
+                <i class="fa-solid fa-arrow-up-right-from-square about-meta about-pill__ext" aria-hidden="true"></i>
+              }
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Pie de derechos de autor -->
+    @if (copyrightText()) {
+      <footer class="about-copyright">
+        <i class="fa-regular fa-copyright" aria-hidden="true"></i>
+        <span>{{ copyrightText() }}</span>
+      </footer>
+    }
+  </div>
+</ng-template>
+
+@switch (variant()) {
+  @case ('card') {
+    <article
+      class="about-card-surface"
+      [class.about-card-surface--sm]="size() === 'sm'"
+      [class.about-card-surface--md]="size() === 'md'"
+      [class.about-card-surface--lg]="size() === 'lg'"
+      [attr.aria-label]="dialogTitle()"
+    >
+      <header class="about-card-surface__header">
+        <div class="about-row about-card-surface__title-group">
+          <i class="fa-solid fa-circle-info about-card-surface__icon" aria-hidden="true"></i>
+          <h3 class="about-heading about-card-surface__title">{{ dialogTitle() }}</h3>
+        </div>
+        <app-chip variant="outline" size="sm">Vista en línea</app-chip>
+      </header>
+      <div class="about-card-surface__body">
+        <ng-container [ngTemplateOutlet]="aboutBody" />
+      </div>
+    </article>
+  }
+
+  @case ('popup') {
+    @if (open()) {
+      <div class="about-popup-overlay" (pointerdown)="onBackdropPointerDown($event)">
+        <div
+          #popupDialog
+          class="about-card-surface about-popup"
+          [class.about-card-surface--sm]="size() === 'sm'"
+          [class.about-card-surface--md]="size() === 'md'"
+          [class.about-card-surface--lg]="size() === 'lg'"
+          role="dialog"
+          aria-modal="true"
+          tabindex="-1"
+          [attr.aria-labelledby]="popupTitleId"
+          (pointerdown)="$event.stopPropagation()"
+          (keydown)="onPopupKeydown($event)"
+        >
+          <app-icon-button
+            class="about-popup__close"
+            variant="hanging-close"
+            animation="none"
+            [ariaLabel]="closeButtonText()"
+            [tooltip]="closeButtonText()"
+            (clicked)="onClose()"
+          />
+
+          <header class="about-card-surface__header">
+            <h3 class="about-heading about-card-surface__title" [id]="popupTitleId">{{ dialogTitle() }}</h3>
+          </header>
+
+          <app-scroll-overlay
+            class="so-block about-popup__scroll"
+            [skipTableDetection]="true"
+            [disableHorizontal]="true"
+          >
+            <div class="about-card-surface__body">
+              <ng-container [ngTemplateOutlet]="aboutBody" />
+            </div>
+          </app-scroll-overlay>
+
+          <footer class="about-popup__footer">
+            <app-button
+              data-about-popup-initial-focus
+              variant="primary"
+              size="sm"
+              iconClass="fa-solid fa-check"
+              (buttonClick)="onClose()"
+            >
+              {{ closeButtonText() }}
+            </app-button>
+          </footer>
+        </div>
+      </div>
+    }
+  }
+
+  @default {
+    @if (open()) {
+      <app-modal
+        [title]="dialogTitle()"
+        [size]="size()"
+        [hasFooter]="true"
+        (closed)="onClose()"
+      >
+        <ng-container [ngTemplateOutlet]="aboutBody" />
+
+        <div slot="footer" class="about-dialog__footer-actions">
+          <app-button
+            data-modal-initial-focus
+            variant="primary"
+            size="sm"
+            iconClass="fa-solid fa-check"
+            (buttonClick)="onClose()"
+          >
+            {{ closeButtonText() }}
+          </app-button>
+        </div>
+      </app-modal>
+    }
+  }
+}

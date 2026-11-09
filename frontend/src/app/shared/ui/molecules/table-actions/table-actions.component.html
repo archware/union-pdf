@@ -1,0 +1,14 @@
+<div class="actions-container">
+  <button type="button" class="action-btn view" [title]="'table.actions.view' | translate" (click)="view.emit()"
+    (keydown.enter)="view.emit()" (keydown.space)="view.emit()">
+    <i class="fa-solid fa-eye"></i>
+  </button>
+  <button type="button" class="action-btn edit" [title]="'table.actions.edit' | translate" (click)="edit.emit()"
+    (keydown.enter)="edit.emit()" (keydown.space)="edit.emit()">
+    <i class="fa-solid fa-pencil"></i>
+  </button>
+  <button type="button" class="action-btn delete" [title]="'table.actions.delete' | translate" (click)="delete.emit()"
+    (keydown.enter)="delete.emit()" (keydown.space)="delete.emit()">
+    <i class="fa-solid fa-trash-can"></i>
+  </button>
+</div>

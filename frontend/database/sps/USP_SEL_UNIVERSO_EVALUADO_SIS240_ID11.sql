@@ -1,0 +1,328 @@
+IF OBJECT_ID(N'ind.SIS240_UNIVERSO_EVALUADO_ID11', N'U') IS NULL
+BEGIN
+    CREATE TABLE ind.SIS240_UNIVERSO_EVALUADO_ID11 (
+        I_ANIO INT NOT NULL,
+        I_MES INT NOT NULL,
+        V_GRUPO VARCHAR(80) NOT NULL,
+        V_CATEGORIA VARCHAR(80) NOT NULL,
+        V_ETIQUETA VARCHAR(160) NOT NULL,
+        I_ORDEN INT NOT NULL,
+        B_TIENE_ORIENTACION BIT NOT NULL,
+        B_TIENE_CONSEJERIA BIT NOT NULL,
+        B_TIENE_METODO_ANTICONCEPTIVO BIT NOT NULL,
+        B_ES_CONTINUADOR BIT NOT NULL,
+        I_TOTAL INT NOT NULL,
+        V_FUENTE VARCHAR(260) NOT NULL,
+        V_NOTA VARCHAR(500) NULL,
+        F_REGISTRO DATETIME2(0) NOT NULL CONSTRAINT DF_SIS240_EVALUADO_FECHA DEFAULT (SYSDATETIME()),
+        CONSTRAINT PK_SIS240_UNIVERSO_EVALUADO_ID11 PRIMARY KEY (I_ANIO, I_MES, V_CATEGORIA)
+    );
+END;
+GO
+
+IF OBJECT_ID(N'ind.SIS240_UNIVERSO_EVALUADO_AUDIT_ID11', N'U') IS NULL
+BEGIN
+    CREATE TABLE ind.SIS240_UNIVERSO_EVALUADO_AUDIT_ID11 (
+        I_AUDIT_ID BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_SIS240_EVALUADO_AUDIT_ID11 PRIMARY KEY,
+        F_AUDIT DATETIME2(0) NOT NULL CONSTRAINT DF_SIS240_EVALUADO_AUDIT_FECHA DEFAULT (SYSDATETIME()),
+        V_ACCION VARCHAR(10) NOT NULL,
+        I_ANIO INT NOT NULL,
+        I_MES INT NOT NULL,
+        V_CATEGORIA VARCHAR(80) NOT NULL,
+        I_TOTAL_ANTERIOR INT NULL,
+        I_TOTAL_NUEVO INT NULL,
+        V_GRUPO_ANTERIOR VARCHAR(80) NULL,
+        V_GRUPO_NUEVO VARCHAR(80) NULL,
+        V_USUARIO VARCHAR(128) NOT NULL CONSTRAINT DF_SIS240_EVALUADO_AUDIT_USUARIO DEFAULT (SUSER_SNAME()),
+        V_APLICACION VARCHAR(128) NULL CONSTRAINT DF_SIS240_EVALUADO_AUDIT_APP DEFAULT (APP_NAME()),
+        V_HOST VARCHAR(128) NULL CONSTRAINT DF_SIS240_EVALUADO_AUDIT_HOST DEFAULT (HOST_NAME())
+    );
+END;
+GO
+
+IF OBJECT_ID(N'ind.TRG_SIS240_UNIVERSO_EVALUADO_AUDIT_ID11', N'TR') IS NULL
+    EXEC(N'CREATE TRIGGER ind.TRG_SIS240_UNIVERSO_EVALUADO_AUDIT_ID11 ON ind.SIS240_UNIVERSO_EVALUADO_ID11 AFTER INSERT AS BEGIN SET NOCOUNT ON; END');
+GO
+
+ALTER TRIGGER ind.TRG_SIS240_UNIVERSO_EVALUADO_AUDIT_ID11
+ON ind.SIS240_UNIVERSO_EVALUADO_ID11
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO ind.SIS240_UNIVERSO_EVALUADO_AUDIT_ID11 (
+        V_ACCION,
+        I_ANIO,
+        I_MES,
+        V_CATEGORIA,
+        I_TOTAL_ANTERIOR,
+        I_TOTAL_NUEVO,
+        V_GRUPO_ANTERIOR,
+        V_GRUPO_NUEVO
+    )
+    SELECT
+        CASE
+            WHEN d.V_CATEGORIA IS NULL THEN 'INSERT'
+            WHEN i.V_CATEGORIA IS NULL THEN 'DELETE'
+            ELSE 'UPDATE'
+        END AS V_ACCION,
+        COALESCE(i.I_ANIO, d.I_ANIO) AS I_ANIO,
+        COALESCE(i.I_MES, d.I_MES) AS I_MES,
+        COALESCE(i.V_CATEGORIA, d.V_CATEGORIA) AS V_CATEGORIA,
+        d.I_TOTAL AS I_TOTAL_ANTERIOR,
+        i.I_TOTAL AS I_TOTAL_NUEVO,
+        d.V_GRUPO AS V_GRUPO_ANTERIOR,
+        i.V_GRUPO AS V_GRUPO_NUEVO
+    FROM inserted i
+    FULL OUTER JOIN deleted d
+        ON d.I_ANIO = i.I_ANIO
+       AND d.I_MES = i.I_MES
+       AND d.V_CATEGORIA = i.V_CATEGORIA;
+END;
+GO
+
+MERGE ind.SIS240_UNIVERSO_EVALUADO_ID11 WITH (HOLDLOCK) AS tgt
+USING (VALUES
+    (
+        2026,
+        4,
+        'ORIENTACION_CONSEJERIA',
+        'O_C_CON_MA',
+        'Orientacion y consejeria con metodo anticonceptivo',
+        10,
+        CONVERT(bit, 1),
+        CONVERT(bit, 1),
+        CONVERT(bit, 1),
+        CONVERT(bit, 0),
+        275,
+        'Referencia funcional usuario abril 2026',
+        'Pacientes con orientacion, consejeria y metodo anticonceptivo. Forma parte del bloque O+C = 284.'
+    ),
+    (
+        2026,
+        4,
+        'ORIENTACION_CONSEJERIA',
+        'SOLO_O_C',
+        'Solo orientacion y consejeria',
+        20,
+        CONVERT(bit, 1),
+        CONVERT(bit, 1),
+        CONVERT(bit, 0),
+        CONVERT(bit, 0),
+        9,
+        'Referencia funcional usuario abril 2026',
+        'Pacientes con orientacion y consejeria sin metodo anticonceptivo. Forma parte del bloque O+C = 284.'
+    ),
+    (
+        2026,
+        4,
+        'CONTINUADOR_SIN_O_C',
+        'SIN_O_C_CON_MA',
+        'Continuador sin orientacion ni consejeria con metodo anticonceptivo',
+        30,
+        CONVERT(bit, 0),
+        CONVERT(bit, 0),
+        CONVERT(bit, 1),
+        CONVERT(bit, 1),
+        51,
+        'Referencia funcional usuario abril 2026',
+        'Pacientes continuadores sin orientacion ni consejeria, con metodo anticonceptivo. Forma parte del bloque continuador = 59.'
+    ),
+    (
+        2026,
+        4,
+        'CONTINUADOR_SIN_O_C',
+        'CONTINUADOR_SIN_O_C_SIN_MA',
+        'Continuador sin orientacion ni consejeria y sin metodo anticonceptivo',
+        40,
+        CONVERT(bit, 0),
+        CONVERT(bit, 0),
+        CONVERT(bit, 0),
+        CONVERT(bit, 1),
+        8,
+        'Referencia funcional usuario abril 2026',
+        'Valor informado como solo O y C continuador; se normaliza como continuador sin O+C y sin MA para conservar el total 59.'
+    )
+) AS src(
+    I_ANIO,
+    I_MES,
+    V_GRUPO,
+    V_CATEGORIA,
+    V_ETIQUETA,
+    I_ORDEN,
+    B_TIENE_ORIENTACION,
+    B_TIENE_CONSEJERIA,
+    B_TIENE_METODO_ANTICONCEPTIVO,
+    B_ES_CONTINUADOR,
+    I_TOTAL,
+    V_FUENTE,
+    V_NOTA
+)
+ON tgt.I_ANIO = src.I_ANIO
+AND tgt.I_MES = src.I_MES
+AND tgt.V_CATEGORIA = src.V_CATEGORIA
+WHEN MATCHED AND (
+       tgt.V_GRUPO <> src.V_GRUPO
+    OR tgt.V_ETIQUETA <> src.V_ETIQUETA
+    OR tgt.I_ORDEN <> src.I_ORDEN
+    OR tgt.B_TIENE_ORIENTACION <> src.B_TIENE_ORIENTACION
+    OR tgt.B_TIENE_CONSEJERIA <> src.B_TIENE_CONSEJERIA
+    OR tgt.B_TIENE_METODO_ANTICONCEPTIVO <> src.B_TIENE_METODO_ANTICONCEPTIVO
+    OR tgt.B_ES_CONTINUADOR <> src.B_ES_CONTINUADOR
+    OR tgt.I_TOTAL <> src.I_TOTAL
+    OR tgt.V_FUENTE <> src.V_FUENTE
+    OR ISNULL(tgt.V_NOTA, '') <> ISNULL(src.V_NOTA, '')
+) THEN
+    UPDATE SET
+        V_GRUPO = src.V_GRUPO,
+        V_ETIQUETA = src.V_ETIQUETA,
+        I_ORDEN = src.I_ORDEN,
+        B_TIENE_ORIENTACION = src.B_TIENE_ORIENTACION,
+        B_TIENE_CONSEJERIA = src.B_TIENE_CONSEJERIA,
+        B_TIENE_METODO_ANTICONCEPTIVO = src.B_TIENE_METODO_ANTICONCEPTIVO,
+        B_ES_CONTINUADOR = src.B_ES_CONTINUADOR,
+        I_TOTAL = src.I_TOTAL,
+        V_FUENTE = src.V_FUENTE,
+        V_NOTA = src.V_NOTA,
+        F_REGISTRO = SYSDATETIME()
+WHEN NOT MATCHED BY TARGET THEN
+    INSERT (
+        I_ANIO,
+        I_MES,
+        V_GRUPO,
+        V_CATEGORIA,
+        V_ETIQUETA,
+        I_ORDEN,
+        B_TIENE_ORIENTACION,
+        B_TIENE_CONSEJERIA,
+        B_TIENE_METODO_ANTICONCEPTIVO,
+        B_ES_CONTINUADOR,
+        I_TOTAL,
+        V_FUENTE,
+        V_NOTA
+    )
+    VALUES (
+        src.I_ANIO,
+        src.I_MES,
+        src.V_GRUPO,
+        src.V_CATEGORIA,
+        src.V_ETIQUETA,
+        src.I_ORDEN,
+        src.B_TIENE_ORIENTACION,
+        src.B_TIENE_CONSEJERIA,
+        src.B_TIENE_METODO_ANTICONCEPTIVO,
+        src.B_ES_CONTINUADOR,
+        src.I_TOTAL,
+        src.V_FUENTE,
+        src.V_NOTA
+    );
+GO
+
+IF OBJECT_ID(N'ind.USP_SEL_UNIVERSO_EVALUADO_SIS240_ID11', N'P') IS NULL
+    EXEC(N'CREATE PROCEDURE ind.USP_SEL_UNIVERSO_EVALUADO_SIS240_ID11 AS BEGIN SET NOCOUNT ON; END');
+GO
+
+ALTER PROCEDURE ind.USP_SEL_UNIVERSO_EVALUADO_SIS240_ID11
+    @I_MES INT = NULL,
+    @I_ANIO INT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Mes INT = NULLIF(@I_MES, 0);
+    DECLARE @Anio INT = NULLIF(@I_ANIO, 0);
+
+    IF @Mes IS NULL OR @Anio IS NULL
+    BEGIN
+        SELECT TOP (1)
+            @Mes = COALESCE(@Mes, I_MES),
+            @Anio = COALESCE(@Anio, I_ANIO)
+        FROM ind.SIS240_UNIVERSO_EVALUADO_ID11
+        WHERE (@Mes IS NULL OR I_MES = @Mes)
+          AND (@Anio IS NULL OR I_ANIO = @Anio)
+        ORDER BY I_ANIO DESC, I_MES DESC;
+    END;
+
+    ;WITH Base AS (
+        SELECT
+            I_ANIO,
+            I_MES,
+            V_GRUPO,
+            V_CATEGORIA,
+            V_ETIQUETA,
+            I_ORDEN,
+            B_TIENE_ORIENTACION,
+            B_TIENE_CONSEJERIA,
+            B_TIENE_METODO_ANTICONCEPTIVO,
+            B_ES_CONTINUADOR,
+            I_TOTAL,
+            V_FUENTE,
+            V_NOTA,
+            F_REGISTRO
+        FROM ind.SIS240_UNIVERSO_EVALUADO_ID11
+        WHERE I_ANIO = @Anio
+          AND I_MES = @Mes
+    )
+    SELECT
+        'RESUMEN_UNIVERSO_EVALUADO_SIS240_ID11' AS V_TABLA,
+        ISNULL(@Anio, 0) AS I_ANIO,
+        ISNULL(@Mes, 0) AS I_MES,
+        ISNULL(SUM(I_TOTAL), 0) AS I_TOTAL_UNIVERSO_EVALUADO,
+        ISNULL(SUM(CASE WHEN V_GRUPO = 'ORIENTACION_CONSEJERIA' THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_ORIENTACION_CONSEJERIA,
+        ISNULL(SUM(CASE WHEN V_CATEGORIA = 'O_C_CON_MA' THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_O_C_CON_MA,
+        ISNULL(SUM(CASE WHEN V_CATEGORIA = 'SOLO_O_C' THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_SOLO_O_C,
+        ISNULL(SUM(CASE WHEN V_GRUPO = 'CONTINUADOR_SIN_O_C' THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_CONTINUADOR_SIN_O_C,
+        ISNULL(SUM(CASE WHEN V_CATEGORIA = 'SIN_O_C_CON_MA' THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_SIN_O_C_CON_MA,
+        ISNULL(SUM(CASE WHEN V_CATEGORIA = 'CONTINUADOR_SIN_O_C_SIN_MA' THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_CONTINUADOR_SIN_O_C_SIN_MA,
+        ISNULL(SUM(CASE WHEN B_TIENE_METODO_ANTICONCEPTIVO = 1 THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_CON_METODO_ANTICONCEPTIVO,
+        ISNULL(SUM(CASE WHEN B_TIENE_METODO_ANTICONCEPTIVO = 0 THEN I_TOTAL ELSE 0 END), 0) AS I_TOTAL_SIN_METODO_ANTICONCEPTIVO,
+        CASE
+            WHEN ISNULL(SUM(I_TOTAL), 0) = 343 AND @Anio = 2026 AND @Mes = 4 THEN 'CUADRADO'
+            WHEN ISNULL(SUM(I_TOTAL), 0) = 0 THEN 'SIN_DATOS_EVALUADOS'
+            ELSE 'REQUIERE_REVISION'
+        END AS V_ESTADO,
+        MAX(F_REGISTRO) AS F_ULTIMA_EVALUACION
+    FROM Base;
+
+    SELECT
+        'DETALLE_UNIVERSO_EVALUADO_SIS240_ID11' AS V_TABLA,
+        I_ANIO,
+        I_MES,
+        V_GRUPO,
+        V_CATEGORIA,
+        V_ETIQUETA,
+        I_ORDEN,
+        B_TIENE_ORIENTACION,
+        B_TIENE_CONSEJERIA,
+        B_TIENE_METODO_ANTICONCEPTIVO,
+        B_ES_CONTINUADOR,
+        I_TOTAL,
+        V_FUENTE,
+        V_NOTA,
+        F_REGISTRO
+    FROM ind.SIS240_UNIVERSO_EVALUADO_ID11
+    WHERE I_ANIO = @Anio
+      AND I_MES = @Mes
+    ORDER BY I_ORDEN;
+
+    ;WITH ObjetosRequeridos AS (
+        SELECT 'ind.USP_SEL_UNIVERSO_EVALUADO_SIS240_ID11' AS V_OBJETO, 'P' AS V_TIPO
+        UNION ALL SELECT 'ind.SIS240_UNIVERSO_EVALUADO_ID11', 'U'
+        UNION ALL SELECT 'ind.SIS240_UNIVERSO_EVALUADO_AUDIT_ID11', 'U'
+        UNION ALL SELECT 'ind.TRG_SIS240_UNIVERSO_EVALUADO_AUDIT_ID11', 'TR'
+    )
+    SELECT
+        'AUDITORIA_OBJETOS_UNIVERSO_EVALUADO_ID11' AS V_TABLA,
+        r.V_OBJETO,
+        r.V_TIPO AS V_TIPO_ESPERADO,
+        CASE WHEN o.object_id IS NULL THEN 0 ELSE 1 END AS B_EXISTE,
+        o.type AS V_TIPO_ENCONTRADO,
+        o.modify_date AS F_MODIFICACION
+    FROM ObjetosRequeridos r
+    LEFT JOIN sys.objects o
+        ON o.object_id = OBJECT_ID(r.V_OBJETO)
+       AND o.type = r.V_TIPO
+    ORDER BY r.V_TIPO, r.V_OBJETO;
+END;
+GO

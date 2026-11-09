@@ -1,0 +1,138 @@
+{
+  "lock_schema_version": 3,
+  "package_name": "@hra/desktop-contracts",
+  "package_version": "0.3.1",
+  "bundle_sha256": "0c54533d135ed96128aba43be41e620c024d498cae146d2ed0ef3e93487608aa",
+  "content_hash_policy": "sha256-git-clean-eol-v1",
+  "consumer": "tauri",
+  "runtime_adoption": "active",
+  "runtime_adoption_evidence": {
+    "schema_version": 2,
+    "content_hash_policy": "sha256-git-clean-eol-v1",
+    "descriptor_path": "contracts/runtime-adoption.evidence.json",
+    "descriptor_sha256": "3ebafafe6cc082e38fb0d5444fdcf7d2640ff184e7699f9eef843735f0e1e13a",
+    "models": [
+      {
+        "model": "ResultEnvelopeV1",
+        "production_files": [
+          {
+            "path": "src-tauri/src/lib.rs",
+            "sha256": "b8647772a45c63986ac9b4b303921f3776bdcb6cf978352e68007a2747f8e09b"
+          },
+          {
+            "path": "src-tauri/src/contract_bridge.rs",
+            "sha256": "65b5517ef03dcd08a7d5d32be788cf586645bda523cf6043ef740e5c4e8e00a9"
+          },
+          {
+            "path": "src/app/dashboard/desktop-contracts.ts",
+            "sha256": "1426cd676beca94482d95337be6fa9389e55a61dd72f81113b216313a598c635"
+          },
+          {
+            "path": "src/app/dashboard/dashboard.component.ts",
+            "sha256": "b480fa63253ab39e8f67b73bff3ddc250c918a584475344c4914407be4de6892"
+          }
+        ],
+        "test_files": [
+          {
+            "path": "src-tauri/src/contract_adoption_tests.rs",
+            "sha256": "314bdc8d32a6ae3afd9e4dd08afe043fd2f3b25f1874c5f440241b223e051656"
+          },
+          {
+            "path": "src/app/dashboard/desktop-contracts.spec.ts",
+            "sha256": "4dc4a5b0b6a261b9366e067a4aeed525fd50bb448c4fd9c4a09a195913cb39d2"
+          },
+          {
+            "path": "src/app/dashboard/dashboard.component.spec.ts",
+            "sha256": "cc820292cb380e57d2f86cee2af5d5b7b207bce4fdc14866fc9470d41c97407a"
+          }
+        ]
+      },
+      {
+        "model": "ConnectionProfileV1",
+        "production_files": [
+          {
+            "path": "src-tauri/src/lib.rs",
+            "sha256": "b8647772a45c63986ac9b4b303921f3776bdcb6cf978352e68007a2747f8e09b"
+          },
+          {
+            "path": "src-tauri/src/interfaces/tauri_cmds.rs",
+            "sha256": "3e247dac27b3f63e10553b2b0500d5d290b91aacfa46f2f36a12deb8f8f1c95e"
+          },
+          {
+            "path": "src/app/dashboard/desktop-contracts.ts",
+            "sha256": "1426cd676beca94482d95337be6fa9389e55a61dd72f81113b216313a598c635"
+          },
+          {
+            "path": "src/app/dashboard/dashboard.component.ts",
+            "sha256": "b480fa63253ab39e8f67b73bff3ddc250c918a584475344c4914407be4de6892"
+          }
+        ],
+        "test_files": [
+          {
+            "path": "src-tauri/src/contract_adoption_tests.rs",
+            "sha256": "314bdc8d32a6ae3afd9e4dd08afe043fd2f3b25f1874c5f440241b223e051656"
+          },
+          {
+            "path": "src/app/dashboard/desktop-contracts.spec.ts",
+            "sha256": "4dc4a5b0b6a261b9366e067a4aeed525fd50bb448c4fd9c4a09a195913cb39d2"
+          },
+          {
+            "path": "src/app/dashboard/dashboard.component.spec.ts",
+            "sha256": "cc820292cb380e57d2f86cee2af5d5b7b207bce4fdc14866fc9470d41c97407a"
+          }
+        ]
+      },
+      {
+        "model": "AdminSessionV1",
+        "production_files": [
+          {
+            "path": "src-tauri/src/lib.rs",
+            "sha256": "b8647772a45c63986ac9b4b303921f3776bdcb6cf978352e68007a2747f8e09b"
+          },
+          {
+            "path": "src-tauri/src/security.rs",
+            "sha256": "e3ce332e518d82cb60acc1fd6bd330bbb66a24c8f8dc79a0a9a26fbcb5d66ce3"
+          },
+          {
+            "path": "src-tauri/src/interfaces/tauri_cmds.rs",
+            "sha256": "3e247dac27b3f63e10553b2b0500d5d290b91aacfa46f2f36a12deb8f8f1c95e"
+          },
+          {
+            "path": "src/app/dashboard/desktop-contracts.ts",
+            "sha256": "1426cd676beca94482d95337be6fa9389e55a61dd72f81113b216313a598c635"
+          },
+          {
+            "path": "src/app/dashboard/dashboard.component.ts",
+            "sha256": "b480fa63253ab39e8f67b73bff3ddc250c918a584475344c4914407be4de6892"
+          }
+        ],
+        "test_files": [
+          {
+            "path": "src-tauri/src/contract_adoption_tests.rs",
+            "sha256": "314bdc8d32a6ae3afd9e4dd08afe043fd2f3b25f1874c5f440241b223e051656"
+          },
+          {
+            "path": "src/app/dashboard/desktop-contracts.spec.ts",
+            "sha256": "4dc4a5b0b6a261b9366e067a4aeed525fd50bb448c4fd9c4a09a195913cb39d2"
+          },
+          {
+            "path": "src/app/dashboard/dashboard.component.spec.ts",
+            "sha256": "cc820292cb380e57d2f86cee2af5d5b7b207bce4fdc14866fc9470d41c97407a"
+          }
+        ]
+      }
+    ]
+  },
+  "generated_files": [
+    {
+      "path": "contracts/generated/rust/contracts.rs",
+      "source_path": "generated/rust/contracts.rs",
+      "sha256": "f762fa9203150024c7558699ea39624091c46b112b979979fce5e067dcd1d65a"
+    },
+    {
+      "path": "contracts/generated/typescript/contracts.ts",
+      "source_path": "generated/typescript/contracts.ts",
+      "sha256": "004d2db075633afda6b916a93cb175bc6a0fdd6215b2014dfc58ed31b0eafe2c"
+    }
+  ]
+}

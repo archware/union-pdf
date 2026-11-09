@@ -1,0 +1,239 @@
+/* =============================================================================
+   ESTILOS DE FORMULARIOS - Clases CSS Globales
+   =============================================================================
+   Define las clases para inputs, selects y otros elementos de formulario
+   utilizando los tokens CSS del sistema de temas.
+
+   📅 Última actualización: Diciembre 2025
+   ============================================================================= */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   INPUTS DE TEXTO Y SELECTS BASE
+   ───────────────────────────────────────────────────────────────────────────── */
+.form-input {
+  display: block;
+  width: 100%;
+  padding: 0 0.875rem;
+  /* Horizontal padding only */
+  font-size: 0.875rem;
+  /* 14px */
+  height: var(--control-height);
+  /* 40px */
+  line-height: calc(var(--control-height) - 2px);
+  /* Dynamic: Height - Borders */
+  color: var(--input-text);
+  background-color: var(--input-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+}
+
+.form-textarea {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--input-text);
+  background-color: var(--input-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+}
+
+/* Hover state */
+.form-input:hover:not(:disabled):not(:focus),
+.form-select:hover:not(:disabled):not(:focus),
+.form-textarea:hover:not(:disabled):not(:focus) {
+  border-color: var(--input-border-hover);
+  box-shadow: var(--shadow-md);
+}
+
+/* Focus state */
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--input-border-focus);
+  outline: 0;
+  box-shadow: var(--input-shadow-focus);
+}
+
+/* Disabled state */
+.form-input:disabled,
+.form-select:disabled,
+.form-textarea:disabled {
+  background-color: var(--input-disabled-bg);
+  color: var(--input-disabled-text);
+  cursor: not-allowed;
+}
+
+/* Placeholder */
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--input-placeholder);
+  opacity: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CONTROLES NATIVOS DE CONTRASEÑA (Edge / WebView2)
+   ─────────────────────────────────────────────────────────────────────────────
+   Suprime el "ojo" (::-ms-reveal) y la "x" (::-ms-clear) nativos de Edge:
+   son controles custodiados por el design system — el toggle de visibilidad
+   lo provee floating-input y el nativo aparecería duplicado en WebView2.
+   ───────────────────────────────────────────────────────────────────────────── */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SELECT EXTRAS
+   ───────────────────────────────────────────────────────────────────────────── */
+.form-select {
+  display: block;
+  width: 100%;
+  height: var(--control-height);
+  padding: 0.625rem 0.875rem;
+  /* ~10px top/bottom padding for 46px height */
+  padding-right: 2.5rem;
+  /* Space for arrow */
+  font-size: 0.875rem;
+  line-height: 1.5;
+  /* Reset line-height to normal */
+  color: var(--input-text);
+  background-color: var(--input-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--input-border);
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+
+  /* Arrow ID */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 16px 12px;
+}
+
+/* Dark mode semantic override for arrow icon (inverted color if needed) */
+/* Note: For simplicity, checking if we need a light arrow for dark mode.
+   Ideally, use an SVG with currentColor or a CSS variable for the URL if supported,
+   but data URI with separate definitions is safer for cross-browser. */
+[data-theme="dark"] .form-select,
+[data-theme="brand-dark"] .form-select,
+.theme-dark .form-select,
+html.dark .form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e5e7eb' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TEXTAREA
+   ───────────────────────────────────────────────────────────────────────────── */
+.form-textarea {
+  min-height: calc(var(--control-height) * 2);
+  /* Al menos 2 filas aprox */
+  resize: vertical;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CHECKBOX & RADIO
+   ───────────────────────────────────────────────────────────────────────────── */
+.form-checkbox,
+.form-radio {
+  width: 1.125rem;
+  height: 1.125rem;
+  padding: 0;
+  background-color: var(--input-bg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  border: 1px solid var(--input-border);
+  appearance: none;
+  print-color-adjust: exact;
+  vertical-align: text-bottom;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.form-checkbox:checked,
+.form-radio:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.form-checkbox {
+  border-radius: 0.25em;
+}
+
+.form-radio {
+  border-radius: 50%;
+}
+
+.form-checkbox:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
+}
+
+.form-radio:checked {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LABELS & GROUPS
+   ───────────────────────────────────────────────────────────────────────────── */
+.form-label {
+  display: block;
+  margin-bottom: var(--field-label-gap);
+  font-size: var(--field-label-font-size);
+  font-weight: var(--field-label-font-weight);
+  line-height: var(--field-label-line-height);
+  color: var(--field-label-color);
+}
+
+.form-group {
+  margin-bottom: 1.5rem; /* 24px vertical gap */
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--form-row-gap, 2.25rem); /* 36px horizontal gap */
+  margin-right: -5px;
+  margin-left: -5px;
+}
+
+.form-row>* {
+  flex: 1 0 0%;
+}
+/* ─────────────────────────────────────────────────────────────────────────────
+   FORM STACKS (24px STANDARD SEPARATION)
+   ─────────────────────────────────────────────────────────────────────────────
+   Estándar institucional: 24px (1.5rem) de separación vertical entre
+   campos de formulario, incluidos los modales de configuración de BD.
+   ───────────────────────────────────────────────────────────────────────────── */
+.atomic-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5); /* 24px de separación vertical */
+  margin-bottom: var(--space-5);
+}
+
+/* Checkboxes y toggles dentro de un form-stack: separación adicional superior */
+.atomic-form-stack .form-check-group {
+  margin-top: var(--space-3); /* 12px extra antes de la zona de checks */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4); /* 16px entre cada checkbox */
+}
+
+/* Contenedor estándar de formulario inyectado canónicamente */
+.formulario { display: flex; flex-direction: column; gap: var(--space-6, 24px); }

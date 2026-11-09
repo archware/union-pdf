@@ -1,0 +1,260 @@
+/* ============================================
+   PANEL COMPONENT - Contenedor Base Universal
+   ============================================ */
+
+/* Host element takes full width by default */
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* === Base Structure === */
+.panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: var(--surface-background);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: visible;
+  /* Default Shadow */
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* === 1. TOP VARIANTS (Best Options) === */
+
+/* Plain: Minimalist (No bg, no border, no header line) */
+.panel--plain {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.panel--plain .panel__header {
+  background: transparent;
+  border-bottom: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Floating: "Floating Glass" (Transparent + Border + Shadow) -> Now White Background */
+.panel--floating {
+  background: var(--surface-background);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+
+.panel--floating .panel__header {
+  background: transparent;
+  border-bottom: none;
+}
+
+
+
+/* Elevated: Clean Lift (White + Shadow, No Border) */
+.panel--elevated,
+.panel--card {
+  border: none;
+  background: var(--surface-background);
+  box-shadow: var(--shadow-md);
+}
+
+.panel--elevated:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(calc(-1 * var(--space-1)));
+}
+
+/* Card specific: less interactive */
+.panel--card {
+  box-shadow: var(--shadow-sm);
+}
+
+.panel--card:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* === 2. STANDARD VARIANTS === */
+
+/* Flat: Section grouping (Gray bg, no border) */
+.panel--flat {
+  border: none;
+  background: var(--surface-section);
+  box-shadow: none;
+}
+
+/* Outlined: Content boundary (Transparent + Border) */
+.panel--outlined {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  box-shadow: none;
+}
+
+.panel--outlined .panel__header {
+  background: var(--surface-section);
+}
+
+/* Transparent: (Legacy alias for Plain but keeps header line logic option if needed) */
+.panel--transparent {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.panel--transparent .panel__header {
+  background: transparent;
+  border-bottom-color: var(--border-color-light, var(--border-color));
+}
+
+.panel--transparent .panel__footer:not(:empty) {
+  background: transparent;
+  border-top-color: var(--border-color-light, var(--border-color));
+}
+
+/* === PADDINGS === */
+.panel--padding-none .panel__body {
+  padding: 0;
+}
+
+.panel--padding-sm .panel__body {
+  padding: var(--space-3);
+}
+
+.panel--padding-md .panel__body {
+  padding: var(--space-6);
+}
+
+.panel--padding-lg .panel__body {
+  padding: var(--space-6) var(--space-8);
+}
+
+/* === HEADER === */
+.panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--surface-section);
+  border-top-left-radius: calc(var(--radius-lg) - 1px);
+  border-top-right-radius: calc(var(--radius-lg) - 1px);
+}
+
+.panel__icon {
+  font-size: var(--text-xl);
+  line-height: 1;
+}
+
+.panel__title {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-emphasis);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-color-secondary);
+  margin: 0;
+  flex: 1;
+}
+
+/* Title Modifiers - Sizes */
+.panel__title--size-sm {
+  font-size: var(--text-xs);
+}
+
+.panel__title--size-md {
+  font-size: var(--text-sm);
+}
+
+.panel__title--size-lg {
+  font-size: var(--text-md);
+}
+
+.panel__title--size-xl {
+  font-size: var(--text-lg);
+}
+
+/* Title Modifiers - Weights */
+.panel__title--weight-normal {
+  font-weight: var(--font-weight-body);
+}
+
+.panel__title--weight-medium {
+  font-weight: var(--font-weight-body);
+}
+
+.panel__title--weight-semibold {
+  font-weight: var(--font-weight-emphasis);
+}
+
+.panel__title--weight-bold {
+  font-weight: var(--font-weight-title);
+}
+
+/* Title Modifiers - Alignment */
+.panel__title--align-left {
+  text-align: left;
+}
+
+.panel__title--align-center {
+  text-align: center;
+}
+
+.panel__title--align-right {
+  text-align: right;
+}
+
+.panel__header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* === BODY === */
+.panel__body {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* === FOOTER === */
+.panel__footer {
+  padding: 0;
+}
+
+.panel__footer:empty {
+  display: none;
+}
+
+.panel__footer:not(:empty) {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border-color);
+  background: var(--surface-section);
+}
+
+/* 
+ * Dark mode se maneja automáticamente via tokens semánticos.
+ * --surface-background, --surface-section, --border-color
+ * ya tienen valores apropiados para temas oscuros.
+ */
+
+/* === RESPONSIVE === */
+@media (max-width: 48rem) {
+  .panel__header {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .panel--padding-md .panel__body {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .panel--padding-lg .panel__body {
+    padding: var(--space-4) var(--space-5);
+  }
+}

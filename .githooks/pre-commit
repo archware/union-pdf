@@ -1,0 +1,17 @@
+#!/bin/sh
+# Hook pre-commit de pdf-tool: candado de integridad de src-tauri/tauri.conf.json.
+# Instalar con: scripts/instalar-hooks.ps1  (o  sh scripts/instalar-hooks.sh)
+# Se puede saltar con "git commit --no-verify", pero la compuerta scripts/verificar-todo.* volvera a detectarlo.
+RAIZ="$(git rev-parse --show-toplevel)" || exit 1
+cd "$RAIZ" || exit 1
+if ! command -v node >/dev/null 2>&1; then
+  echo "pre-commit: 'node' no esta disponible; no se puede verificar tauri.conf.json. Commit bloqueado." >&2
+  exit 1
+fi
+node scripts/verificar-tauri-conf.mjs --staged
+estado=$?
+if [ "$estado" -ne 0 ]; then
+  echo "pre-commit: COMMIT BLOQUEADO por el candado de integridad de tauri.conf.json." >&2
+  exit 1
+fi
+exit 0

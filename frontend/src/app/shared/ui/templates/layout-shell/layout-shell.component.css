@@ -1,0 +1,137 @@
+/* CSS Grid Layout */
+.layout-shell {
+  display: grid;
+  height: 100vh;   /* Fallback para navegadores sin soporte dvh */
+  height: 100dvh;  /* Dynamic viewport height: corrige iOS Safari (barra inferior del navegador) */
+  /* Use CSS variable for sidebar width (default 260px) */
+  --sidebar-width: 260px;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar content";
+  background-color: var(--surface-section);
+  color: var(--text-color);
+}
+
+/* Sidebar Area */
+.layout-sidebar {
+  grid-area: sidebar;
+  background-color: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  z-index: 10;
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  transition: width 0.3s ease, min-width 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Sidebar hidden state - desktop only */
+@media (min-width: 769px) {
+  .layout-shell.sidebar-hidden {
+    grid-template-columns: 0 1fr;
+  }
+
+  .layout-shell.sidebar-hidden .layout-sidebar {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border-right: none;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Header Area */
+.layout-header {
+  grid-area: header;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  height: 64px;
+}
+
+/* Content Area */
+.layout-content {
+  grid-area: content;
+  overflow: hidden;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure ScrollOverlay takes full space */
+.layout-content ::ng-deep app-scroll-overlay {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.content-wrapper {
+  width: 100%;
+  padding: var(--space-6);
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .content-wrapper {
+    padding: var(--space-4);
+  }
+}
+
+/*
+ * Dark mode se maneja automáticamente via tokens semánticos.
+ * --surface-section, --surface-background, --border-color, etc.
+ * ya tienen valores apropiados para temas oscuros.
+ */
+
+/* Responsive - Mobile/Tablet */
+@media (max-width: 768px) {
+  .layout-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: 64px 1fr;
+    grid-template-areas:
+      "header"
+      "content";
+  }
+
+  .layout-sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: var(--shadow-xl);
+    z-index: 50;
+  }
+
+  /* Cuando se activa el sidebar en móvil (clase toggleada) */
+  .layout-sidebar.active {
+    transform: translateX(0);
+  }
+
+  /* Overlay backdrop for mobile */
+  .layout-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: var(--overlay-backdrop);
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .layout-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .content-wrapper {
+    padding: var(--space-3);
+  }
+}

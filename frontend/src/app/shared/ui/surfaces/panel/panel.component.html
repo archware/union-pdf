@@ -1,0 +1,40 @@
+<div class="panel" [class.panel--elevated]="variant === 'elevated'" [class.panel--card]="variant === 'card'"
+  [class.panel--floating]="variant === 'floating'" [class.panel--flat]="variant === 'flat'"
+  [class.panel--outlined]="variant === 'outlined'" [class.panel--transparent]="variant === 'transparent'"
+  [class.panel--plain]="variant === 'plain'" [class.panel--padding-none]="padding === 'none'"
+  [class.panel--padding-sm]="padding === 'sm'" [class.panel--padding-md]="padding === 'md'"
+  [class.panel--padding-lg]="padding === 'lg'">
+
+  <!-- Header -->
+  @if (showHeader && (title || icon)) {
+  <header class="panel__header">
+    @if (icon) {
+    <span class="panel__icon">{{ icon }}</span>
+    }
+    @if (title) {
+    <h3 class="panel__title" [class.panel__title--size-sm]="titleSize === 'sm'"
+      [class.panel__title--size-md]="titleSize === 'md'" [class.panel__title--size-lg]="titleSize === 'lg'"
+      [class.panel__title--size-xl]="titleSize === 'xl'" [class.panel__title--weight-normal]="titleWeight === 'normal'"
+      [class.panel__title--weight-medium]="titleWeight === 'medium'"
+      [class.panel__title--weight-semibold]="titleWeight === 'semibold'"
+      [class.panel__title--weight-bold]="titleWeight === 'bold'"
+      [class.panel__title--align-left]="titleAlign === 'left'"
+      [class.panel__title--align-center]="titleAlign === 'center'"
+      [class.panel__title--align-right]="titleAlign === 'right'">{{ title }}</h3>
+    }
+    <div class="panel__header-actions">
+      <ng-content select="[slot=header-actions]"></ng-content>
+    </div>
+  </header>
+  }
+
+  <!-- Body / Content -->
+  <div class="panel__body">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Footer (optional) -->
+  <footer class="panel__footer">
+    <ng-content select="[slot=footer]"></ng-content>
+  </footer>
+</div>

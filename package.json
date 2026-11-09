@@ -1,0 +1,30 @@
+{
+  "name": "union-pdf",
+  "version": "0.5.1",
+  "description": "Unión PDF — Aplicación de escritorio multiplataforma (Windows, macOS y Linux) para unión y organización de documentos PDF e imágenes (Tauri v1.5 + Angular 22 + Atomic UI)",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/run-build.js",
+    "build:ps1": "powershell -ExecutionPolicy Bypass -File scripts/verificar-todo.ps1",
+    "build:sh": "bash scripts/verificar-todo.sh",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cargo build --release",
+    "test": "node scripts/run-build.js",
+    "test:frontend": "cd frontend && npm test -- --watch=false",
+    "test:backend": "cargo test",
+    "verify": "node scripts/run-build.js",
+    "check": "node scripts/run-build.js",
+    "probar:compilacion": "node scripts/probar-compilacion.mjs",
+    "check:tauri-conf": "node scripts/verificar-tauri-conf.mjs",
+    "test:gobernanza": "node --test \"scripts/tests/*.test.mjs\""
+  },
+  "keywords": [
+    "pdf",
+    "tauri",
+    "angular",
+    "desktop"
+  ],
+  "author": "archware <havel363@gmail.com>",
+  "license": "UNLICENSED"
+}

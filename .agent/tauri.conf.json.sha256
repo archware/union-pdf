@@ -1,0 +1,4 @@
+# Hash canonico de src-tauri/tauri.conf.json (SHA-256 con saltos de linea normalizados a LF).
+# NO editar a mano. Via legitima y unica de actualizacion (requiere autorizacion explicita del usuario):
+#   node scripts/verificar-tauri-conf.mjs --actualizar --motivo "razon del cambio"
+2ea9f7e23107b42f670c8d2bd0e6a8898e59616388357368e55725a0e91c3068  src-tauri/tauri.conf.json

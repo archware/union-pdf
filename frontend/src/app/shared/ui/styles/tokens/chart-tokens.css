@@ -1,0 +1,31 @@
+:root,
+[data-theme="light"],
+.theme-light {
+  --chart-text-color: #475569;
+  --chart-title-color: #0f172a;
+  --chart-grid-color: rgba(15, 23, 42, 0.16);
+  --chart-tooltip-bg: rgba(255, 255, 255, 0.96);
+  --chart-tooltip-text: #0f172a;
+  --chart-tooltip-border: rgba(15, 23, 42, 0.18);
+  --chart-color-1: #ec4899;
+  --chart-color-2: #3b82f6;
+  --chart-color-3: #8b5cf6;
+  --chart-color-4: #10b981;
+  --chart-color-5: #f59e0b;
+}
+
+[data-theme="dark"],
+[data-theme="brand-dark"],
+.theme-dark,
+html.dark {
+  --chart-text-color: #a1a1aa;
+  --chart-title-color: #f4f4f5;
+  --chart-grid-color: rgba(255, 255, 255, 0.10);
+  --chart-tooltip-bg: rgba(24, 24, 27, 0.94);
+  --chart-tooltip-text: #f4f4f5;
+  --chart-tooltip-border: #3f3f46;
+}
+
+[data-theme="brand-dark"] {
+  --chart-grid-color: rgba(255, 255, 255, 0.12);
+}

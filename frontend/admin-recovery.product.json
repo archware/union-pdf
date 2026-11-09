@@ -1,0 +1,15 @@
+{
+  "applicationId": "com.havelcontreras.base-tauri-angular",
+  "artifactName": "HRA-Modulo-Operativo-Tauri-Recuperacion-Administrativa-1.6.1-Beta.exe",
+  "artifactRole": "administrative-recovery-utility",
+  "cliFallback": true,
+  "credentialTarget": {
+    "account": "admin-password-hash-argon2id-v1",
+    "service": "pe.gob.hra.modulo-operativo"
+  },
+  "defaultInvocation": "gui",
+  "interfaceMode": "native-win32-gui",
+  "mutexName": "Global\\HRA.ModuloOperativoTauri.AdminCredential.Runtime.v1",
+  "productVersion": "1.6.1",
+  "schemaVersion": 2
+}

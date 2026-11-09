@@ -1,0 +1,35 @@
+# Icono de la aplicación pdf-tool
+
+Este es un icono de ejemplo para la aplicación pdf-tool.
+
+Formato: .ico (Microsoft Windows icon format)
+Tamaños incluidos: 16x16, 32x32, 48x48, 256x256
+Colores: 32 bits/pixel
+
+Para generar un nuevo icono desde una imagen PNG:
+
+```bash
+# Usando ImageMagick (si está disponible)
+convert input.png -define icon:auto-resize=16,32,48,256 output.ico
+
+# O usando icotool (si está disponible)
+icotool -c -o output.ico input.png
+
+# Para crear un icono desde cero con un editor gráfico
+# 1. Crear imagen PNG 256x256 px
+# 2. Exportar como .ico con múltiples tamaños
+```
+
+## Propiedades del icono actual
+
+- Tamaño: 70 bytes
+- Formato: MS Windows icon resource
+- Resolución: 1x1 pixels (muy pequeño)
+- Bits por píxel: 32
+
+## Recomendaciones para el nuevo icono
+
+1. Tamaño recomendado: 256x256 px
+2. Formato: PNG con fondo transparente
+3. Colores: Azul y verde para representar PDF y tecnología
+4. Estilo: Moderno y minimalista

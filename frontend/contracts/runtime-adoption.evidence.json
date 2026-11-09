@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "package_name": "@hra/desktop-contracts",
+  "package_version": "0.3.1",
+  "consumer": "tauri",
+  "models": {
+    "ResultEnvelopeV1": {
+      "production_files": [
+        "src-tauri/src/lib.rs",
+        "src-tauri/src/contract_bridge.rs",
+        "src/app/dashboard/desktop-contracts.ts",
+        "src/app/dashboard/dashboard.component.ts"
+      ],
+      "test_files": [
+        "src-tauri/src/contract_adoption_tests.rs",
+        "src/app/dashboard/desktop-contracts.spec.ts",
+        "src/app/dashboard/dashboard.component.spec.ts"
+      ]
+    },
+    "ConnectionProfileV1": {
+      "production_files": [
+        "src-tauri/src/lib.rs",
+        "src-tauri/src/interfaces/tauri_cmds.rs",
+        "src/app/dashboard/desktop-contracts.ts",
+        "src/app/dashboard/dashboard.component.ts"
+      ],
+      "test_files": [
+        "src-tauri/src/contract_adoption_tests.rs",
+        "src/app/dashboard/desktop-contracts.spec.ts",
+        "src/app/dashboard/dashboard.component.spec.ts"
+      ]
+    },
+    "AdminSessionV1": {
+      "production_files": [
+        "src-tauri/src/lib.rs",
+        "src-tauri/src/security.rs",
+        "src-tauri/src/interfaces/tauri_cmds.rs",
+        "src/app/dashboard/desktop-contracts.ts",
+        "src/app/dashboard/dashboard.component.ts"
+      ],
+      "test_files": [
+        "src-tauri/src/contract_adoption_tests.rs",
+        "src/app/dashboard/desktop-contracts.spec.ts",
+        "src/app/dashboard/dashboard.component.spec.ts"
+      ]
+    }
+  }
+}

@@ -1,0 +1,134 @@
+/**
+ * TABLE DESIGN TOKENS
+ * Single Source of Truth para todos los estilos de tabla
+ *
+ * Usado por:
+ * - responsive-table.css (CSS global para HTML nativo)
+ * - Atomic Table Components (app-table, app-table-row, etc.)
+ * - ScrollOverlayComponent
+ */
+
+/* ============================================
+   LIGHT MODE TOKENS (Default)
+   ============================================ */
+:root {
+  /* === Colores Base (referencia tokens semánticos) === */
+  --table-color-primary: var(--primary-color);
+  --table-color-border: var(--border-color);
+  --table-color-border-light: var(--border-color-light, var(--border-color));
+  --table-color-background: var(--surface-background);
+  --table-color-text: var(--text-color);
+  --table-color-text-secondary: var(--text-color-secondary);
+  --table-color-stripe: var(--hover-background-subtle);
+  --table-color-hover: var(--hover-background);
+
+  /* === Header === */
+  --table-header-bg: var(--surface-background);
+  --table-header-color: var(--text-color-secondary);
+  --table-header-border-width: var(--space-1);
+  --table-header-border-style: solid;
+  --table-header-border-color: var(--primary-color);
+  --table-header-radius: var(--radius-md);
+  --table-header-shadow: var(--shadow-xs, 0 1px var(--space-1) var(--shadow-color, rgba(0, 0, 0, 0.05)));
+
+  /* === Celdas === */
+  --table-cell-padding: var(--space-3) var(--space-4);
+  --table-border-radius: var(--radius-md);
+
+  /* === Cards (Móvil) === */
+  --table-card-padding: var(--space-4);
+  --table-card-gap: var(--space-4);
+  --table-card-shadow: var(--shadow-md);
+  --table-card-shadow-hover: var(--shadow-lg);
+
+  /* === Tipografía === */
+  --table-font-family: inherit;
+  --table-font-size: var(--text-sm);
+  --table-font-size-mobile: var(--text-sm);
+  --table-font-size-header: var(--text-xs);
+  --table-font-weight-header: 600;
+  --table-font-weight-label: 600;
+
+  /* === Efectos === */
+  --table-transition-duration: 0.2s;
+  --table-transition-timing: ease;
+  --table-row-hover-shadow: 0 var(--space-1) var(--space-3) rgba(0, 0, 0, 0.08), 0 var(--space-1) var(--space-1) rgba(0, 0, 0, 0.04);
+  --table-row-hover-transform: translateY(calc(-1 * var(--space-1)));
+
+  /* === Sombras === */
+  --table-shadow-row: var(--shadow-xs, 0 1px var(--space-1) var(--shadow-color, rgba(0, 0, 0, 0.05)));
+
+  /* === Breakpoint === */
+  --table-breakpoint: 768px;
+}
+/* ============================================
+   DARK MODE TOKENS
+   ============================================ */
+html.dark,
+[data-theme="dark"] {
+  /* Colores */
+  --table-color-primary: var(--primary-color-light);
+  --table-color-background: var(--surface-section);
+  --table-color-stripe: rgba(255, 255, 255, 0.06);
+  --table-color-hover: var(--hover-background);
+
+  /* Header - Fondo primario, sin borde */
+  --table-header-bg: var(--brand-primary-700, var(--primary-color-darker));
+  --table-header-color: var(--gray-0);
+  --table-header-border-width: 0;
+  --table-header-border-color: transparent;
+  --table-header-shadow: none;
+
+  /* Sombras Dark Mode */
+  --table-shadow-row: var(--shadow-sm);
+  --table-card-shadow: var(--shadow-lg);
+  --table-card-shadow-hover: var(--shadow-xl);
+
+  /* Efecto Hover Elevado (Dark) */
+  --table-row-hover-shadow: 0 var(--space-1) var(--space-4) rgba(0, 0, 0, 0.3), 0 var(--space-1) var(--space-2) rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   LEGACY ALIAS (Compatibilidad con --rtc-*)
+   Mapea tokens antiguos a nuevos
+   ============================================ */
+:root {
+  /* Alias para mantener compatibilidad con responsive-table.css */
+  --rtc-color-primary: var(--table-color-primary);
+  --rtc-color-border: var(--table-color-border);
+  --rtc-color-border-light: var(--table-color-border-light);
+  --rtc-color-background: var(--table-color-background);
+  --rtc-color-text: var(--table-color-text);
+  --rtc-color-label: var(--table-color-text-secondary);
+  --rtc-color-stripe: var(--table-color-stripe);
+  --rtc-color-row-hover: var(--table-color-hover);
+
+  --rtc-header-bg: var(--table-header-bg);
+  --rtc-header-color: var(--table-header-color);
+  --rtc-header-border-width: var(--table-header-border-width);
+  --rtc-header-border-style: var(--table-header-border-style);
+  --rtc-header-border-color: var(--table-header-border-color);
+  --rtc-header-radius: var(--table-header-radius);
+  --rtc-header-shadow: var(--table-header-shadow);
+
+  --rtc-cell-padding: var(--table-cell-padding);
+  --rtc-border-radius: var(--table-border-radius);
+  --rtc-card-padding: var(--table-card-padding);
+  --rtc-card-gap: var(--table-card-gap);
+  --rtc-shadow-card: var(--table-card-shadow);
+  --rtc-shadow-hover: var(--table-card-shadow-hover);
+
+  --rtc-font-family: var(--table-font-family);
+  --rtc-font-size-base: var(--table-font-size);
+  --rtc-font-size-mobile: var(--table-font-size-mobile);
+  --rtc-font-size-header: var(--table-font-size-header);
+  --rtc-font-weight-header: var(--table-font-weight-header);
+  --rtc-font-weight-label: var(--table-font-weight-label);
+
+  --rtc-transition-duration: var(--table-transition-duration);
+  --rtc-transition-timing: var(--table-transition-timing);
+  --rtc-row-hover-shadow: var(--table-row-hover-shadow);
+  --rtc-row-hover-transform: var(--table-row-hover-transform);
+  --rtc-shadow-row: var(--table-shadow-row);
+}
+

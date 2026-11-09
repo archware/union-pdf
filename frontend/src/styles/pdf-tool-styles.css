@@ -1,0 +1,1052 @@
+/* ============================================================================= 
+   ESTILOS ESPECÍFICOS PARA pdf-tool - VISUAL RESALTANTE (Mapeado a Tokens Atomic UI)
+   ============================================================================= */
+
+/* =============================================================================
+   MODIFICACIONES VISUALES RESALTANTES
+   ============================================================================= */
+   
+/* Mapeo hacia tokens CSS de Atomic UI para PDF Tool */
+:root {
+  /* Color primario para PDF Tool mapeado a tokens de marca */
+  --pdf-tool-primary-50: var(--brand-primary-50);
+  --pdf-tool-primary-100: var(--brand-primary-100);
+  --pdf-tool-primary-200: var(--brand-primary-200);
+  --pdf-tool-primary-300: var(--brand-primary-300);
+  --pdf-tool-primary-400: var(--brand-primary-400);
+  --pdf-tool-primary-500: var(--primary-color, var(--brand-primary-500));
+  --pdf-tool-primary-500-rgb: var(--brand-primary-500-rgb);
+  --pdf-tool-primary-600: var(--brand-primary-600);
+  --pdf-tool-primary-700: var(--brand-primary-700);
+  --pdf-tool-primary-800: var(--brand-primary-800);
+  --pdf-tool-primary-900: var(--brand-primary-900);
+  
+  /* Color secundario */
+  --pdf-tool-secondary-50: var(--brand-secondary-50);
+  --pdf-tool-secondary-100: var(--brand-secondary-100);
+  --pdf-tool-secondary-200: var(--brand-secondary-200);
+  --pdf-tool-secondary-300: var(--brand-secondary-300);
+  --pdf-tool-secondary-400: var(--brand-secondary-400);
+  --pdf-tool-secondary-500: var(--secondary-color, var(--brand-secondary-500));
+  --pdf-tool-secondary-500-rgb: var(--brand-secondary-500-rgb);
+  --pdf-tool-secondary-600: var(--brand-secondary-600);
+  --pdf-tool-secondary-700: var(--brand-secondary-700);
+  --pdf-tool-secondary-800: var(--brand-secondary-800);
+  --pdf-tool-secondary-900: var(--brand-secondary-900);
+  
+  /* Colores de estado */
+  --pdf-tool-success-50: var(--green-50);
+  --pdf-tool-success-100: var(--green-100);
+  --pdf-tool-success-200: var(--green-200);
+  --pdf-tool-success-300: var(--green-300);
+  --pdf-tool-success-400: var(--green-400);
+  --pdf-tool-success-500: var(--success-color, var(--green-500));
+  --pdf-tool-success-500-rgb: 34, 197, 94;
+  
+  --pdf-tool-warning-50: var(--orange-50);
+  --pdf-tool-warning-100: var(--orange-100);
+  --pdf-tool-warning-200: var(--orange-200);
+  --pdf-tool-warning-300: var(--orange-300);
+  --pdf-tool-warning-400: var(--orange-400);
+  --pdf-tool-warning-500: var(--warning-color, var(--orange-500));
+  --pdf-tool-warning-500-rgb: 249, 115, 22;
+  
+  --pdf-tool-danger-50: var(--red-50);
+  --pdf-tool-danger-100: var(--red-100);
+  --pdf-tool-danger-200: var(--red-200);
+  --pdf-tool-danger-300: var(--red-300);
+  --pdf-tool-danger-400: var(--red-400);
+  --pdf-tool-danger-500: var(--danger-color, var(--red-500));
+  --pdf-tool-danger-500-rgb: 239, 68, 68;
+
+  /* Alias hacia tokens primitivos canónicos de Atomic UI */
+  --border-radius-sm: var(--radius-sm);
+  --border-radius-md: var(--radius-md);
+  --border-radius-lg: var(--radius-lg);
+  --font-size-xs: var(--text-xs);
+  --font-size-sm: var(--text-sm);
+  --font-size-base: var(--text-md);
+  --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --transition-fast: 0.2s ease;
+}
+
+/* =============================================================================
+   ESTILOS DE COMPONENTES RESALTANTES
+   ============================================================================= */
+
+/* Botones más llamativos */
+.pdf-tool-button {
+  background-color: var(--pdf-tool-primary-500);
+  border: 1px solid var(--pdf-tool-primary-600);
+  color: var(--text-color-inverse, var(--gray-0));
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(var(--pdf-tool-primary-500-rgb), 0.2);
+}
+
+.pdf-tool-button:hover {
+  background-color: var(--pdf-tool-primary-600);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(var(--pdf-tool-primary-500-rgb), 0.3);
+}
+
+.pdf-tool-button:active {
+  transform: translateY(0);
+}
+
+/* Tarjetas con efecto resaltante */
+.pdf-tool-card {
+  background: var(--surface-background, var(--gray-0));
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.pdf-tool-card:hover {
+  box-shadow: 0 12px 24px rgba(var(--pdf-tool-primary-500-rgb), 0.2);
+  transform: translateY(-4px);
+}
+
+/* Cabeceras más llamativas */
+.pdf-tool-header {
+  background: linear-gradient(135deg, var(--pdf-tool-primary-500), var(--pdf-tool-secondary-500));
+  color: var(--text-color-inverse, var(--gray-0));
+  padding: 24px;
+  border-radius: 12px 12px 0 0;
+  margin-bottom: 24px;
+}
+
+/* Contenedores de PDF */
+.pdf-tool-pdf-container {
+  background-color: var(--pdf-tool-primary-50);
+  border: 2px dashed var(--pdf-tool-primary-300);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.pdf-tool-pdf-container:hover {
+  background-color: var(--pdf-tool-primary-100);
+  border-color: var(--pdf-tool-primary-500);
+}
+
+/* =============================================================================
+   ESTILOS PARA LA INTERFAZ DE PDF TOOL
+   ============================================================================= */
+
+/* Barra de herramientas resaltante */
+.pdf-tool-toolbar {
+  background: linear-gradient(to right, var(--pdf-tool-primary-500), var(--pdf-tool-secondary-500));
+  color: var(--text-color-inverse, var(--gray-0));
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(var(--pdf-tool-primary-500-rgb), 0.3);
+  margin-bottom: 24px;
+}
+
+/* Barra de progreso más llamativa */
+.pdf-tool-progress {
+  background: linear-gradient(to right, var(--pdf-tool-primary-500), var(--pdf-tool-secondary-500));
+  height: 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(var(--pdf-tool-primary-500-rgb), 0.2);
+}
+
+/* Iconos de PDF más resaltantes */
+.pdf-tool-icon {
+  color: var(--pdf-tool-primary-500);
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+.pdf-tool-icon:hover {
+  color: var(--pdf-tool-secondary-500);
+  transform: scale(1.1);
+}
+
+/* =============================================================================
+   ESTILOS PARA ELEMENTOS DE PDF
+   Nota: la animacion local pulse-glow se retiro (sin uso; @keyframes locales
+   prohibidos por la doctrina de Atomic UI).
+   ============================================================================= */
+
+.pdf-tool-document-card {
+  border: 2px solid var(--pdf-tool-primary-300);
+  border-radius: 12px;
+  background: var(--surface-background, var(--gray-0));
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.pdf-tool-document-card:hover {
+  border-color: var(--pdf-tool-primary-500);
+  box-shadow: 0 8px 16px rgba(var(--pdf-tool-primary-500-rgb), 0.2);
+  transform: translateY(-2px);
+}
+
+/* =============================================================================
+   EFECTOS DE RESALTADO PARA ELEMENTOS PRINCIPALES
+   ============================================================================= */
+
+.pdf-tool-highlight {
+  background: linear-gradient(120deg, var(--pdf-tool-primary-500), var(--pdf-tool-secondary-500));
+  color: var(--text-color-inverse, var(--gray-0));
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* =============================================================================
+   ESTILOS PARA ELEMENTOS DE INFORMES
+   ============================================================================= */
+
+.pdf-tool-report-card {
+  background: linear-gradient(135deg, var(--pdf-tool-primary-50), var(--pdf-tool-primary-100));
+  border-left: 4px solid var(--pdf-tool-primary-500);
+  box-shadow: var(--shadow-xs);
+  transition: all 0.3s ease;
+}
+
+.pdf-tool-report-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 6px 12px rgba(var(--pdf-tool-primary-500-rgb), 0.2);
+}
+
+
+/* =============================================================================
+   EDITOR PDF STUDIO - REDISEÑO VISUAL CON TOKENS ATOMIC UI
+   ============================================================================= */
+
+html,
+body,
+app-root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+app-scroll-overlay.so-root.editor-scroll-shell {
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+app-scroll-overlay.so-root.editor-scroll-shell > .so-scroll-area {
+  height: 100%;
+  max-height: 100dvh;
+}
+
+.editor-layout {
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface-background);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xs);
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.header-brand-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.brand-badge-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--border-radius-md);
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-color-on-primary, var(--gray-0));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  box-shadow: 0 3px 8px rgba(var(--brand-primary-500-rgb), 0.3);
+  flex-shrink: 0;
+}
+
+.brand-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-color);
+  letter-spacing: -0.015em;
+}
+
+.header-meta-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.editor-main {
+  display: flex;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+
+.editor-column {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.editor-column--left {
+  flex: 0 0 clamp(320px, 34%, 390px);
+  width: clamp(320px, 34%, 390px);
+  max-width: 390px;
+  gap: var(--space-4);
+}
+
+.editor-column--right {
+  flex: 1 1 0%;
+  width: auto;
+  border-radius: var(--border-radius-lg);
+  transition: outline-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.editor-column--right.editor-column--dragover {
+  outline: 2px dashed var(--primary-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(var(--brand-primary-500-rgb), 0.12);
+}
+
+@media (max-width: 960px) {
+  .editor-layout {
+    padding: var(--space-4);
+  }
+
+  .editor-main {
+    flex-direction: column;
+  }
+
+  .editor-column,
+  .editor-column--left,
+  .editor-column--right {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .editor-layout {
+    padding: var(--space-3);
+  }
+
+  .editor-header {
+    padding: var(--space-3);
+  }
+}
+
+.upload-zone {
+  cursor: pointer;
+  border: 2px dashed rgba(var(--brand-primary-500-rgb), 0.38);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-4);
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--brand-primary-500-rgb), 0.04) 0%,
+    rgba(var(--brand-secondary-500-rgb), 0.06) 100%
+  );
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.upload-zone > * {
+  pointer-events: none;
+}
+
+.upload-zone:hover,
+.upload-zone:focus-visible,
+.upload-zone.dragover {
+  border-color: var(--primary-color);
+  background: var(--primary-color-lighter);
+}
+
+.upload-zone.dragover {
+  box-shadow: 0 0 0 4px rgba(var(--brand-primary-500-rgb), 0.15);
+}
+
+.upload-icon-container {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--text-color-on-primary, var(--gray-0));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-2);
+  box-shadow: 0 4px 12px rgba(var(--brand-primary-500-rgb), 0.28);
+  transition: transform var(--transition-fast);
+}
+
+.upload-zone:hover .upload-icon-container,
+.upload-zone:focus-visible .upload-icon-container {
+  transform: scale(1.08);
+}
+
+.upload-text {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 var(--space-1) 0;
+}
+
+.upload-subtext {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.file-list-container {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.file-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-color-light);
+}
+
+.file-list-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+app-scroll-overlay.so-root.file-list-scroll-overlay {
+  width: 100%;
+  height: auto;
+  max-height: var(--so-max-height, 210px);
+}
+
+app-scroll-overlay.so-root.file-list-scroll-overlay > .so-scroll-area {
+  height: auto !important;
+  min-height: 0 !important;
+  padding-right: var(--space-3);
+}
+
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.file-item {
+  border: 1px solid var(--border-color-light);
+  border-left: 3px solid var(--primary-color);
+  background: var(--surface-background);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-2) var(--space-3);
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition-fast);
+}
+
+.file-item--image {
+  border-left-color: var(--secondary-color);
+}
+
+.file-item:hover {
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border-color);
+}
+
+.file-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  flex: 1;
+}
+
+.file-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-sm);
+  background: var(--danger-color-lighter);
+  color: var(--danger-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.file-icon-box--image {
+  background: var(--primary-color-lighter);
+  color: var(--primary-color);
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.file-name {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-size {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.bullet-divider { opacity: 0.5; }
+
+.file-badge-pill {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.file-actions {
+  display: flex;
+  align-items: center;
+  height: var(--control-height, 2.5rem);
+  flex-shrink: 0;
+}
+
+.page-select-container {
+  margin-top: var(--space-1);
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  gap: var(--space-2);
+}
+
+.page-select-container > app-floating-input.page-input-control,
+.page-input-control {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 9.5rem;
+}
+
+.output-filename-container {
+  margin-top: var(--space-1);
+  width: 100%;
+}
+
+.output-filename-container > app-floating-input.output-filename-control,
+.output-filename-control {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.merge-action-container {
+  margin-top: var(--space-2);
+}
+
+.status-container {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+.status-message { flex: 1; }
+
+.status-container--error {
+  background: var(--danger-color-lighter);
+  border-color: var(--danger-color-light);
+  color: var(--danger-color);
+}
+
+.status-container--success {
+  background: var(--success-color-lighter);
+  border-color: var(--success-color-light);
+  color: var(--success-color);
+}
+
+.status-container--loading {
+  background: rgba(var(--brand-primary-500-rgb), 0.1);
+  border-color: rgba(var(--brand-primary-500-rgb), 0.25);
+  color: var(--primary-color);
+}
+
+.viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color-light);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.viewer-header-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-title {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-color);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.viewer-stats-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 3px 8px;
+  background: rgba(var(--brand-primary-500-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-primary-500-rgb), 0.18);
+  border-radius: 9999px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.page-workspace {
+  display: flex;
+  gap: var(--space-3);
+  height: clamp(520px, max(calc(100dvh - 155px), 46vw), 920px);
+}
+
+.thumbnail-column {
+  width: 148px;
+  overflow: hidden;
+  border-right: 1px solid var(--border-color-light);
+  padding-right: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.thumbnail-header {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.thumbnail-count {
+  background: var(--primary-color-light);
+  color: var(--primary-color-text);
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+app-scroll-overlay.so-root.thumbnail-scroll-overlay {
+  flex: 1 1 0%;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+}
+
+app-scroll-overlay.so-root.thumbnail-scroll-overlay > .so-scroll-area {
+  height: 100%;
+  max-height: 100%;
+  padding-right: var(--space-2);
+}
+
+.thumbnail-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.thumbnail-item {
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-md);
+  padding: 3px;
+  cursor: pointer;
+  position: relative;
+  background: var(--surface-section);
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.thumbnail-item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.thumbnail-item--selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--brand-primary-500-rgb), 0.2);
+}
+
+.thumbnail-item--discarded {
+  opacity: 0.45;
+  filter: grayscale(0.5);
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 210 / 290;
+  object-fit: contain;
+  display: block;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color-light);
+  background: var(--surface-background);
+  -webkit-user-drag: none;
+}
+
+.thumbnail-badge {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  background: var(--surface-overlay);
+  color: var(--text-color-inverse, var(--gray-0));
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: var(--border-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.thumbnail-rotation-tag {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(var(--brand-primary-500-rgb), 0.9);
+  color: var(--text-color-inverse, var(--gray-0));
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: var(--border-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.thumbnail-status-tag {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: var(--danger-color);
+  color: var(--text-color-inverse, var(--gray-0));
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.page-preview-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.preview-meta {
+  margin-bottom: var(--space-2);
+}
+
+.preview-meta-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.preview-title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 9999px;
+}
+
+.preview-status-pill--active {
+  background: var(--success-color-lighter);
+  color: var(--success-color);
+  border: 1px solid var(--success-color-light);
+}
+
+.preview-status-pill--inactive {
+  background: var(--danger-color-lighter);
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color-light);
+}
+
+.preview-description {
+  margin: 2px 0 0 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  margin-bottom: var(--space-2);
+  background: var(--surface-section);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--border-radius-md);
+}
+
+.preview-zoom-group,
+.preview-rotate-group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.preview-zoom-badge {
+  min-width: 3.25rem;
+  text-align: center;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--primary-color);
+  background: rgba(var(--brand-primary-500-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-primary-500-rgb), 0.2);
+  border-radius: var(--border-radius-sm);
+  padding: 2px 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.preview-rotation-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--primary-color);
+  background: rgba(var(--brand-primary-500-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-primary-500-rgb), 0.22);
+  border-radius: 9999px;
+  padding: 2px 8px;
+}
+
+.page-preview-stage {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  background: var(--surface-sunken);
+  display: flex;
+  overflow: hidden;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-color-light);
+  position: relative;
+}
+
+.page-preview-stage--inactive {
+  opacity: 0.55;
+}
+
+app-scroll-overlay.so-root.preview-stage-scroll-overlay {
+  --so-scroll-end-space: 0px;
+  flex: 1 1 0%;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+app-scroll-overlay.so-root.preview-stage-scroll-overlay > .so-scroll-area {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+}
+
+.preview-stage-canvas-wrap {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  padding: var(--space-2);
+  box-sizing: border-box;
+}
+
+.preview-stage-canvas-wrap--zoomed {
+  width: max-content;
+  height: max-content;
+}
+
+.preview-canvas-element {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--border-radius-sm);
+  background: var(--surface-background);
+}
+
+.preview-canvas-element--zoomed {
+  max-width: none;
+  max-height: none;
+}
+
+.preview-stage-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.watermark-pill {
+  background: var(--surface-overlay);
+  color: var(--text-color-inverse, var(--gray-0));
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-shadow: var(--shadow-lg);
+}
+
+.preview-actions {
+  margin-top: var(--space-2);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.empty-state-panel { height: 100%; }
+
+.empty-state-container {
+  height: 100%;
+  min-height: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-4);
+  position: relative;
+}
+
+.empty-state-icon-wrapper {
+  background: rgba(var(--brand-primary-500-rgb), 0.08);
+  border: 1px solid rgba(var(--brand-primary-500-rgb), 0.2);
+  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  position: relative;
+  z-index: 1;
+}
+
+.empty-state-icon {
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+
+.empty-state-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--text-color);
+  margin: 0 0 var(--space-2) 0;
+  position: relative;
+  z-index: 1;
+}
+
+.empty-state-text {
+  font-size: var(--font-size-sm);
+  max-width: 340px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}

@@ -1,0 +1,25 @@
+<div class="layout-shell" [class.sidebar-hidden]="!sidebarVisible" [style.--sidebar-width]="sidebarWidth">
+  <!-- Sidebar Slot -->
+  <aside class="layout-sidebar" [class.active]="sidebarVisible">
+    <ng-content select="[slot=sidebar]"></ng-content>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div class="layout-overlay" [class.active]="sidebarVisible" (click)="onOverlayClick()"
+    (keydown.escape)="onOverlayClick()" tabindex="-1" role="presentation"></div>
+
+  <!-- Topbar Slot -->
+  <header class="layout-header">
+    <ng-content select="[slot=topbar]"></ng-content>
+  </header>
+
+  <!-- Main Content Slot -->
+  <main class="layout-content">
+    <app-scroll-overlay class="so-block h-full w-full" [skipTableDetection]="true">
+      <div class="content-wrapper">
+        <ng-content></ng-content>
+      </div>
+      <app-footer variant="inline"></app-footer>
+    </app-scroll-overlay>
+  </main>
+</div>

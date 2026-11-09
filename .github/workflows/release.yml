@@ -1,0 +1,189 @@
+name: Release Multiplataforma (Windows, macOS, Linux)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_version:
+        description: 'Tag de version para publicar en GitHub Releases (ej. v0.5.1)'
+        required: false
+        default: 'v0.5.1'
+
+permissions:
+  contents: write
+
+jobs:
+  verificar-compuertas:
+    name: Compuertas de Calidad (Frontend + Rust)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias nativas de Linux (GTK3 / WebKit2GTK)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libssl-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Configurar Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache de Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: 'src-tauri -> target'
+
+      - name: Verificar integridad de tauri.conf.json y gobernanza
+        run: |
+          node scripts/verificar-tauri-conf.mjs
+          npm run test:gobernanza
+
+      - name: Instalar dependencias y verificar Frontend (Atomic UI + Vitest + Build)
+        working-directory: frontend
+        run: |
+          npm ci
+          if [ -d "../../-Atomic-UI" ]; then
+            npm run check:atomic:pin
+          else
+            echo "Checkout aislado en CI: se omite check:atomic:pin (requiere clon hermano ../../-Atomic-UI)"
+          fi
+          npm run check:types
+          npm run check:angular
+          npm run check:theme
+          npm run check:css
+          npm test -- --watch=false
+          npm run build
+
+      - name: Ejecutar pruebas unitarias de Backend Rust
+        working-directory: src-tauri
+        run: cargo test
+
+  publicar-release:
+    name: Compilar y Publicar (${{ matrix.etiqueta }})
+    needs: verificar-compuertas
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            etiqueta: windows-x86_64
+            args: ''
+            binario_origen: src-tauri/target/release/union-pdf.exe
+            binario_publico: union-pdf-windows-x86_64.exe
+          - os: ubuntu-22.04
+            etiqueta: linux-x86_64
+            args: ''
+            binario_origen: src-tauri/target/release/union-pdf
+            binario_publico: union-pdf-linux-x86_64
+          - os: macos-latest
+            etiqueta: macos-aarch64
+            args: '--target aarch64-apple-darwin'
+            binario_origen: src-tauri/target/aarch64-apple-darwin/release/union-pdf
+            binario_publico: union-pdf-macos-arm64
+          - os: macos-latest
+            etiqueta: macos-x86_64
+            args: '--target x86_64-apple-darwin'
+            binario_origen: src-tauri/target/x86_64-apple-darwin/release/union-pdf
+            binario_publico: union-pdf-macos-x86_64
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar dependencias del sistema en Linux
+        if: matrix.os == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libssl-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Configurar Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.os == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Cache de Cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: 'src-tauri -> target'
+
+      - name: Instalar dependencias de Frontend y compilar dist/
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Compilar binario nativo Release (Cargo + Tauri v1.5)
+        shell: bash
+        run: |
+          cargo build --release --manifest-path src-tauri/Cargo.toml ${{ matrix.args }}
+
+      - name: Preparar binario portable con checksum SHA-256
+        shell: bash
+        run: |
+          mkdir -p release-portables
+          cp "${{ matrix.binario_origen }}" "release-portables/${{ matrix.binario_publico }}"
+          cd release-portables
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "${{ matrix.binario_publico }}" > "${{ matrix.binario_publico }}.sha256"
+          else
+            shasum -a 256 "${{ matrix.binario_publico }}" > "${{ matrix.binario_publico }}.sha256"
+          fi
+
+      - name: Publicar artefactos multiplataforma en GitHub Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.1' }}
+          name: 'Unión PDF ${{ github.ref_type == "tag" && github.ref_name || inputs.tag_version || "v0.5.1" }}'
+          body: |
+            ## Unión PDF — Lanzamiento Multiplataforma (`@archware`)
+
+            Estudio nativo de alto rendimiento para combinar, reorganizar, rotar y extraer páginas de documentos PDF e imágenes con procesamiento 100% en memoria local y privacidad absoluta.
+
+            ### Artefactos disponibles por sistema operativo
+            - **Windows (x86_64):** `union-pdf-windows-x86_64.exe` (+ `.sha256`)
+            - **macOS (Apple Silicon M1/M2/M3/M4):** `union-pdf-macos-arm64` (+ `.sha256`)
+            - **macOS (Intel x86_64):** `union-pdf-macos-x86_64` (+ `.sha256`)
+            - **Linux (x86_64):** `union-pdf-linux-x86_64` (+ `.sha256`)
+          draft: false
+          prerelease: false
+          files: |
+            release-portables/${{ matrix.binario_publico }}
+            release-portables/${{ matrix.binario_publico }}.sha256

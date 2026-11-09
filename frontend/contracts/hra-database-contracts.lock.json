@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0.0",
+  "package": {
+    "name": "@hra/database-contracts",
+    "version": "0.2.1"
+  },
+  "source_bundle": {
+    "bundle_sha256": "029ecd19ada2c87c6eea086136814ff4102dfbe333e2c0920ddc003af036b83d",
+    "manifest_sha256": "13eeb121ef37f1aa77ceb5f5a6b2f5e1018661fda78f9b20350c6f2fd7430b91",
+    "release_status": "blocked",
+    "deployable": false,
+    "blocking_decisions": [
+      "ADR-0001",
+      "ADR-0003"
+    ],
+    "catalogs": [
+      {
+        "path": "catalog/sqlserver/indicator-11/1.0.0-candidate.json",
+        "sha256": "e9ebb64d0571d60f3b4bf8c6c6d547f40abb41fb5a1004c2bc3dd957c59a8218"
+      }
+    ]
+  },
+  "consumer_gate": {
+    "checker_path": "scripts/check-hra-database-contracts.mjs",
+    "content_canonicalization": "sha256-git-clean-eol-v1"
+  },
+  "policy": {
+    "sql_copied": false,
+    "deployment_allowed": false,
+    "generated_files": [
+      "contracts/hra-database-contracts.lock.json",
+      "scripts/check-hra-database-contracts.mjs"
+    ]
+  },
+  "evidence": {
+    "lock_core_sha256": "42fdd44ef476a80de48ed33e6b0be1486b4604a449bb9bc828eec7666149a647",
+    "checker_canonicalization": "sha256-git-clean-eol-v1",
+    "checker_normalized_sha256": "e0e7f6fe1badf093e0e91f31e3b8d44c054a28ca87d379ba7a45b7a0f84a1e89",
+    "checker_sha256": "f70a74903c18bdda50cb682c0bf8f1619e128c0f9fd7ad586429ec3368c03c76",
+    "source_manifest_sha256": "13eeb121ef37f1aa77ceb5f5a6b2f5e1018661fda78f9b20350c6f2fd7430b91"
+  }
+}

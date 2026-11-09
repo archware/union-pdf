@@ -1,0 +1,48 @@
+<div class="sidebar-container" [class.collapsed]="collapsed">
+  <div class="sidebar-logo">
+    <i [class]="logoIcon + ' logo-icon'"></i>
+    @if (!collapsed) {
+    <span class="logo-text">{{ logoText }}</span>
+    }
+  </div>
+
+  <nav class="sidebar-nav" (keydown)="handleKeydown($event)" tabindex="0">
+    <ul class="nav-list" role="menu">
+      @for (item of menuItems; track item.label; let i = $index) {
+      <li class="nav-item" role="none">
+        <button type="button" class="nav-link" [class.active]="item.active" (click)="onItemClick(item, i)"
+          role="menuitem" [attr.aria-current]="item.active ? 'page' : null"
+          [attr.tabindex]="focusedIndex === i ? 0 : -1">
+          <i [class]="item.icon + ' nav-icon'" [style.color]="item.active ? null : (item.iconColor || null)"></i>
+          @if (!collapsed) {
+          <span class="nav-label">
+            {{ item.label }}
+            @if(item.badge) { <span class="nav-badge">{{ item.badge }}</span> }
+          </span>
+          }
+        </button>
+      </li>
+      }
+    </ul>
+  </nav>
+
+  @if (user) {
+  <div class="sidebar-footer">
+    <div class="user-profile">
+      <app-avatar [name]="user.name || 'User'" [initials]="user.initials" [size]="'md'"></app-avatar>
+      @if (!collapsed && user) {
+      <div class="user-info">
+        <span class="user-name">{{ user.name }}</span>
+        <span class="user-role">{{ user.role }}</span>
+      </div>
+      }
+    </div>
+  </div>
+  } 
+</div>
+
+
+
+
+
+

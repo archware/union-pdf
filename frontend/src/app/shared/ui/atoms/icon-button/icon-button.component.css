@@ -1,0 +1,318 @@
+:host {
+  display: inline-block;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-color-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.icon-btn--sm {
+  width: var(--control-height-sm);
+  height: var(--control-height-sm);
+  border-radius: var(--radius-sm);
+}
+
+.icon-btn--lg {
+  width: var(--control-height-lg);
+  height: var(--control-height-lg);
+  border-radius: var(--radius-lg);
+}
+
+.icon-btn:hover { background: var(--surface-hover); color: var(--primary-color); transform: translateY(-2px) scale(1.05); box-shadow: var(--shadow-md); filter: brightness(1.1); }
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.icon-btn:disabled {
+  cursor: not-allowed;
+  background: transparent;
+  color: var(--text-color-secondary);
+  transform: none !important;
+}
+
+.icon-btn:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.icon-btn--close:focus-visible,
+.icon-btn--close-ghost:focus-visible,
+.icon-btn--close-soft:focus-visible,
+.icon-btn--hanging-close:focus-visible {
+  outline: 2px solid var(--danger-color);
+  outline-offset: 2px;
+}
+
+/* Ghost variant - más sutil */
+.icon-btn--ghost {
+  border: 1px solid transparent;
+  box-shadow: none;
+}
+
+.icon-btn--ghost:hover {
+  background: transparent;
+  color: var(--primary-color);
+  box-shadow: none;
+  border: 1px solid transparent;
+}
+
+/* Avatar variant - circular con gradiente */
+.icon-btn--avatar {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+  border-radius: 50%;
+  border: none;
+  box-shadow: none;
+  color: var(--text-color-on-primary);
+}
+
+.icon-btn--avatar:hover {
+  background: linear-gradient(135deg, var(--primary-color-dark), var(--primary-color));
+  transform: scale(1.05);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+/* Badge */
+.icon-btn__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-size: 0.625rem;
+  font-weight: var(--font-weight-emphasis);
+  color: var(--text-color-on-primary);
+  background: var(--danger-color);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* SVG icons inside */
+::ng-deep svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Standardized Icon Animations */
+::ng-deep i.icon,
+::ng-deep i.configuration-icon,
+::ng-deep i.fa-solid,
+::ng-deep i.fa-regular,
+::ng-deep i.fa-brands {
+  transition: color 200ms ease, transform 200ms ease;
+}
+
+
+/* Rotate Animation (Default) */
+.icon-anim-rotate:hover ::ng-deep i.icon,
+.icon-anim-rotate:hover ::ng-deep i.configuration-icon,
+.icon-anim-rotate:hover ::ng-deep i.fa-solid,
+.icon-anim-rotate:hover ::ng-deep i.fa-regular,
+.icon-anim-rotate:hover ::ng-deep i.fa-brands {
+  transform: scale(1.1) rotate(180deg);
+  color: var(--primary-color);
+}
+
+/* Grow Animation */
+.icon-anim-grow:hover ::ng-deep i.icon,
+.icon-anim-grow:hover ::ng-deep i.configuration-icon,
+.icon-anim-grow:hover ::ng-deep i.fa-solid,
+.icon-anim-grow:hover ::ng-deep i.fa-regular,
+.icon-anim-grow:hover ::ng-deep i.fa-brands {
+  transform: scale(1.15);
+  color: var(--primary-color);
+}
+
+/* None Animation */
+.icon-anim-none:hover ::ng-deep i.icon,
+.icon-anim-none:hover ::ng-deep i.configuration-icon,
+.icon-anim-none:hover ::ng-deep i.fa-solid,
+.icon-anim-none:hover ::ng-deep i.fa-regular,
+.icon-anim-none:hover ::ng-deep i.fa-brands {
+  transform: none !important;
+  /* Still allow color change for interactive feedback */
+  color: var(--primary-color);
+}
+
+
+/* Close variant - efecto fisico de cierre */
+.icon-btn--close {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-color-secondary);
+  border-radius: var(--radius-full, 50%);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none;
+}
+
+.icon-btn--close:hover:not(:disabled) {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+  color: var(--text-color-on-primary);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+.icon-btn--close:active:not(:disabled) {
+  background-color: var(--danger-color-dark);
+  border-color: var(--danger-color-dark);
+  transform: scale(0.9);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Close-ghost variant - neutro en reposo; en hover solo colorea la X en rojo sin pintar fondo ni borde */
+.icon-btn--close-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-color-secondary);
+  border-radius: var(--radius-full, 50%);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none;
+}
+
+.icon-btn--close-ghost:hover:not(:disabled) {
+  background: transparent;
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--danger-color);
+  transform: scale(1.1);
+  box-shadow: none;
+  filter: none;
+}
+
+.icon-btn--close-ghost:active:not(:disabled) {
+  background: transparent;
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--danger-color-dark);
+  transform: scale(0.92);
+  box-shadow: none;
+  filter: none;
+}
+
+/* Close-soft variant - círculo suave peligro en reposo y sólido en hover */
+.icon-btn--close-soft {
+  background-color: var(--danger-color-lighter);
+  border: 1px solid var(--danger-color-light);
+  color: var(--danger-color-text);
+  border-radius: var(--radius-full, 50%);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none;
+}
+
+.icon-btn--close-soft:hover:not(:disabled) {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+  color: var(--text-color-on-primary);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+.icon-btn--close-soft:active:not(:disabled) {
+  background-color: var(--danger-color-dark);
+  border-color: var(--danger-color-dark);
+  transform: scale(0.92);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Hanging Close Variant */
+:host(.is-hanging-close) {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  z-index: 100;
+  width: 2rem;
+  height: 2rem;
+}
+
+.icon-btn--hanging-close {
+  background-color: var(--surface-background);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  color: var(--text-color);
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-full, 50%);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-btn--hanging-close:hover:not(:disabled) {
+  background-color: var(--danger-color) !important;
+  border-color: var(--danger-color) !important;
+  color: var(--text-color-on-primary) !important;
+  transform: scale(1.1);
+}
+
+.icon-btn--hanging-close:active:not(:disabled) {
+  transform: scale(0.95) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+/* --- EXACT CSS From CodePen (rNPjmg) --- */
+/* Scaled down to match previous SVG 20x20 size natively (1em = 50px proportion) */
+.close {
+  position: relative;
+  display: inline-block;
+  font-size: 20px;
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
+}
+
+.icon-btn--sm .close {
+  font-size: 16px;
+}
+
+.icon-btn--lg .close {
+  font-size: 22px;
+}
+.close::before, .close::after {
+  content: "";
+  position: absolute;
+  height: 0.04em;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  margin-top: -0.02em;
+  background: currentColor;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.close::before {
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.close::after {
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+.close.heavy::before, .close.heavy::after {
+  height: 0.24em;
+  margin-top: -0.12em;
+}
+.close.blades::before, .close.blades::after {
+  border-radius: 0.1em 0;
+}
+/* --------------------------------------- */

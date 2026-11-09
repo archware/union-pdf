@@ -1,0 +1,403 @@
+.so-root {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  /* Colores plomo (gris) sutiles semi-transparentes con soporte de tokens personalizados */
+  --so-thumb-color-start: var(
+    --so-custom-thumb-start,
+    color-mix(in srgb, var(--text-color) 35%, transparent)
+  );
+  --so-thumb-color-end: var(
+    --so-custom-thumb-end,
+    color-mix(in srgb, var(--text-color) 35%, transparent)
+  );
+  --so-thumb-color-hover: var(
+    --so-custom-thumb-hover,
+    color-mix(in srgb, var(--text-color) 52%, transparent)
+  );
+  --so-thumb-color-active: var(
+    --so-custom-thumb-active,
+    color-mix(in srgb, var(--text-color) 68%, transparent)
+  );
+  --so-track-size: 7px;
+  --so-thumb-blur: var(--space-1);
+  --so-min-column-width: 140px;
+  --so-scroll-end-space: calc(var(--so-track-size) + var(--space-8));
+}
+
+/* Outer border for tables to provide rounded corners and enclosing border */
+.so-root[data-so-table] {
+  border: 1px solid var(--table-color-border, var(--border-color));
+  border-radius: var(--table-border-radius, var(--space-2));
+}
+
+@media screen and (max-width: 768px) {
+  .so-root[data-so-table] {
+    border: none;
+    border-radius: 0;
+  }
+}
+
+/* Colores para tema oscuro - blanco sutil */
+:host-context(.dark) .so-root,
+:host-context([data-theme='dark']) .so-root,
+html.dark .so-root,
+[data-theme='dark'] .so-root {
+  --so-thumb-color-start: var(
+    --so-custom-thumb-start,
+    color-mix(in srgb, var(--text-color) 38%, transparent)
+  );
+  --so-thumb-color-end: var(
+    --so-custom-thumb-end,
+    color-mix(in srgb, var(--text-color) 38%, transparent)
+  );
+  --so-thumb-color-hover: var(
+    --so-custom-thumb-hover,
+    color-mix(in srgb, var(--text-color) 55%, transparent)
+  );
+  --so-thumb-color-active: var(
+    --so-custom-thumb-active,
+    color-mix(in srgb, var(--text-color) 72%, transparent)
+  );
+}
+
+.so-root.so-block {
+  display: block;
+  height: 100%; /* Enable scroll by giving explicit height */
+}
+
+.so-root.so-block:not([data-so-table]) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.so-root.so-block:not([data-so-table]) > .so-scroll-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: inherit;
+}
+
+.so-root.so-block[data-so-max-height]:not([data-so-table]) {
+  height: auto;
+  max-height: var(--so-max-height, 100%);
+}
+
+.so-scroll-area {
+  width: 100%;
+  height: 100%; /* Enable scroll by giving explicit height */
+  overflow: auto;
+  position: relative;
+  box-sizing: border-box;
+
+  /* HIDE NATIVE SCROLLBARS SO ONLY CUSTOM DIVS ARE SEEN */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.so-scroll-area::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Agregamos padding al área scrolleable para dar respiro al final y asegurar que el último registro se vea por completo */
+.so-scroll-area {
+  padding-bottom: var(--so-scroll-end-space);
+  scroll-padding-bottom: var(--so-scroll-end-space);
+}
+
+.so-root:not(.so-has-overflow-x) > .so-scroll-area {
+  padding-bottom: 0;
+  scroll-padding-bottom: 0;
+}
+
+.so-root[data-so-table].so-has-overflow-x tbody[data-so-vertical] {
+  padding-bottom: var(--so-scroll-end-space);
+  scroll-padding-bottom: var(--so-scroll-end-space);
+}
+
+/* Cuando hay tabla, el div maneja el scroll */
+.so-root[data-so-table] > .so-scroll-area {
+  overflow-y: auto;
+}
+
+.so-root [data-so-managed-scrollbar] {
+  overscroll-behavior: contain;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.so-root [data-so-managed-scrollbar]::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* The canonical native mode keeps the browser as the only scroll mechanism. */
+.so-root [data-so-native-scrollbar] {
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.so-root [data-so-native-scrollbar]::-webkit-scrollbar {
+  display: block;
+  width: var(--space-3);
+  height: var(--space-3);
+}
+
+.so-root [data-so-native-scrollbar]::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+.so-root [data-so-native-scrollbar]::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border: var(--space-1) solid var(--scrollbar-track);
+  border-radius: var(--radius-full);
+}
+
+.so-root [data-so-native-scrollbar]::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+.so-root [data-so-native-scrollbar]::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
+}
+
+.so-root.so-native-scrollbars > .so-scrollbar,
+.so-root.so-native-scrollbars::after {
+  display: none !important;
+}
+
+.so-root.so-variant-brand,
+html.dark .so-root.so-variant-brand,
+[data-theme='dark'] .so-root.so-variant-brand {
+  --so-thumb-color-start: var(
+    --so-custom-thumb-start,
+    rgba(var(--brand-primary-500-rgb), 0.62)
+  );
+  --so-thumb-color-end: var(
+    --so-custom-thumb-end,
+    rgba(var(--brand-secondary-500-rgb), 0.72)
+  );
+  --so-thumb-color-hover: var(--so-custom-thumb-hover, var(--primary-color));
+  --so-thumb-color-active: var(--so-custom-thumb-active, var(--primary-color-dark));
+  --so-track-bg: var(--so-custom-track-bg, rgba(var(--brand-primary-500-rgb), 0.08));
+  --so-track-bg-hover: var(
+    --so-custom-track-bg-hover,
+    rgba(var(--brand-primary-500-rgb), 0.14)
+  );
+  --so-resting-opacity: var(--so-custom-resting-opacity, 0.68);
+}
+
+.so-scrollbar {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+  z-index: 10;
+  display: none;
+}
+
+.so-root.so-variant-brand > .so-scrollbar {
+  border-radius: var(--radius-full);
+  background: var(--so-track-bg);
+  opacity: var(--so-resting-opacity, 0.68);
+  transition:
+    opacity 180ms ease,
+    background-color 180ms ease;
+}
+
+.so-root.so-has-overflow-y > .so-scrollbar-y {
+  display: block;
+  pointer-events: auto;
+}
+
+.so-root.so-has-overflow-x > .so-scrollbar-x {
+  display: block;
+  pointer-events: auto;
+}
+
+.so-root.so-scrolling > .so-scrollbar,
+.so-root:hover > .so-scrollbar,
+.so-root > .so-scrollbar:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.so-root.so-variant-brand.so-scrolling > .so-scrollbar,
+.so-root.so-variant-brand:hover > .so-scrollbar,
+.so-root.so-variant-brand > .so-scrollbar:focus-within {
+  opacity: 1;
+  background: var(--so-track-bg-hover);
+}
+
+.so-root.so-has-overflow-x::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--so-track-size);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.12));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.so-root.so-has-overflow-x.so-scrolling::after,
+.so-root.so-has-overflow-x:hover::after {
+  opacity: 1;
+}
+
+.so-scrollbar-y {
+  right: var(--space-1);
+  top: 0;
+  width: var(--so-track-size);
+  height: 0;
+}
+
+/* Scrollbar horizontal con z-index: 2 para estar debajo de la vertical (z-index: 10) */
+.so-scrollbar-x {
+  left: 0;
+  top: 0;
+  height: var(--so-track-size);
+  width: 0;
+  z-index: 2;
+}
+
+/* Las dimensiones de las barras se controlan dinámicamente desde TypeScript cuando ambas están activas */
+
+.so-thumb {
+  position: absolute;
+  border-radius: var(--radius-full);
+  backdrop-filter: blur(var(--so-thumb-blur));
+  will-change: transform, width, height, opacity;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  background: linear-gradient(90deg, var(--so-thumb-color-start), var(--so-thumb-color-end));
+}
+
+.so-thumb:active {
+  cursor: grabbing;
+  background: var(--so-thumb-color-active);
+}
+
+.so-thumb:hover {
+  background: var(--so-thumb-color-hover);
+}
+
+.so-thumb-y {
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: calc(var(--space-1) * 3);
+  transform: translateY(0);
+  background: linear-gradient(180deg, var(--so-thumb-color-start), var(--so-thumb-color-end));
+}
+
+.so-thumb-x {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: calc(var(--space-1) * 3);
+  transform: translateX(0);
+}
+
+.so-root[data-so-max-height][data-so-table] [data-so-vertical],
+.so-root[data-so-max-height][data-so-table]:not([data-so-sync-columns]) > .so-scroll-area {
+  max-height: var(--so-max-height, 100%);
+  height: var(--so-body-height, auto);
+  min-height: var(--so-body-height, auto);
+}
+
+.so-root[data-so-max-height]:not([data-so-table]) > .so-scroll-area,
+.so-root[data-so-max-height]:not([data-so-table]) > .so-scroll-area > [data-so-vertical] {
+  max-height: var(--so-max-height, 100%);
+  height: auto;
+  min-height: 0;
+}
+
+.so-root[data-so-max-height][data-so-table]:not([data-so-sync-columns]) > .so-scroll-area {
+  max-height: var(--so-max-height, 100%);
+  height: var(--so-body-height, auto);
+  min-height: var(--so-body-height, auto);
+}
+
+.so-root.so-no-vertical > .so-scrollbar-y,
+.so-root.so-no-horizontal > .so-scrollbar-x {
+  display: none !important;
+}
+
+.so-root[data-so-table][data-so-sync-columns] table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  display: block;
+}
+
+/* When the template is locked the user provides explicit pixel sizes.
+   Using width: max-content would cause fr-unit tracks to expand to cell
+   max-content, making column widths shift whenever translated text changes.
+   With min-width: 100% the table fills its container and fr units distribute
+   over a definite size instead. */
+.so-root.so-lock-template[data-so-table][data-so-sync-columns] table {
+  width: 100%;
+  min-width: max-content;
+}
+
+.so-root[data-so-table][data-so-sync-columns] thead,
+.so-root[data-so-table][data-so-sync-columns] tbody {
+  display: block;
+  width: 100%;
+}
+
+.so-root[data-so-table][data-so-sync-columns] thead {
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.so-root[data-so-table][data-so-sync-columns] thead tr,
+.so-root[data-so-table][data-so-sync-columns] tbody tr {
+  display: grid;
+  grid-template-columns: var(
+    --so-column-template,
+    repeat(auto-fit, minmax(var(--so-min-column-width, 140px), max-content))
+  );
+  width: max-content;
+  min-width: 100%;
+}
+
+.so-root[data-so-table][data-so-sync-columns] tbody[data-so-vertical] {
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.so-root[data-so-table][data-so-sync-columns] th,
+.so-root[data-so-table][data-so-sync-columns] td {
+  min-width: var(--so-min-column-width, 140px);
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+
+.so-root[data-so-table]:not([data-so-sync-columns]) table {
+  width: max-content;
+  min-width: 100%;
+}
+
+.so-root[data-so-table]:not([data-so-sync-columns]) tbody[data-so-vertical] {
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: var(--so-max-height, 100%);
+  height: var(--so-body-height, auto);
+  min-height: var(--so-body-height, auto);
+}

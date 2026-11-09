@@ -1,0 +1,894 @@
+/* =============================================================================
+   TOKENS DE COMPONENTES - Estilos específicos de UI
+   =============================================================================
+   Tokens derivados para componentes específicos de la aplicación.
+   Estos tokens utilizan los valores semánticos definidos en _tokens-semantic.css
+
+   📅 Última actualización: Diciembre 2025
+   ============================================================================= */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   🌞 TEMA CLARO - Componentes
+   ───────────────────────────────────────────────────────────────────────────── */
+:root,
+[data-theme="light"],
+.theme-light {
+
+  /* === CHAPA DE ENTORNO (atoms/version) ===
+     QA y STAGING no tienen tono en la paleta semantica, y con razon: exito,
+     aviso, peligro e informacion nombran VEREDICTOS, no entornos. El violeta
+     vive aqui, con el resto de tokens de componente, y no en el CSS del propio
+     componente: el tema se resuelve en un solo sitio. */
+  --version-qa-fill: var(--purple-500);
+  --version-qa-surface: var(--purple-50);
+  --version-qa-border: var(--purple-200);
+  --version-qa-text: var(--purple-800);
+   /* === NAVEGACIÓN === */
+   --nav-bg: var(--surface-background);
+   --nav-text: var(--text-color);
+   --nav-text-hover: var(--primary-color);
+   --nav-border: var(--border-color-light);
+   --nav-item-hover-bg: var(--hover-background-subtle);
+   --nav-item-active-bg: var(--primary-color-lighter);
+   --nav-item-active-text: var(--primary-color);
+   --nav-shadow: var(--shadow-sm);
+   --topbar-height: 4rem;
+   --topbar-action-icon-size: var(--icon-md);
+   --topbar-title-max-inline-size: 10rem;
+   --topbar-title-compact-min-inline-size: 5rem;
+   --topbar-title-compact-max-inline-size: 9.375rem;
+
+   /* === CONTENEDORES DESPLAZABLES === */
+   --size-panel-scroll-max: clamp(12rem, 55dvh, 25rem);
+   --size-scroll-region-compact: 7.5rem;
+   --size-table-viewport-compact: 13.75rem;
+
+   /* === SIDEBAR === */
+   --sidebar-bg: var(--surface-background);
+   --sidebar-text: var(--text-color-secondary);
+   --sidebar-heading: var(--text-color);
+   --sidebar-border: var(--border-color-light);
+   --sidebar-item-hover: var(--hover-background-subtle);
+   --sidebar-item-active: var(--primary-color-lighter);
+
+   /* === CARDS === */
+   --card-bg: var(--surface-background);
+   --card-border: var(--border-color-light);
+   --card-header-bg: var(--surface-section);
+   --card-footer-bg: var(--surface-section);
+   --card-shadow: var(--shadow-md);
+
+   /* === TABLAS ===
+      Tokens que los componentes atómicos realmente consumen.
+      Prefijo --table-color-*  → colores de superficie
+      Prefijo --table-font-*   → tipografía
+      Prefijo --table-card-*   → layout responsive (móvil)
+      Prefijo --table-header-* → estilos de cabecera
+      LEGADO: tokens --table-bg / --table-stripe-bg mantenidos para
+              compatibilidad con código de gerencial/operativo existente. */
+
+   /* --- Colores de superficie (consumidos por table.component.ts) --- */
+   --table-color-background:  var(--surface-background);
+   --table-color-stripe:      var(--gray-50);
+   --table-color-hover:       var(--brand-primary-50);
+   --table-color-border:      var(--brand-primary-200);
+   --table-color-border-light: rgba(0, 0, 0, 0.05);
+   --table-color-text:        var(--text-color-secondary);
+   --table-color-primary:     var(--primary-color);
+
+   /* --- Tipografía --- */
+   --heading-font-family:      var(--font-family-heading);
+   --table-font-family:        var(--font-family-base);
+   --table-font-size:          0.875rem;
+   --table-font-size-header:   0.75rem;
+   --table-font-weight-header: 600;
+   --table-font-weight-label:  600;
+
+   /* --- Espaciado de celdas --- */
+   --table-cell-padding: 0.75rem 1rem;
+
+   /* --- Cabecera --- */
+   --table-header-color:        var(--text-color);
+   --table-header-bg:           var(--surface-section);
+   --table-header-border-width: 2px;
+   --table-header-border-style: solid;
+   --table-header-border-color: var(--brand-primary-200);
+   --table-header-radius:       0.5rem;
+   --table-header-shadow:       none;
+
+   /* --- Hover de filas --- */
+   --table-row-hover-shadow:    0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+   --table-row-hover-transform: translateY(-2px);
+
+   /* --- Transición --- */
+   --table-transition-duration: 0.2s;
+   --table-transition-timing:   ease;
+
+   /* --- Responsive (cards en móvil) --- */
+   --table-border-radius: 0.5rem;
+   --table-card-padding:  1rem;
+   --table-card-gap:      0.75rem;
+   --table-card-shadow:   var(--shadow-sm);
+
+   /* --- Legado mantenido (gerencial, operativo) --- */
+   --table-bg:              var(--surface-background);
+   --table-header-start:    var(--brand-primary-500);
+   --table-header-end:      var(--brand-secondary-500);
+   --table-header-text:     var(--text-color);
+   --table-cell-text:       var(--text-color-secondary);
+   --table-row-alt-bg:      var(--surface-section);
+   --table-row-hover:       var(--brand-primary-50);
+   --table-row-selected:    var(--selected-background);
+   --table-border:          var(--brand-primary-100);
+   --table-stripe-bg:       var(--gray-50);
+   --table-stripe-alt:      var(--brand-secondary-50);
+   --table-hover-bg:        var(--brand-primary-50);
+   --table-hover-secondary: var(--brand-secondary-50);
+   --table-row-transition:  background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+   /* === CHARTS ===
+      Tokens consumidos por chart.component.ts vía getComputedStyle. */
+   --chart-text-color:    var(--text-color-secondary);
+   --chart-tooltip-bg:    var(--surface-elevated);
+   --chart-tooltip-text:  var(--text-color);
+   --chart-tooltip-border: var(--border-color);
+   --chart-grid-color:    rgba(15, 23, 42, 0.16);
+   --surface-color:       var(--surface-background);
+
+   /* Paleta de colores de segmentos de gráficos (donut, bar, line)
+      Hardcoded como constantes visuales — igual en todos los temas
+      para mantener identidad cromática de los indicadores. */
+   --chart-color-1:  #ec4899; /* rosa   — Ampolla Mensual      */
+   --chart-color-2:  #3b82f6; /* azul   — Ampolla Trimestral   */
+   --chart-color-3:  #8b5cf6; /* violeta — Preservativo/Barra  */
+   --chart-color-4:  #10b981; /* verde  — Ligaduras (AQV)      */
+   --chart-color-5:  #f59e0b; /* ámbar  — Vasectomías (AQV)    */
+   --chart-color-6:  #14b8a6; /* teal   — DIU / SIU            */
+   --chart-color-7:  #f43f5e; /* rosa   — Implantes            */
+   --chart-color-8:  #84cc16; /* lima   — Oral Combinado       */
+   --chart-color-9:  #a855f7; /* púrpura — Preservativo Fem.   */
+   --chart-color-10: #64748b; /* gris   — Consejería           */
+   /* Color semántico para texto sobre barras de avance */
+   --chart-label-color: var(--text-color-secondary);
+
+   /* === FORMULARIOS / INPUTS === */
+   --control-height: var(--control-height-md);
+   /* Derivado de primitivos - 46px standard */
+   --input-bg: var(--surface-background);
+   --input-border: var(--gray-300);
+   /* Más oscuro para contraste */
+   --input-border-width: 2.5px;
+   /* Grosor óptimo para visibilidad */
+   --input-border-hover: var(--info-color);
+   /* Igual que select2: hover usa color primario para look&feel uniforme */
+   --input-border-focus: var(--info-color);
+   --input-placeholder: var(--text-color-placeholder);
+   --field-label-color: var(--text-color);
+   --field-label-color-floated: var(--info-color-text);
+   --field-label-color-error: var(--danger-color-text);
+   --input-text: var(--text-color);
+   --input-shadow: var(--shadow-sm);
+   /* LIGHT: drop shadow clásico (profundidad) */
+   --input-shadow-hover: var(--shadow-md);
+   /* LIGHT: sombra elevada al hacer hover — igual que select2 */
+   --input-shadow-focus: 0 0 0 3px rgba(0, 122, 255, 0.25);
+   /* LIGHT: glow azul al enfocar inputs/selects */
+   --form-row-gap: 2.25rem;
+   /* 36px - espaciado vertical entre secciones de formulario */
+   --input-disabled-bg: var(--gray-100);
+   /* LIGHT: gray-400 sobre gray-100 daba 2.31:1, ilegible incluso en su propio
+      tema. gray-600 sobre gray-100 da 6.87:1. (WCAG 1.4.3 exime a los controles
+      inactivos; 4.5:1 se sostiene aquí como listón propio de legibilidad.) */
+   --input-disabled-text: var(--gray-600);
+
+   /* === BOTONES === */
+   --button-primary-bg: var(--primary-color);
+   --button-primary-bg-hover: var(--primary-color-hover);
+   --button-primary-bg-active: var(--primary-color-active);
+   --button-primary-text: var(--text-color-on-primary);
+
+   --button-secondary-bg: var(--secondary-color);
+   --button-secondary-bg-hover: var(--secondary-color-hover);
+   --button-secondary-text: var(--text-color-on-secondary);
+
+   --button-outline-border: var(--border-color-strong);
+   --button-outline-text: var(--text-color-secondary);
+  --button-outline-bg: var(--surface-section);
+   --button-outline-hover-bg: var(--hover-background-subtle);
+
+   --button-ghost-text: var(--text-color-secondary);
+   --button-ghost-hover-bg: var(--hover-background-subtle);
+   --button-disabled-bg: var(--input-disabled-bg);
+   --button-disabled-text: var(--input-disabled-text);
+   --button-disabled-border: var(--input-disabled-text);
+   --action-bar-gap: 2.25rem;
+
+   /* Button Shadows */
+   --button-shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+   --button-shadow-outer: 0 1px 3px hsla(0, 0%, 0%, 0.2);
+   --button-shadow: var(--button-shadow-inset), var(--button-shadow-outer);
+
+   /* === BADGES === */
+   --badge-primary-bg: var(--primary-color);
+   --badge-primary-text: var(--text-color-on-primary);
+   --badge-secondary-bg: var(--gray-200);
+   --badge-secondary-text: var(--gray-700);
+   --badge-success-bg: var(--success-color-light);
+   --badge-success-text: var(--success-color-text);
+   --badge-warning-bg: var(--warning-color-light);
+   --badge-warning-text: var(--warning-color-text);
+   --badge-danger-bg: var(--danger-color-light);
+   --badge-danger-text: var(--danger-color-text);
+   --badge-info-bg: var(--info-color-light);
+   --badge-info-text: var(--info-color-text);
+
+   /* === TOOLTIPS === */
+   --tooltip-bg: var(--gray-900);
+   --tooltip-text: var(--gray-0);
+   --tooltip-shadow: var(--shadow-lg);
+
+   /* === DROPDOWNS / SELECT === */
+   --dropdown-bg: var(--surface-background);
+   --dropdown-border: var(--border-color);
+   --dropdown-shadow: var(--shadow-dropdown);
+   --dropdown-item-hover: var(--hover-background-subtle);
+   --dropdown-item-selected: var(--selected-background);
+   --select2-min-width: 15rem;
+
+   /* === NG-SELECT (específico del proyecto) === */
+   --ng-select-border: var(--border-color-strong);
+   --ng-select-shadow: var(--shadow-sm);
+   --ng-select-hover-bg: var(--brand-primary-50);
+   --ng-select-hover-shadow: inset 0 0 0 2px var(--info-color);
+   --ng-select-selected-bg: var(--brand-primary-50);
+
+   /* === MODALES === */
+   --modal-bg: var(--surface-background);
+   --modal-overlay: var(--surface-overlay);
+   --modal-shadow: var(--shadow-xl);
+   --modal-header-bg: var(--surface-section);
+   --modal-footer-bg: var(--surface-section);
+   --modal-border: var(--border-color-light);
+   --size-dialog-wide: 53.125rem;
+   --crud-dialog-max-width-sm: 32rem;
+   --crud-dialog-max-width-md: 42rem;
+   --crud-dialog-max-width-lg: 48rem;
+   --crud-dialog-max-width-xl: 58rem;
+   --crud-dialog-max-height: calc(100dvh - var(--space-8));
+   --crud-dialog-padding: 0;
+
+   /* === THERMAL RECEIPT === */
+   --receipt-panel-background: var(--surface-background);
+   --receipt-panel-border: var(--border-color);
+   --receipt-panel-detail-background: var(--surface-section);
+   --receipt-panel-emphasis: var(--primary-color);
+   --receipt-panel-shadow: var(--shadow-sm);
+   --print-document-background: var(--surface-background);
+   --print-document-border: var(--border-color);
+   --print-document-detail-background: var(--surface-section);
+   --print-document-accent: var(--primary-color);
+   --print-document-shadow: var(--shadow-sm);
+   --print-document-paper-background: var(--gray-0);
+   --print-document-paper-color: var(--gray-950);
+   --print-document-muted-color: var(--gray-700);
+   --print-document-border-color: var(--gray-300);
+   --print-document-accent-color: var(--brand-primary-700);
+   --print-document-font-family: Arial, sans-serif;
+   --receipt-paper-width: 58mm;
+   --receipt-printable-width: 48mm;
+   --receipt-print-padding: 1mm;
+   --receipt-print-background: #ffffff;
+   --receipt-print-color: #000000;
+   --receipt-print-font-family: 'Courier New', Courier, monospace;
+   --receipt-print-font-size: 7pt;
+   --receipt-print-font-weight: var(--font-weight-title);
+   --receipt-print-letter-spacing: 0;
+   --receipt-print-line-height: 1.25;
+
+   /* === ALERTS === */
+   --alert-info-bg: var(--info-color-lighter);
+   --alert-info-border: var(--info-color);
+   --alert-info-text: var(--info-color-text);
+   --alert-success-bg: var(--success-color-lighter);
+   --alert-success-border: var(--success-color);
+   --alert-success-text: var(--success-color-text);
+   --alert-warning-bg: var(--warning-color-lighter);
+   --alert-warning-border: var(--warning-color);
+   --alert-warning-text: var(--warning-color-text);
+   --alert-danger-bg: var(--danger-color-lighter);
+   --alert-danger-border: var(--danger-color);
+   --alert-danger-text: var(--danger-color-text);
+   --alert-flow-gap: 2.25rem;
+   --alert-flow-gap-compact: var(--space-4);
+
+   /* === SCROLLBAR === */
+   --scrollbar-track: color-mix(in srgb, var(--info-color), transparent 92%);
+   --scrollbar-thumb: color-mix(in srgb, var(--info-color), transparent 68%);
+   --scrollbar-thumb-hover: color-mix(in srgb, var(--info-color), transparent 48%);
+
+   /* === LOADER / SPINNER === */
+   --loader-border: var(--gray-300);
+   --loader-spinner: var(--accent-color);
+   --loader-gradient-start: var(--brand-accent-300);
+   --loader-gradient-end: var(--brand-accent-500);
+
+   /* Standardized Loader Ramp: Purple (Primary) -> Pink (Accent) -> Amber (Secondary) */
+   --loader-gradient-1: var(--brand-primary-600);
+   --loader-gradient-2: var(--brand-primary-400);
+   --loader-gradient-3: var(--brand-accent-500);
+   --loader-gradient-4: var(--brand-secondary-400);
+   --loader-gradient-5: var(--brand-secondary-500);
+
+   /* === TABS === */
+   --tab-bg: transparent;
+   --tab-text: var(--text-color-secondary);
+   --tab-hover-bg: var(--hover-background-subtle);
+   --tab-active-bg: var(--surface-background);
+   --tab-active-text: var(--primary-color);
+   --tab-active-border: var(--primary-color);
+   --tab-border: var(--border-color-light);
+
+   /* === BREADCRUMBS === */
+   --breadcrumb-text: var(--text-color-muted);
+   --breadcrumb-separator: var(--gray-400);
+   --breadcrumb-active: var(--text-color);
+   --breadcrumb-hover: var(--primary-color);
+
+   /* === PAGINATION === */
+   --pagination-bg: var(--surface-background);
+   --pagination-text: var(--text-color);
+   --pagination-hover-bg: var(--hover-background-subtle);
+   --pagination-active-bg: var(--primary-color);
+   --pagination-active-text: var(--text-color-on-primary);
+   --pagination-disabled-text: var(--text-color-muted);
+   --pagination-border: var(--border-color);
+   --pagination-page-size-inline-size: 6rem;
+
+   /* === PROGRESS BAR === */
+   --progress-bg: var(--gray-200);
+   --progress-fill: var(--primary-color);
+   --progress-success: var(--success-color);
+   --progress-warning: var(--warning-color);
+   --progress-danger: var(--danger-color);
+
+   /* === SWITCH / TOGGLE === */
+   --switch-bg-off: var(--gray-300);
+   --switch-bg-on: var(--primary-color);
+   --switch-thumb: var(--gray-0);
+   --switch-disabled-bg: var(--gray-200);
+
+   /* === AVATAR === */
+   --avatar-bg: var(--primary-color-lighter);
+   --avatar-text: var(--primary-color-dark);
+   --avatar-border: var(--border-color-light);
+
+   /* === SKELETON === */
+   --skeleton-bg: var(--gray-200);
+   --skeleton-shimmer: var(--gray-100);
+   --skeleton-rectangular-block-size: 8rem;
+   --skeleton-card-media-block-size: clamp(5rem, 30vw, 8.75rem);
+   --skeleton-card-title-inline-size: 80%;
+   --skeleton-card-line-inline-size: 60%;
+   --skeleton-card-line-short-inline-size: 40%;
+   --skeleton-avatar-size: var(--space-7);
+   --skeleton-avatar-title-inline-size: 7.5rem;
+   --skeleton-avatar-subtitle-inline-size: 5rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   🌙 TEMA OSCURO - Componentes
+   ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="dark"],
+.theme-dark,
+html.dark {
+
+  /* === CHAPA DE ENTORNO (atoms/version) ===
+     QA y STAGING no tienen tono en la paleta semantica, y con razon: exito,
+     aviso, peligro e informacion nombran VEREDICTOS, no entornos. El violeta
+     vive aqui, con el resto de tokens de componente, y no en el CSS del propio
+     componente: el tema se resuelve en un solo sitio. */
+  --version-qa-fill: var(--purple-400);
+  --version-qa-surface: var(--purple-900);
+  --version-qa-border: var(--purple-800);
+  --version-qa-text: var(--purple-300);
+   /* === NAVEGACIÓN === */
+   --nav-bg: var(--surface-section);
+   /* Sub BG: #2a3556 */
+   --nav-text: var(--text-color);
+   --nav-text-hover: var(--primary-color);
+   --nav-border: var(--border-color);
+   --nav-item-hover-bg: var(--hover-background-subtle);
+   --nav-item-active-bg: var(--primary-color-lighter);
+   --nav-item-active-text: var(--primary-color-text);
+   --nav-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+
+   /* === SIDEBAR === */
+   --sidebar-bg: var(--surface-section);
+   /* Sub BG: #2a3556 */
+   --sidebar-text: var(--text-color-secondary);
+   --sidebar-heading: var(--text-color);
+   --sidebar-border: var(--border-color);
+   --sidebar-item-hover: var(--hover-background-subtle);
+   --sidebar-item-active: var(--primary-color-lighter);
+
+   /* === CARDS === */
+   --card-bg: var(--surface-background);
+   /* Layer BG: #1b2440 */
+   --card-border: var(--border-color);
+   --card-header-bg: var(--surface-section);
+   --card-footer-bg: var(--surface-section);
+   --card-shadow: var(--shadow-lg);
+
+   /* === TABLAS (dark overrides) === */
+   --table-color-background:    var(--surface-background);
+   --table-color-stripe:        var(--surface-section);
+   --table-color-hover:         var(--hover-background);
+   --table-color-border:        var(--border-color-strong);
+   --table-color-border-light:  rgba(255, 255, 255, 0.05);
+   --table-color-text:          var(--text-color-secondary);
+   --table-color-primary:       var(--primary-color);
+   --table-header-color:        var(--text-color);
+   --table-header-bg:           var(--surface-section);
+   --table-header-border-color: var(--border-color);
+   --table-header-shadow:       none;
+   --table-row-hover-shadow:    0 4px 16px rgba(0, 0, 0, 0.3), 0 2px 6px rgba(0, 0, 0, 0.2);
+   --table-row-hover-transform: translateY(-2px);
+   --table-card-shadow:         var(--shadow-md);
+
+   /* Legado dark */
+   --table-bg:              var(--surface-background);
+   --table-header-start:    var(--brand-primary-700);
+   --table-header-end:      var(--brand-secondary-700);
+   --table-header-text:     var(--text-color);
+   --table-cell-text:       var(--text-color-secondary);
+   --table-row-alt-bg:      var(--surface-section);
+   --table-row-hover:       var(--hover-background);
+   --table-row-selected:    var(--selected-background);
+   --table-border:          var(--border-color-strong);
+   --table-stripe-bg:       var(--surface-section);
+   --table-stripe-alt:      var(--surface-ground);
+   --table-hover-bg:        var(--hover-background);
+   --table-hover-secondary: var(--hover-background-subtle);
+   --table-row-transition:  background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+   /* === CHARTS (dark overrides) === */
+   --chart-text-color:     var(--text-color-secondary);
+   --chart-tooltip-bg:     var(--surface-elevated);
+   --chart-tooltip-text:   var(--text-color);
+   --chart-tooltip-border: var(--border-color);
+   --chart-grid-color:     rgba(255, 255, 255, 0.10);
+   --surface-color:        var(--surface-background);
+   --chart-label-color:    var(--text-color-secondary);
+
+   /* === FORMULARIOS / INPUTS === */
+   --input-bg: var(--surface-background);
+   /* Layer BG (Typical for inputs in dark) or Sub BG */
+   --input-border: var(--gray-600);
+   /* Más visible en oscuro */
+   --input-border-width: 2.5px;
+   --input-border-hover: var(--info-color);
+   /* Igual que select2: hover usa color primario para look&feel uniforme */
+   --input-border-focus: var(--info-color);
+   --input-placeholder: var(--text-color-placeholder);
+   --field-label-color: var(--text-color);
+   --field-label-color-floated: var(--info-color-text);
+   --field-label-color-error: var(--danger-color-text);
+   --input-text: var(--text-color);
+   --input-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.40);
+   /* DARK: anillo blanco nítido + sombra oscura — visible sobre fondos oscuros */
+   --input-shadow-hover: 0 0 0 1.5px rgba(255, 255, 255, 0.22), 0 4px 12px rgba(0, 0, 0, 0.55);
+   /* DARK: anillo blanco más fuerte en hover */
+   --input-shadow-focus: 0 0 0 3px rgba(10, 132, 255, 0.35);
+   /* DARK: glow azul al enfocar inputs/selects */
+   --form-row-gap: 2.25rem;
+   /* DARK: este bloque no declaraba los tokens de deshabilitado, así que
+      heredaba los del bloque claro —anclado a `:root`— y pintaba el campo con
+      gray-100 (#F3F4F6, casi blanco) sobre una página #1e1e1e: un bloque pálido
+      con texto a 2.05:1. Se hunde en lugar de iluminarse, como el resto del
+      tema. gray-400 sobre surface-sunken da 6.99:1. */
+   --input-disabled-bg: var(--surface-sunken);
+   --input-disabled-text: var(--gray-400);
+
+   /* === BOTONES === */
+   --button-primary-bg: var(--brand-primary-500);
+   --button-primary-bg-hover: var(--brand-primary-400);
+   --button-primary-bg-active: var(--brand-primary-300);
+   --button-primary-text: var(--gray-0);
+
+   --button-secondary-bg: var(--brand-secondary-600);
+   --button-secondary-bg-hover: var(--brand-secondary-500);
+   --button-secondary-text: var(--gray-0);
+
+   --button-outline-border: var(--border-color-strong);
+   --button-outline-text: var(--text-color-secondary);
+  --button-outline-bg: var(--surface-section);
+   --button-outline-hover-bg: var(--hover-background-subtle);
+
+   --button-ghost-text: var(--text-color-secondary);
+   --button-ghost-hover-bg: var(--hover-background-subtle);
+   --button-disabled-bg: var(--input-disabled-bg);
+   --button-disabled-text: var(--input-disabled-text);
+   --button-disabled-border: var(--input-disabled-text);
+
+   /* Button Shadows (Dark Mode - more subtle) */
+   --button-shadow-inset: inset 0 1px 0 hsla(224, 60%, 70%, 0.4);
+   --button-shadow-outer: 0 1px 4px hsla(0, 0%, 0%, 0.4);
+   --button-shadow: var(--button-shadow-inset), var(--button-shadow-outer);
+
+   /* === BADGES === */
+   --badge-primary-bg: var(--brand-primary-500);
+   --badge-primary-text: var(--gray-0);
+   --badge-secondary-bg: var(--surface-section);
+   --badge-secondary-text: var(--text-color-secondary);
+   --badge-success-bg: var(--success-color-light);
+   --badge-success-text: var(--success-color-text);
+   --badge-warning-bg: var(--warning-color-light);
+   --badge-warning-text: var(--warning-color-text);
+   --badge-danger-bg: var(--danger-color-light);
+   --badge-danger-text: var(--danger-color-text);
+   --badge-info-bg: var(--info-color-light);
+   --badge-info-text: var(--info-color-text);
+
+   /* === TOOLTIPS === */
+   --tooltip-bg: var(--surface-section);
+   --tooltip-text: var(--text-color);
+
+   /* === DROPDOWNS / SELECT === */
+   --dropdown-bg: var(--surface-elevated);
+   /* Sub BG often used for popovers */
+   --dropdown-border: var(--border-color);
+   --dropdown-shadow: var(--shadow-dropdown);
+   --dropdown-item-hover: var(--hover-background-subtle);
+   --dropdown-item-selected: var(--selected-background);
+
+   /* === NG-SELECT === */
+   --ng-select-border: var(--border-color-strong);
+   /* Fixed hardcoded #404040 */
+   --ng-select-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+   --ng-select-hover-bg: var(--hover-background);
+   --ng-select-hover-shadow: inset 0 0 0 2px var(--info-color);
+   --ng-select-selected-bg: var(--selected-background);
+
+   /* === MODALES === */
+   --modal-bg: var(--surface-background);
+   /* Layer BG */
+   --modal-overlay: var(--surface-overlay);
+   --modal-shadow: var(--shadow-xl);
+   --modal-header-bg: var(--surface-section);
+   --modal-footer-bg: var(--surface-section);
+   --modal-border: var(--border-color);
+   --crud-dialog-max-width-sm: 32rem;
+   --crud-dialog-max-width-md: 42rem;
+   --crud-dialog-max-width-lg: 48rem;
+   --crud-dialog-max-width-xl: 58rem;
+   --crud-dialog-max-height: calc(100dvh - var(--space-8));
+   --crud-dialog-padding: 0;
+
+   /* === ALERTS === */
+   --alert-info-bg: var(--info-color-lighter);
+   --alert-info-border: var(--info-color);
+   --alert-info-text: var(--blue-300);
+   --alert-success-bg: var(--success-color-lighter);
+   --alert-success-border: var(--success-color);
+   --alert-success-text: var(--success-color-text);
+   --alert-warning-bg: var(--warning-color-lighter);
+   --alert-warning-border: var(--warning-color);
+   --alert-warning-text: var(--warning-color-text);
+   --alert-danger-bg: var(--danger-color-lighter);
+   --alert-danger-border: var(--danger-color);
+   --alert-danger-text: var(--red-300);
+
+   /* === SCROLLBAR === */
+   --scrollbar-track: color-mix(in srgb, var(--info-color), transparent 88%);
+   --scrollbar-thumb: color-mix(in srgb, var(--info-color), transparent 60%);
+   --scrollbar-thumb-hover: color-mix(in srgb, var(--info-color), transparent 40%);
+
+   /* === LOADER / SPINNER === */
+   --loader-border: var(--border-color-strong);
+   /* Fixed hardcoded #404040 */
+   --loader-spinner: var(--brand-accent-400);
+
+   /* Dark Mode Ramp: Lighter/Brighter variants */
+   --loader-gradient-1: var(--brand-primary-400);
+   --loader-gradient-2: var(--brand-primary-300);
+   --loader-gradient-3: var(--brand-accent-300);
+   --loader-gradient-4: var(--brand-secondary-300);
+   --loader-gradient-5: var(--brand-secondary-400);
+
+   /* === TABS === */
+   --tab-bg: transparent;
+   --tab-text: var(--text-color-secondary);
+   --tab-hover-bg: var(--hover-background-subtle);
+   --tab-active-bg: var(--surface-elevated);
+   --tab-active-text: var(--primary-color);
+   --tab-active-border: var(--primary-color);
+   --tab-border: var(--border-color);
+
+   /* === BREADCRUMBS === */
+   --breadcrumb-text: var(--text-color-muted);
+   --breadcrumb-separator: var(--gray-600);
+   --breadcrumb-active: var(--text-color);
+   --breadcrumb-hover: var(--primary-color);
+
+   /* === PAGINATION === */
+   --pagination-bg: var(--surface-elevated);
+   --pagination-text: var(--text-color);
+   --pagination-hover-bg: var(--hover-background-subtle);
+   --pagination-active-bg: var(--brand-primary-600);
+   --pagination-active-text: var(--gray-0);
+   --pagination-disabled-text: var(--text-color-muted);
+   --pagination-border: var(--border-color);
+
+   /* === PROGRESS BAR === */
+   --progress-bg: var(--gray-700);
+   --progress-fill: var(--primary-color);
+   --progress-success: var(--success-color);
+   --progress-warning: var(--warning-color);
+   --progress-danger: var(--danger-color);
+
+   /* === SWITCH / TOGGLE === */
+   --switch-bg-off: var(--gray-600);
+   --switch-bg-on: var(--brand-primary-500);
+   --switch-thumb: var(--gray-0);
+   --switch-disabled-bg: var(--gray-700);
+
+   /* === AVATAR === */
+   --avatar-bg: var(--hover-background);
+   --avatar-text: var(--primary-color);
+   --avatar-border: var(--border-color);
+
+   /* === SKELETON === */
+   --skeleton-bg: var(--gray-700);
+   --skeleton-shimmer: var(--gray-600);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   🌙 TEMA OSCURO CORPORATIVO - Componentes
+   ───────────────────────────────────────────────────────────────────────────── */
+[data-theme="brand-dark"] {
+
+  /* === CHAPA DE ENTORNO (atoms/version) ===
+     QA y STAGING no tienen tono en la paleta semantica, y con razon: exito,
+     aviso, peligro e informacion nombran VEREDICTOS, no entornos. El violeta
+     vive aqui, con el resto de tokens de componente, y no en el CSS del propio
+     componente: el tema se resuelve en un solo sitio. */
+  --version-qa-fill: var(--purple-400);
+  --version-qa-surface: var(--purple-900);
+  --version-qa-border: var(--purple-800);
+  --version-qa-text: var(--purple-300);
+   /* === NAVEGACIÓN === */
+   --nav-bg: var(--surface-section);
+   --nav-text: var(--text-color);
+   --nav-text-hover: var(--primary-color);
+   --nav-border: var(--border-color);
+   --nav-item-hover-bg: var(--hover-background-subtle);
+   --nav-item-active-bg: var(--primary-color-lighter);
+   --nav-item-active-text: var(--primary-color-text);
+   --nav-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+
+   /* === SIDEBAR === */
+   --sidebar-bg: var(--surface-section);
+   --sidebar-text: var(--text-color-secondary);
+   --sidebar-heading: var(--text-color);
+   --sidebar-border: var(--border-color);
+   --sidebar-item-hover: var(--hover-background-subtle);
+   --sidebar-item-active: var(--primary-color-lighter);
+
+   /* === CARDS === */
+   --card-bg: var(--surface-background);
+   --card-border: var(--border-color);
+   --card-header-bg: var(--surface-section);
+   --card-footer-bg: var(--surface-section);
+   --card-shadow: var(--shadow-lg);
+
+   /* === TABLAS (brand-dark overrides) === */
+   --table-color-background:    var(--surface-background);
+   --table-color-stripe:        var(--surface-section);
+   --table-color-hover:         var(--hover-background);
+   --table-color-border:        var(--border-color-strong);
+   --table-color-border-light:  rgba(255, 255, 255, 0.06);
+   --table-color-text:          var(--text-color-secondary);
+   --table-color-primary:       var(--primary-color);
+   --table-header-color:        var(--text-color);
+   --table-header-bg:           var(--surface-section);
+   --table-header-border-color: var(--border-color);
+   --table-header-shadow:       none;
+   --table-row-hover-shadow:    0 4px 16px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+   --table-row-hover-transform: translateY(-2px);
+   --table-card-shadow:         var(--shadow-md);
+
+   /* Legado brand-dark */
+   --table-bg:              var(--surface-background);
+   --table-header-start:    var(--brand-primary-700);
+   --table-header-end:      var(--brand-secondary-700);
+   --table-header-text:     var(--text-color);
+   --table-cell-text:       var(--text-color-secondary);
+   --table-row-alt-bg:      var(--surface-section);
+   --table-row-hover:       var(--hover-background);
+   --table-row-selected:    var(--selected-background);
+   --table-border:          var(--border-color-strong);
+   --table-stripe-bg:       var(--surface-section);
+   --table-stripe-alt:      var(--surface-ground);
+   --table-hover-bg:        var(--hover-background);
+   --table-hover-secondary: var(--hover-background-subtle);
+   --table-row-transition:  background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+   /* === CHARTS (brand-dark overrides) === */
+   --chart-text-color:     var(--text-color-secondary);
+   --chart-tooltip-bg:     var(--surface-elevated);
+   --chart-tooltip-text:   var(--text-color);
+   --chart-tooltip-border: var(--border-color);
+   --chart-grid-color:     rgba(255, 255, 255, 0.12);
+   --surface-color:        var(--surface-background);
+   --chart-label-color:    var(--text-color-secondary);
+
+   /* === FORMULARIOS / INPUTS === */
+   --input-bg: var(--surface-background);
+   --input-border: var(--gray-600);
+   --input-border-width: 2.5px;
+   --input-border-hover: var(--info-color);
+   /* Igual que select2: hover usa color primario */
+   --input-border-focus: var(--info-color);
+   --input-placeholder: var(--text-color-placeholder);
+   --field-label-color: var(--text-color);
+   --field-label-color-floated: var(--info-color-text);
+   --field-label-color-error: var(--danger-color-text);
+   --input-text: var(--text-color);
+   --input-shadow: 0 0 0 1px rgba(188, 154, 187, 0.18), 0 2px 6px rgba(0, 0, 0, 0.50);
+   /* BRAND-DARK: glow de marca (primary violeta) + sombra profunda */
+   --input-shadow-hover: 0 0 0 2px rgba(188, 154, 187, 0.38), 0 4px 14px rgba(0, 0, 0, 0.60);
+   /* BRAND-DARK: glow primario más fuerte en hover */
+   --input-shadow-focus: 0 0 0 3px rgba(10, 132, 255, 0.35);
+   /* BRAND-DARK: glow azul al enfocar inputs/selects */
+   --form-row-gap: 2.25rem;
+   --input-disabled-bg: var(--surface-sunken);
+   /* BRAND-DARK: gray-600 sobre surface-sunken (#29324d) daba 1.68:1, el peor
+      de los cuatro temas. gray-400 lo lleva a 4.99:1. */
+   --input-disabled-text: var(--gray-400);
+
+   /* === BOTONES === */
+   --button-primary-bg: var(--brand-primary-500);
+   --button-primary-bg-hover: var(--brand-primary-400);
+   --button-primary-bg-active: var(--brand-primary-300);
+   --button-primary-text: var(--gray-0);
+
+   --button-secondary-bg: var(--brand-secondary-600);
+   --button-secondary-bg-hover: var(--brand-secondary-500);
+   --button-secondary-text: var(--gray-0);
+
+   --button-outline-border: var(--border-color-strong);
+   --button-outline-text: var(--text-color-secondary);
+  --button-outline-bg: var(--surface-section);
+   --button-outline-hover-bg: var(--hover-background-subtle);
+
+   --button-ghost-text: var(--text-color-secondary);
+   --button-ghost-hover-bg: var(--hover-background-subtle);
+   --button-disabled-bg: var(--input-disabled-bg);
+   --button-disabled-text: var(--input-disabled-text);
+   --button-disabled-border: var(--input-disabled-text);
+
+   /* Button Shadows (Brand-Dark Mode) */
+   --button-shadow-inset: inset 0 1px 0 hsla(224, 60%, 70%, 0.4);
+   --button-shadow-outer: 0 1px 4px hsla(0, 0%, 0%, 0.4);
+   --button-shadow: var(--button-shadow-inset), var(--button-shadow-outer);
+
+   /* === BADGES === */
+   --badge-primary-bg: var(--brand-primary-500);
+   --badge-primary-text: var(--gray-0);
+   --badge-secondary-bg: var(--surface-section);
+   --badge-secondary-text: var(--text-color-secondary);
+   --badge-success-bg: var(--success-color-light);
+   --badge-success-text: var(--success-color-text);
+   --badge-warning-bg: var(--warning-color-light);
+   --badge-warning-text: var(--warning-color-text);
+   --badge-danger-bg: var(--danger-color-light);
+   --badge-danger-text: var(--danger-color-text);
+   --badge-info-bg: var(--info-color-light);
+   --badge-info-text: var(--info-color-text);
+
+   /* === TOOLTIPS === */
+   --tooltip-bg: var(--surface-section);
+   --tooltip-text: var(--text-color);
+
+   /* === DROPDOWNS / SELECT === */
+   --dropdown-bg: var(--surface-elevated);
+   --dropdown-border: var(--border-color);
+   --dropdown-shadow: var(--shadow-dropdown);
+   --dropdown-item-hover: var(--hover-background-subtle);
+   --dropdown-item-selected: var(--selected-background);
+
+   /* === NG-SELECT === */
+   --ng-select-border: var(--border-color-strong);
+   --ng-select-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+   --ng-select-hover-bg: var(--hover-background);
+   --ng-select-hover-shadow: inset 0 0 0 2px var(--info-color);
+   --ng-select-selected-bg: var(--selected-background);
+
+   /* === MODALES === */
+   --modal-bg: var(--surface-background);
+   --modal-overlay: var(--surface-overlay);
+   --modal-shadow: var(--shadow-xl);
+   --modal-header-bg: var(--surface-section);
+   --modal-footer-bg: var(--surface-section);
+   --modal-border: var(--border-color);
+   --crud-dialog-max-width-sm: 32rem;
+   --crud-dialog-max-width-md: 42rem;
+   --crud-dialog-max-width-lg: 48rem;
+   --crud-dialog-max-width-xl: 58rem;
+   --crud-dialog-max-height: calc(100dvh - var(--space-8));
+   --crud-dialog-padding: 0;
+
+   /* === ALERTS === */
+   --alert-info-bg: var(--info-color-lighter);
+   --alert-info-border: var(--info-color);
+   --alert-info-text: var(--blue-300);
+   --alert-success-bg: var(--success-color-lighter);
+   --alert-success-border: var(--success-color);
+   --alert-success-text: var(--success-color-text);
+   --alert-warning-bg: var(--warning-color-lighter);
+   --alert-warning-border: var(--warning-color);
+   --alert-warning-text: var(--warning-color-text);
+   --alert-danger-bg: var(--danger-color-lighter);
+   --alert-danger-border: var(--danger-color);
+   --alert-danger-text: var(--red-300);
+
+   /* === SCROLLBAR === */
+   --scrollbar-track: color-mix(in srgb, var(--info-color), transparent 88%);
+   --scrollbar-thumb: color-mix(in srgb, var(--info-color), transparent 55%);
+   --scrollbar-thumb-hover: color-mix(in srgb, var(--info-color), transparent 35%);
+
+   /* === LOADER / SPINNER === */
+   --loader-border: var(--border-color-strong);
+   --loader-spinner: var(--brand-accent-400);
+   --loader-gradient-1: var(--brand-primary-400);
+   --loader-gradient-2: var(--brand-primary-300);
+   --loader-gradient-3: var(--brand-accent-300);
+   --loader-gradient-4: var(--brand-secondary-300);
+   --loader-gradient-5: var(--brand-secondary-400);
+
+   /* === TABS === */
+   --tab-bg: transparent;
+   --tab-text: var(--text-color-secondary);
+   --tab-hover-bg: var(--hover-background-subtle);
+   --tab-active-bg: var(--surface-elevated);
+   --tab-active-text: var(--primary-color);
+   --tab-active-border: var(--primary-color);
+   --tab-border: var(--border-color);
+
+   /* === BREADCRUMBS === */
+   --breadcrumb-text: var(--text-color-muted);
+   --breadcrumb-separator: var(--gray-600);
+   --breadcrumb-active: var(--text-color);
+   --breadcrumb-hover: var(--primary-color);
+
+   /* === PAGINATION === */
+   --pagination-bg: var(--surface-elevated);
+   --pagination-text: var(--text-color);
+   --pagination-hover-bg: var(--hover-background-subtle);
+   --pagination-active-bg: var(--brand-primary-600);
+   --pagination-active-text: var(--gray-0);
+   --pagination-disabled-text: var(--text-color-muted);
+   --pagination-border: var(--border-color);
+
+   /* === PROGRESS BAR === */
+   --progress-bg: var(--gray-700);
+   --progress-fill: var(--primary-color);
+   --progress-success: var(--success-color);
+   --progress-warning: var(--warning-color);
+   --progress-danger: var(--danger-color);
+
+   /* === SWITCH / TOGGLE === */
+   --switch-bg-off: var(--gray-600);
+   --switch-bg-on: var(--brand-primary-500);
+   --switch-thumb: var(--gray-0);
+   --switch-disabled-bg: var(--gray-700);
+
+   /* === AVATAR === */
+   --avatar-bg: var(--hover-background);
+   --avatar-text: var(--primary-color);
+   --avatar-border: var(--border-color);
+
+   /* === SKELETON === */
+   --skeleton-bg: var(--gray-700);
+   --skeleton-shimmer: var(--gray-600);
+}

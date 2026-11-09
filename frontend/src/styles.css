@@ -1,0 +1,42 @@
+/* =============================================================================
+   ESTILOS GLOBALES - Atomic UI
+   =============================================================================
+   📅 Actualizado: Diciembre 2025
+   🎨 Sistema de temas portable implementado
+   ============================================================================= */
+
+/* =============================================================================
+   SISTEMA DE TEMAS PORTABLE
+   =============================================================================
+   Para personalizar los colores de marca para otro proyecto:
+   1. Abre: src/styles/themes/_tokens-brand.css
+   2. Modifica los valores de --brand-primary-* y --brand-secondary-*
+   3. ¡Listo! Todo se actualiza automáticamente
+   ============================================================================= */
+
+/* Tipografía local (Open Sans + Quicksand) provista por ./styles/themes/_fonts.css */
+
+/* Iconografia (Local - FontAwesome) */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+/* Sistema de temas y tokens */
+@import './styles/themes/index.css';
+
+/* Estilos específicos para pdf-tool */
+@import './styles/pdf-tool-styles.css';
+
+/* Tokens de Tabla (CR?TICO para estilos de cabecera y hover) */
+@import './app/shared/ui/styles/tokens/table-tokens.css';
+
+/* Tokens de Gráficos (Colores semánticos para Chart.js) */
+@import './app/shared/ui/styles/tokens/chart-tokens.css';
+
+/* Estilos para tabla responsiva (usado por TableComponent) */
+@import './app/shared/ui/styles/responsive-table.css';
+
+/* Animaciones compartidas de la UI */
+@import './app/shared/ui/styles/animations.css';
+
+/* Tailwind CSS - Capas utilitarias sin Preflight destructivo al final de la cascada */
+@tailwind components;
+@tailwind utilities;

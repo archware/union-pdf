@@ -1,0 +1,83 @@
+/* =============================================================================
+   TOKENS DE MARCA - PERSONALIZACIÓN POR EMPRESA
+   =============================================================================
+
+   🎨 INSTRUCCIONES PARA PERSONALIZAR:
+   ──────────────────────────────────────────────────────────────────────────────
+   1. Cambia los valores de --brand-primary-* con los colores de tu empresa
+   2. Cambia los valores de --brand-secondary-* con el color secundario
+   3. Opcionalmente ajusta --brand-accent-* para un tercer color
+   4. Los colores deben seguir una escala de 50 (más claro) a 900 (más oscuro)
+
+   💡 TIP: Usa https://uicolors.app para generar escalas de color automáticamente
+
+   📅 Última actualización: Diciembre 2025
+   🏢 Marca actual: Lujo / Corporativo (Púrpura + Dorado)
+   ============================================================================= */
+
+:root {
+   /* ─────────────────────────────────────────────────────────────────────────
+     🔵 COLOR PRIMARIO DE MARCA (Índigo Vibrante / Royal Studio)
+     Base: #4F46E5
+     Estilo: Moderno, Tecnológico, Dinámico, Confiable
+     ───────────────────────────────────────────────────────────────────────── */
+   --brand-primary-50: #eef2ff;
+   --brand-primary-100: #e0e7ff;
+   --brand-primary-200: #c7d2fe;
+   --brand-primary-300: #a5b4fc;
+   --brand-primary-400: #818cf8;
+   --brand-primary-500: #4f46e5;
+   /* ← COLOR PRINCIPAL */
+   --brand-primary-500-rgb: 79, 70, 229;
+   /* RGB para uso en rgba() */
+   --brand-primary-600: #4338ca;
+   --brand-primary-700: #3730a3;
+   --brand-primary-800: #312e81;
+   --brand-primary-900: #1e1b4b;
+
+   /* Colores especiales de acento (derivados del primario) */
+   --brand-primary-A100: #c7d2fe;
+   --brand-primary-A200: #a5b4fc;
+   --brand-primary-A400: #818cf8;
+   --brand-primary-A700: #6366f1;
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     🟢 COLOR SECUNDARIO DE MARCA (Teal Oceánico / Cyan Menta)
+     Base: #0D9488
+     Estilo: Fresco, Precisión, Éxito, Contraste
+     ───────────────────────────────────────────────────────────────────────── */
+   --brand-secondary-50: #f0fdfa;
+   --brand-secondary-100: #ccfbf1;
+   --brand-secondary-200: #99f6e4;
+   --brand-secondary-300: #5eead4;
+   --brand-secondary-400: #2dd4bf;
+   --brand-secondary-500: #0d9488;
+   /* ← COLOR SECUNDARIO PRINCIPAL */
+   --brand-secondary-500-rgb: 13, 148, 136;
+   /* RGB para uso en rgba() */
+   --brand-secondary-600: #0f766e;
+   --brand-secondary-700: #115e59;
+   --brand-secondary-800: #134e4a;
+   --brand-secondary-900: #042f2e;
+   --brand-secondary-950: #021c1b;
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     ✨ COLOR DE ACENTO (Ámbar Radiante)
+     Para destacados, etiquetas, badges especiales y llamadas visuales
+     ───────────────────────────────────────────────────────────────────────── */
+   --brand-accent-50: #fffbeb;
+   --brand-accent-100: #fef3c7;
+   --brand-accent-200: #fde68a;
+   --brand-accent-300: #fcd34d;
+   --brand-accent-400: #fbbf24;
+   --brand-accent-500: #f59e0b;
+   --brand-accent-600: #d97706;
+   --brand-accent-700: #b45309;
+   --brand-accent-800: #92400e;
+   --brand-accent-900: #78350f;
+
+   /* ─────────────────────────────────────────────────────────────────────────
+     🏢 METADATOS DE MARCA (para documentación)
+     Estos son comentarios de referencia, no afectan el CSS
+     ───────────────────────────────────────────────────────────────────────── */
+}

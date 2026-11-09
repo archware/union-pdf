@@ -1,0 +1,15 @@
+<div
+  class="so-scroll-area"
+  #scrollArea
+  [attr.role]="scrollAreaAriaLabel ? 'region' : null"
+  [attr.aria-label]="scrollAreaAriaLabel"
+  [attr.tabindex]="scrollAreaAriaLabel ? 0 : null"
+>
+  <ng-content></ng-content>
+</div>
+<div class="so-scrollbar so-scrollbar-y" #barY aria-hidden="true">
+  <div class="so-thumb so-thumb-y" #thumbY></div>
+</div>
+<div class="so-scrollbar so-scrollbar-x" #barX aria-hidden="true">
+  <div class="so-thumb so-thumb-x" #thumbX></div>
+</div>

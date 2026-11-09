@@ -1,0 +1,401 @@
+<app-scroll-overlay
+  class="so-block editor-scroll-shell"
+  variant="brand"
+  [skipTableDetection]="true"
+  [disableHorizontal]="true"
+  scrollAreaAriaLabel="Area principal del editor PDF">
+  <div class="editor-layout">
+    <header class="editor-header">
+      <div class="header-brand-container">
+        <div class="brand-badge-icon">
+          <i class="fa-solid fa-file-pdf"></i>
+        </div>
+        <h1 class="brand-title">Unión PDF</h1>
+      </div>
+      <div class="header-meta-actions">
+        <app-button
+          variant="outline"
+          size="sm"
+          iconClass="fa-solid fa-circle-info"
+          (buttonClick)="openAboutDialog()">
+          Acerca de
+        </app-button>
+      </div>
+    </header>
+
+    <main class="editor-main">
+      <!-- Left Column: Documentos & Configuración -->
+      <div class="editor-column editor-column--left">
+        <app-panel variant="elevated" padding="md">
+          <!-- Drag & Drop Zone -->
+          <div class="upload-zone" id="drop-zone"
+               role="button"
+               tabindex="0"
+               aria-label="Seleccionar archivos PDF o imágenes"
+               draggable="false"
+               (dragstart)="$event.preventDefault()"
+               (dragend)="onDragLeave($event)"
+               (mousedown)="onUploadZoneMouseDown($event)"
+               (mouseup)="onUploadZoneMouseUp($event)"
+               (mouseleave)="onUploadZoneMouseLeave()"
+               (click)="triggerFileInput($event)"
+               (keydown.enter)="triggerFileInput()"
+               (keydown.space)="triggerFileInput(); $event.preventDefault()"
+               (dragover)="onDragOver($event)" 
+               (dragleave)="onDragLeave($event)" 
+               (drop)="onDrop($event)"
+               [class.dragover]="isDragging"
+               [class.upload-zone--dialog-open]="isFileDialogOpen">
+            <div class="upload-icon-container">
+              <i class="fa-solid fa-cloud-arrow-up fa-2x"></i>
+            </div>
+            <p class="upload-text">Arrastra tus archivos PDF o imágenes aquí</p>
+            <span class="upload-subtext">o haz clic para seleccionarlos</span>
+          </div>
+
+          <!-- Selected Files List -->
+          @if (uploadedFiles.length > 0) {
+            <div class="file-list-container">
+              <div class="file-list-header">
+                <div class="file-list-title">
+                  <i class="fa-solid fa-folder-open text-primary"></i>
+                  <strong>Documentos cargados</strong>
+                  <app-badge [count]="uploadedFiles.length" variant="primary" size="sm"></app-badge>
+                </div>
+                <app-button variant="danger" appearance="gradient" size="sm" iconClass="fa-trash" (buttonClick)="clearAll()">
+                  Limpiar lista
+                </app-button>
+              </div>
+
+              <app-scroll-overlay
+                class="so-block file-list-scroll-overlay"
+                variant="brand"
+                [maxBodyHeight]="210"
+                [skipTableDetection]="true"
+                [disableHorizontal]="true"
+                [resetKey]="uploadedFiles.length === 0"
+                scrollAreaAriaLabel="Lista de documentos PDF cargados">
+                <div class="file-list">
+                  @for (file of uploadedFiles; track file.id) {
+                    <div class="file-item" [class.file-item--image]="file.kind === 'image'">
+                      <div class="file-main-info">
+                        <div class="file-info">
+                          <div class="file-icon-box" [class.file-icon-box--image]="file.kind === 'image'">
+                            <i [class]="'fa-solid ' + (file.kind === 'image' ? 'fa-file-image' : 'fa-file-pdf')"></i>
+                          </div>
+                          <div class="file-details">
+                            <div class="file-name" [title]="file.name">{{ file.name }}</div>
+                            <div class="file-size">
+                              <span>{{ file.size }}</span>
+                              <span class="bullet-divider">•</span>
+                              <span class="file-badge-pill">{{ getFileBadgeText(file) }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="page-select-container">
+                        <app-floating-input
+                          class="page-input-control"
+                          variant="floating"
+                          label="Hojas a incluir"
+                          [value]="file.pagesToKeep"
+                          [ngModel]="file.pagesToKeep"
+                          (ngModelChange)="updatePageInput(file.id, $event)"
+                          placeholder="Ej: 1-3, 5 (deja vacío para todas)"
+                        ></app-floating-input>
+                        <div class="file-actions">
+                          <app-icon-button
+                            variant="close-ghost"
+                            size="md"
+                            tooltip="Eliminar archivo"
+                            ariaLabel="Eliminar archivo"
+                            (clicked)="removeItem(file.id)"
+                          ></app-icon-button>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </app-scroll-overlay>
+
+              <!-- Output Filename Input -->
+              <div class="output-filename-container">
+                <app-floating-input
+                  class="output-filename-control"
+                  variant="floating"
+                  label="Nombre del archivo PDF resultante"
+                  [value]="outputFileName"
+                  [ngModel]="outputFileName"
+                  (ngModelChange)="updateOutputFileName($event)"
+                  [clearable]="true"
+                  (clear)="updateOutputFileName('')"
+                ></app-floating-input>
+              </div>
+
+              <!-- CTA Button -->
+              <div class="merge-action-container">
+                <app-button variant="primary" appearance="gradient" size="lg" [fullWidth]="true" iconClass="fa-layer-group" (buttonClick)="mergeSelectedPDFs()" [loading]="isMerging">
+                  {{ uploadedFiles.length === 1 ? 'Guardar y Descargar PDF' : 'Unir, Reordenar y Descargar PDF' }}
+                </app-button>
+              </div>
+            </div>
+          }
+        </app-panel>
+
+        <!-- Status Alerts -->
+        @if (statusMessage) {
+          <div class="status-container"
+               [class.status-container--error]="statusType === 'error'"
+               [class.status-container--success]="statusType === 'success'"
+               [class.status-container--loading]="statusType !== 'error' && statusType !== 'success'">
+            <i [class]="'fa-solid ' + (statusType === 'error' ? 'fa-triangle-exclamation text-danger' : (statusType === 'success' ? 'fa-circle-check text-success' : 'fa-spinner fa-spin text-primary'))"></i>
+            <span class="status-message">{{ statusMessage }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Right Side: Interactive Visual Viewer -->
+      <div class="editor-column editor-column--right"
+           [class.editor-column--dragover]="isDragging"
+           (dragend)="onDragLeave($event)"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onDrop($event)">
+        @if (uploadedFiles.length > 0) {
+          <app-panel variant="elevated" padding="md">
+            <div class="viewer-header">
+              <div class="viewer-header-main">
+                <h2 class="viewer-title">
+                  <i class="fa-solid fa-table-cells text-primary"></i>
+                  <span>Organizador Visual de Hojas</span>
+                </h2>
+              </div>
+              <div class="viewer-stats-badge">
+                <i class="fa-solid fa-check-double text-success"></i>
+                <span>{{ getActivePageCount() }} de {{ globalPageOrder.length }} hojas activas</span>
+              </div>
+            </div>
+            
+            <div class="page-workspace">
+              <!-- Thumbnails -->
+              <div class="thumbnail-column">
+                <div class="thumbnail-header">
+                  <span>Miniaturas</span>
+                  <span class="thumbnail-count">{{ globalPageOrder.length }}</span>
+                </div>
+                <app-scroll-overlay
+                  class="so-block thumbnail-scroll-overlay"
+                  variant="brand"
+                  [skipTableDetection]="true"
+                  [disableHorizontal]="true"
+                  [resetKey]="uploadedFiles.length"
+                  scrollAreaAriaLabel="Miniaturas de hojas del documento">
+                  <div class="thumbnail-list">
+                    @for (entry of orderedEntries(); track entry.page.id) {
+                      <div class="thumbnail-item"
+                           [class.thumbnail-item--selected]="selectedPageId === entry.page.id"
+                           [class.thumbnail-item--discarded]="!entry.page.active"
+                           (mousedown)="$event.preventDefault()"
+                           (dragstart)="$event.preventDefault()"
+                           (click)="setSelectedPage(entry.page.id)"
+                           (dblclick)="togglePageActive(entry.page.id)">
+                        <img [src]="getThumbnailSrc(entry)" class="thumbnail-image" draggable="false" alt="Pagina {{entry.page.pageNum}}">
+                        <div class="thumbnail-badge">
+                          @if (entry.file.kind === 'image') {
+                            <i class="fa-solid fa-image"></i>
+                          }
+                          <span>Pág. {{entry.page.pageNum}}</span>
+                        </div>
+                        @if ((entry.page.rotation ?? 0) !== 0) {
+                          <div class="thumbnail-rotation-tag">
+                            <i class="fa-solid fa-rotate-right"></i> {{ entry.page.rotation }}°
+                          </div>
+                        }
+                        @if (!entry.page.active) {
+                          <div class="thumbnail-status-tag">
+                            <i class="fa-solid fa-ban"></i> Excluida
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </app-scroll-overlay>
+              </div>
+
+              <!-- Preview -->
+              <div class="page-preview-panel">
+                <div class="preview-meta">
+                  <div class="preview-meta-title-row">
+                    <h3 class="preview-title">{{ selectedEntry?.file?.name || 'Selecciona una hoja' }}</h3>
+                    @if (selectedEntry) {
+                      <span class="preview-status-pill" [class.preview-status-pill--active]="selectedEntry.page.active" [class.preview-status-pill--inactive]="!selectedEntry.page.active">
+                        <i [class]="'fa-solid ' + (selectedEntry.page.active ? 'fa-circle-check text-success' : 'fa-ban text-danger')"></i>
+                        {{ selectedEntry.page.active ? 'Página Activa' : 'Página Excluida' }}
+                      </span>
+                    }
+                  </div>
+                  <p class="preview-description text-muted">
+                    @if (selectedEntry) {
+                      Hoja {{ selectedEntry.page.pageNum }} de {{ selectedEntry.file.pageCount }} •
+                      Posición de exportación: {{ getOrderPosition(selectedEntry.page.id) }} de {{ globalPageOrder.length }}
+                    } @else {
+                      Aquí se mostrará la vista previa ampliada de la hoja seleccionada.
+                    }
+                  </p>
+                </div>
+
+                @if (selectedEntry) {
+                  <div class="preview-toolbar">
+                    <div class="preview-zoom-group" role="group" aria-label="Controles de zoom de vista previa">
+                      <app-icon-button
+                        class="zoom-out-btn"
+                        variant="ghost"
+                        size="sm"
+                        icon="fa-magnifying-glass-minus"
+                        tooltip="Alejar vista previa"
+                        ariaLabel="Alejar vista previa"
+                        [disabled]="previewZoom <= 0.5"
+                        (clicked)="zoomOutPreview()"
+                      ></app-icon-button>
+                      <span class="preview-zoom-badge" (click)="resetPreviewZoom()" title="Restablecer zoom al 100%">
+                        {{ getPreviewZoomPercent() }}%
+                      </span>
+                      <app-icon-button
+                        class="zoom-in-btn"
+                        variant="ghost"
+                        size="sm"
+                        icon="fa-magnifying-glass-plus"
+                        tooltip="Acercar vista previa"
+                        ariaLabel="Acercar vista previa"
+                        [disabled]="previewZoom >= 3"
+                        (clicked)="zoomInPreview()"
+                      ></app-icon-button>
+                      <app-button
+                        class="zoom-reset-btn"
+                        variant="secondary"
+                        appearance="flat"
+                        size="sm"
+                        iconClass="fa-compress"
+                        [disabled]="previewZoom === 1"
+                        (buttonClick)="resetPreviewZoom()"
+                      >
+                        100%
+                      </app-button>
+                    </div>
+
+                    <div class="preview-rotate-group" role="group" aria-label="Controles de rotacion de hoja">
+                      <app-button
+                        class="rotate-left-btn"
+                        variant="secondary"
+                        appearance="flat"
+                        size="sm"
+                        iconClass="fa-rotate-left"
+                        (buttonClick)="rotateSelectedPage(-90)"
+                      >
+                        Girar izq.
+                      </app-button>
+                      <app-button
+                        class="rotate-right-btn"
+                        variant="secondary"
+                        appearance="gradient"
+                        size="sm"
+                        iconClass="fa-rotate-right"
+                        (buttonClick)="rotateSelectedPage(90)"
+                      >
+                        Rotar hoja
+                      </app-button>
+                      @if ((selectedEntry.page.rotation ?? 0) !== 0) {
+                        <span class="preview-rotation-pill">
+                          <i class="fa-solid fa-compass text-primary"></i>
+                          <span>{{ selectedEntry.page.rotation }}°</span>
+                        </span>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <div class="page-preview-stage" #previewStage
+                     [class.page-preview-stage--inactive]="selectedEntry?.page?.active === false"
+                     (wheel)="onPreviewWheel($event)">
+                  <app-scroll-overlay
+                    class="so-block preview-stage-scroll-overlay"
+                    variant="brand"
+                    [skipTableDetection]="true"
+                    [resetKey]="(selectedPageId || '') + '-' + (previewZoom <= 1 ? 'fit' : 'zoom') + '-' + (selectedEntry?.page?.rotation ?? 0)"
+                    scrollAreaAriaLabel="Area desplazable de vista previa de hoja PDF">
+                    <div class="preview-stage-canvas-wrap"
+                         [class.preview-stage-canvas-wrap--zoomed]="previewZoom > 1">
+                      <canvas #previewCanvas
+                              class="preview-canvas-element"
+                              [class.preview-canvas-element--zoomed]="previewZoom > 1"></canvas>
+                    </div>
+                  </app-scroll-overlay>
+                  @if (selectedEntry?.page?.active === false) {
+                    <div class="preview-stage-watermark">
+                      <div class="watermark-pill">
+                        <i class="fa-solid fa-eye-slash"></i>
+                        <span>Esta hoja no se incluirá en el PDF descargado</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                @if (selectedEntry) {
+                  <div class="preview-actions">
+                    <app-button [variant]="selectedEntry.page.active ? 'danger' : 'success'" appearance="gradient" size="sm" [iconClass]="selectedEntry.page.active ? 'fa-ban' : 'fa-rotate-left'" (buttonClick)="togglePageActive(selectedEntry.page.id)">
+                      {{ selectedEntry.page.active ? 'Excluir hoja' : 'Restaurar hoja' }}
+                    </app-button>
+                    <app-button variant="secondary" appearance="gradient" size="sm" iconClass="fa-arrow-up" (buttonClick)="movePagePosition(selectedEntry.page.id, -1)" [disabled]="getOrderPosition(selectedEntry.page.id) <= 1">
+                      Subir
+                    </app-button>
+                    <app-button variant="secondary" appearance="gradient" size="sm" iconClass="fa-arrow-down" (buttonClick)="movePagePosition(selectedEntry.page.id, 1)" [disabled]="getOrderPosition(selectedEntry.page.id) >= globalPageOrder.length">
+                      Bajar
+                    </app-button>
+                  </div>
+                }
+              </div>
+            </div>
+          </app-panel>
+        } @else {
+          <app-panel variant="elevated" padding="lg" class="empty-state-panel">
+            <div class="empty-state-container">
+              <div class="empty-state-icon-wrapper">
+                <i class="fa-solid fa-file-pdf empty-state-icon"></i>
+              </div>
+              <h3 class="empty-state-title">Visor de hojas</h3>
+              <p class="empty-state-text">
+                Selecciona o arrastra archivos PDF o imágenes para organizar sus páginas.
+              </p>
+            </div>
+          </app-panel>
+        }
+      </div>
+    </main>
+  </div>
+</app-scroll-overlay>
+
+<app-about-dialog
+  [open]="isAboutDialogOpen"
+  variant="modal"
+  size="md"
+  dialogTitle="Acerca de Unión PDF"
+  appName="Unión PDF"
+  appSubtitle="Organizador, extractor y unificador visual de documentos PDF e imágenes"
+  appDescription="Aplicación de escritorio multiplataforma (Windows, macOS y Linux) de alto rendimiento para unificar, reorganizar, rotar y extraer páginas de archivos PDF e imágenes con procesamiento 100% en memoria local y privacidad absoluta."
+  [version]="estadoSistema ? 'v' + estadoSistema.version : 'v0.5.1'"
+  environment="LOCAL & SEGURO"
+  [runtimeInfo]="estadoSistema ? estadoSistema.runtime : 'Tauri + Rust Desktop'"
+  logoIcon="fa-solid fa-file-pdf"
+  logoImageUrl="assets/doctrinas/ssit-emblem.jpg"
+  authorName="Ing. Havel CONTRERAS TAPAHUASCO"
+  authorRole="Arquitecto de Software | DIY AI Lab | Creador de Ecosistemas · COTAHA (@archware · Atomic UI · Artifact Barracuda · Artifact Mangosta)"
+  githubHandle="@archware"
+  githubUrl="https://github.com/archware"
+  aiDisclosure="Desarrollado en co-ingeniería con IA Agéntica en el DIY AI Lab de Ing. Havel CONTRERAS TAPAHUASCO (COTAHA · @archware): ecosistema de ingeniería que integra Artifact Mangosta (DDD, Arquitectura Hexagonal y CQRS estricto), Artifact Barracuda (Chasis Frontend reactivo con Signals) y el sistema de diseño Atomic UI (@atomic-ui/core), con inferencia 100% local en bare-metal (NVIDIA Tesla V100 32 GB VRAM) y verificación por compuertas deterministas."
+  [credits]="aboutCredits"
+  [techStack]="aboutTechStack"
+  [links]="aboutLinks"
+  copyrightText="© 2026 Ing. Havel CONTRERAS TAPAHUASCO (COTAHA · @archware). Todos los derechos reservados."
+  (closed)="closeAboutDialog()"
+/>
+

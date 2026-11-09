@@ -1,0 +1,107 @@
+{
+  "administrativeRecovery": {
+    "applicationId": "com.havelcontreras.base-tauri-angular",
+    "artifactName": "HRA-Recuperacion-Administrativa-1.6.1-x64.exe",
+    "artifactRole": "administrative-recovery-utility",
+    "cliFallback": true,
+    "credentialTarget": {
+      "account": "admin-password-hash-argon2id-v1",
+      "service": "pe.gob.hra.modulo-operativo"
+    },
+    "defaultInvocation": "gui",
+    "file": "admin-recovery.product.json",
+    "interfaceMode": "native-win32-gui",
+    "mutexName": "Global\\HRA.ModuloOperativoTauri.AdminCredential.Runtime.v1",
+    "productVersion": "1.6.1",
+    "schemaVersion": 2,
+    "sha256": "c6870368423805ae9ebaadc26c4c298788e6f9f25678935456566dbdbfc29610",
+    "valid": true
+  },
+  "consumer": {
+    "capabilities": [
+      "administrative-recovery-local",
+      "administrative-security",
+      "atomic-ui",
+      "desktop-ipc",
+      "id11-dashboard",
+      "legacy-tls-private-network",
+      "version-footer"
+    ],
+    "id": "base-tauri",
+    "runtime": "rust-tauri-angular",
+    "version": "1.6.1"
+  },
+  "deliveryPolicy": {
+    "artifactPolicy": {
+      "exactBinaryArtifacts": 4,
+      "requiredKinds": [
+        "administrative-recovery-utility",
+        "msi-installer",
+        "setup-installer",
+        "windows-application"
+      ]
+    },
+    "deliveryMode": "installer",
+    "productionPolicy": {
+      "authorizedSignerThumbprints": [],
+      "codeSigningEkuOid": "1.3.6.1.5.5.7.3.3",
+      "expectedPublisher": "Hospital Regional Ayacucho",
+      "requireCleanEnvironmentValidation": true,
+      "requireCleanInstallation": true,
+      "requireIndependentVerification": true,
+      "requireInstitutionalSignature": true,
+      "requireTimestamp": true
+    },
+    "projectIdentifier": "com.havelcontreras.base-tauri-angular",
+    "releaseManifestFormat": "hra-release-manifest-v2"
+  },
+  "generatedBy": "@hra/platform-orchestrator",
+  "safety": {
+    "containsSecrets": false,
+    "databaseDeployment": false,
+    "generatedArtifactsOnly": true
+  },
+  "schemaVersion": 1,
+  "sources": {
+    "atomic": {
+      "provenance": {
+        "exists": true,
+        "file": "docs/atomic-provenance.json",
+        "hash": "56f436acb2df6ca9d277942d91248cebc33987a6c10c8b364212c0d5acac66e4",
+        "ref": "1987ef4ac992e9296c9a053b21efb324796016eb",
+        "version": "5.8.2"
+      },
+      "sha256": "56f436acb2df6ca9d277942d91248cebc33987a6c10c8b364212c0d5acac66e4",
+      "version": "5.8.2"
+    },
+    "databaseContracts": {
+      "bundleSha256": "029ecd19ada2c87c6eea086136814ff4102dfbe333e2c0920ddc003af036b83d",
+      "lock": {
+        "exists": true,
+        "file": "contracts/hra-database-contracts.lock.json",
+        "hash": "029ecd19ada2c87c6eea086136814ff4102dfbe333e2c0920ddc003af036b83d",
+        "runtimeAdoption": "not-applicable",
+        "version": "0.2.1"
+      },
+      "sqlTreeSha256": "0bb87373e57eab99ea606320cb661f691b059032ffceb537a7cfbf834661d8a6",
+      "version": "0.2.1"
+    },
+    "desktopContracts": {
+      "lock": {
+        "exists": true,
+        "file": "contracts/hra-desktop-contracts.lock.json",
+        "hash": "0c54533d135ed96128aba43be41e620c024d498cae146d2ed0ef3e93487608aa",
+        "runtimeAdoption": "active",
+        "verifier": {
+          "canonical": true,
+          "declared": true,
+          "exists": true,
+          "file": "scripts/check-hra-contracts.mjs"
+        },
+        "version": "0.3.1"
+      },
+      "sha256": "0c54533d135ed96128aba43be41e620c024d498cae146d2ed0ef3e93487608aa",
+      "version": "0.3.1"
+    }
+  }
+}

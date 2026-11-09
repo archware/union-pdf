@@ -1,0 +1,67 @@
+.actions-container {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: center;
+  align-items: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 150ms ease;
+  color: var(--text-color);
+}
+
+.action-btn:hover {
+  background: var(--surface-elevated);
+  border-color: var(--border-color);
+}
+
+.action-btn.view { 
+  color: var(--secondary-color); 
+}
+
+.action-btn.view:hover { 
+  color: var(--secondary-color);
+  background: var(--secondary-color-lighter);
+}
+
+.action-btn.edit { 
+  color: var(--primary-color); 
+}
+
+.action-btn.edit:hover { 
+  color: var(--primary-color);
+  background: var(--primary-color-lighter);
+}
+
+.action-btn.delete { 
+  color: var(--danger-color); 
+}
+
+.action-btn.delete:hover { 
+  color: var(--danger-color);
+  background: var(--danger-color-lighter);
+}
+
+/* 
+ * Dark mode ahora se maneja automáticamente via tokens semánticos.
+ * --secondary-color-lighter, --primary-color-lighter, --danger-color-lighter
+ * ya tienen valores apropiados para temas oscuros.
+ */
+
+:host {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
