@@ -171,7 +171,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.1' }}
-          name: 'Unión PDF ${{ github.ref_type == \"tag\" && github.ref_name || inputs.tag_version || \"v0.5.1\" }}'
+          name: 'Unión PDF ${{ github.ref_type == "tag" && github.ref_name || inputs.tag_version || "v0.5.1" }}'
           body: |
             ## Unión PDF — Lanzamiento Multiplataforma (`@archware`)
 
