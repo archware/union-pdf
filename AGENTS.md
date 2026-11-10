@@ -40,6 +40,7 @@ gobernada por la doctrina de escritorio (`DOCTRINA_ESCRITORIO.md`).
 3. **Commit ≠ tag.** Un tag (`v0.5.1`) apunta a UN commit y el push de un tag ejecuta el `release.yml` DE ESE COMMIT. Corregir `release.yml` en `main` NO cambia lo que ejecuta un tag ya publicado. Para publicar con el YAML corregido: ejecutar `workflow_dispatch` eligiendo la RAMA `main` (no el tag) con `tag_version`, o —solo con autorización explícita del usuario— publicar un tag nuevo. Mover o borrar un tag publicado (`git tag -f`, `git push --force`) está prohibido sin autorización y `--force` está en `approvals.deny`.
 4. **No declares "publicado" ni "release listo" sin ver el run de Actions** (URL o `gh run list`). Sin `gh` ni acceso web di "NO VERIFICADO" y pide al usuario el resultado del run; no descargues ni instales `gh` ni uses `sudo`/`apt` desde Git Bash en Windows.
 5. **Confirmación obligatoria** antes de `taskkill`, `git config --global`, `git push`, crear/mover tags y `git pull` con merge sobre `main`. Si `git push` es rechazado (non-fast-forward), informa y espera: no hagas merge automático.
+6. **Proceso de lanzamiento seguro:** El proceso completo debe seguir las reglas documentadas en `docs/RELEASE_PROCESS.md` y el checklist de seguridad en `docs/SECURITY_CHECKLIST.md`.
 <!-- /verificacion-proporcional:v1 -->
 
 ## 1) Decision de stack (fijada y gobernada)

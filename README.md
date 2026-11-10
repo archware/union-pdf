@@ -123,8 +123,26 @@ cargo build --release
 cd ..
 
 # Paso 3: Verificar existencia del binario físico
-Test-Path src-tauri\target\release\union-pdf.exe
+Test-Path src-tauri\\target\\release\\union-pdf.exe
 ```
+
+## 🚀 7. Activación Manual del Workflow de Lanzamiento
+
+Para activar el workflow de publicación multiplataforma:
+
+1. **Acceder a GitHub:**
+   - Navegar a https://github.com/archware/union-pdf
+   - Ir a la pestaña "Actions"
+
+2. **Ejecutar el workflow:**
+   - Seleccionar "Release Multiplataforma (Windows, macOS, Linux)"
+   - Hacer clic en "Run workflow" y confirmar
+
+3. **Verificar ejecución:**
+   - Confirmar que todos los jobs se completan exitosamente
+   - Verificar que los artefactos son publicados en GitHub Releases
+
+**Nota:** El workflow requiere activación manual desde la interfaz web de GitHub debido a limitaciones del entorno de ejecución.
 
 ---
 
