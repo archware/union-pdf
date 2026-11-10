@@ -20,6 +20,16 @@ Si el usuario solicita: *"compila"*, *"construye el proyecto"*, *"genera el ejec
 7. **El terminal es Git Bash y CONSERVA el directorio entre comandos.** Nunca uses `cd ..` ni rutas relativas: cada `cd ..` se acumula y te saca del repositorio (en una sesion real acabaste en `...\source\repos` y `...\source`, y `npm run build` fallo con `ENOENT package.json`). Empieza SIEMPRE con ruta absoluta: `cd /c/Users/cotaha/source/repos/pdf-tool && npm run build`. Un `.ps1` no se ejecuta con `./scripts/x.ps1` (bash falla con `syntax error`): usa `powershell -ExecutionPolicy Bypass -File "C:\Users\cotaha\source\repos\pdf-tool\scripts\verificar-todo.ps1"`.
 <!-- /regla-exito-compilacion:v1 -->
 
+<!-- verificacion-proporcional:v1 -->
+## Verificación proporcional y publicación (pdf-tool / union-pdf)
+
+1. **Tipo de cambio → verificación.** Solo `.github/workflows/*.yml`: parser YAML (`python -c "import sys,yaml; yaml.safe_load(open(sys.argv[1],encoding='utf-8'))" .github/workflows/release.yml`), `actionlint` si existe, y revisar `git diff`; NO corras `verificar-todo`, `npm run build`, `npm test` ni `probar-compilacion` (no validan el workflow y cuestan minutos). Solo `*.md`/docs: `git diff` y el linter documental. Compuerta completa (`scripts/verificar-todo.ps1` o `probar-compilacion.ps1`, una sola vez, citando su bloque de frescura) únicamente si cambió código Rust/Angular, contratos o configuración de build.
+2. **GitHub Actions: dentro de `${{ }}` solo existen comillas simples.** `github.ref_type == 'tag'` es válido; `"tag"` o `\"tag\"` produce `Unexpected symbol`. El valor YAML que envuelve la expresión usa comillas dobles (`name: "Unión PDF ${{ ... 'tag' ... }}"`). Escapar más una comilla que ya falla no arregla nada: relee la línea real con `sed -n '174p'` y corrige la causa.
+3. **Commit ≠ tag.** Un tag (`v0.5.1`) apunta a UN commit y el push de un tag ejecuta el `release.yml` DE ESE COMMIT. Corregir `release.yml` en `main` NO cambia lo que ejecuta un tag ya publicado. Para publicar con el YAML corregido: ejecutar `workflow_dispatch` eligiendo la RAMA `main` (no el tag) con `tag_version`, o —solo con autorización explícita del usuario— publicar un tag nuevo. Mover o borrar un tag publicado (`git tag -f`, `git push --force`) está prohibido sin autorización y `--force` está en `approvals.deny`.
+4. **No declares "publicado" ni "release listo" sin ver el run de Actions** (URL o `gh run list`). Sin `gh` ni acceso web di "NO VERIFICADO" y pide al usuario el resultado del run; no descargues ni instales `gh` ni uses `sudo`/`apt` desde Git Bash en Windows.
+5. **Confirmación obligatoria** antes de `taskkill`, `git config --global`, `git push`, crear/mover tags y `git pull` con merge sobre `main`. Si `git push` es rechazado (non-fast-forward), informa y espera: no hagas merge automático.
+<!-- /verificacion-proporcional:v1 -->
+
 ## 📍 1. Dónde se Guarda el Ejecutable (.exe)
 
 El binario físico de lanzamiento se genera exclusivamente en:
