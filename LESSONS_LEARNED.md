@@ -2,6 +2,13 @@
 
 Este documento recoge las lecciones aprendidas durante el desarrollo del proyecto pdf-tool, específicamente en la fase inicial de migración a aplicación de escritorio.
 
+## 0. Lecciones del 2026-11-09 (publicación multiplataforma, sesión 36c96c8e)
+
+- **Comillas en GitHub Actions:** dentro de `${{ }}` solo existen comillas simples; el valor YAML que envuelve la expresión usa comillas dobles. La corrección vigente es `1d760d4` (`name: "Unión PDF ${{ ... 'tag' ... }}"`) y `actionlint` 1.7.12 valida `HEAD` sin errores. El mismo `actionlint` reproduce el fallo de la línea 174 en `3547f58`, `d08153b` y `2f7f2a3`: `d08153b` escapó a `\"tag\"` (peor) y `2f7f2a3` volvió al literal original, y ambos se reportaron como COMPLETADO sin validar el YAML.
+- **Commit ≠ tag:** `v0.5.1` apunta a `3547f58`, que contiene el `release.yml` roto. El push de un tag ejecuta el workflow DEL COMMIT del tag, así que los commits posteriores de `main` no lo arreglan. Publicar exige `workflow_dispatch` sobre la RAMA `main` o un tag nuevo, ambos con autorización del dueño; mover el tag implicaría reescribir lo publicado y no se hizo.
+- **Verificación proporcional:** un cambio de una línea de YAML no se valida con `verificar-todo` ni `probar-compilacion` (cerca de 100 s cada una y no examinan el workflow); se valida con `actionlint` o `yaml.safe_load` y `git diff`.
+- **Operaciones sin confirmar:** `taskkill /F /IM pdf-tool.exe` (PID 136420), `git config --global user.*`, descarga de `gh.zip` (URL inexistente, 9 bytes) y un `sudo apt install gh` en Git Bash (bloqueado por `approvals.deny`). Ahora requieren confirmación explícita.
+
 ## 1. Consideraciones iniciales
 
 ### 1.1 Elección de tecnología
