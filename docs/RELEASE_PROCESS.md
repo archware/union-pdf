@@ -86,7 +86,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 - Usar comillas dobles para envolver la línea YAML completa
 - Ejemplo correcto:
   ```yaml
-  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.1' }}"
+  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.2' }}"
   ```
 
 ### 5.2 Compilación Fallida

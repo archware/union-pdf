@@ -1,6 +1,6 @@
 {
   "name": "union-pdf",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Unión PDF — Aplicación de escritorio multiplataforma (Windows, macOS y Linux) para unión y organización de documentos PDF e imágenes (Tauri v1.5 + Angular 22 + Atomic UI)",
   "private": true,
   "type": "module",

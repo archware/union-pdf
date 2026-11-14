@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_version:
-        description: 'Tag de version para publicar en GitHub Releases (ej. v0.5.1)'
+        description: 'Tag de version para publicar en GitHub Releases (ej. v0.5.2)'
         required: false
-        default: 'v0.5.1'
+        default: 'v0.5.2'
 
 permissions:
   contents: write
@@ -170,8 +170,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.1' }}
-          name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.1' }}"
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.2' }}
+          name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.2' }}"
           body: |
             ## Unión PDF — Lanzamiento Corporativo Multiplataforma (`COTAHA · @archware`)
 

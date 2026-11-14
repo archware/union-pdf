@@ -1329,7 +1329,7 @@ describe('AppComponent (Unión PDF)', () => {
           correcto: true,
           datos: {
             nombreAplicacion: 'union-pdf',
-            version: '0.5.1',
+            version: '0.5.2',
             entorno: 'desarrollo',
             plataforma: 'windows',
             runtime: 'tauri-v1.5',
@@ -1346,7 +1346,7 @@ describe('AppComponent (Unión PDF)', () => {
       expect(mockDesktopFacade.estaEnModoEscritorio).toHaveBeenCalled();
       expect(mockDesktopFacade.obtenerEstadoSistema).toHaveBeenCalled();
       expect(app.estadoSistema?.runtime).toBe('tauri-v1.5');
-      expect(app.estadoSistema?.version).toBe('0.5.1');
+      expect(app.estadoSistema?.version).toBe('0.5.2');
       expect(mockCdr.markForCheck).toHaveBeenCalled();
     });
 
@@ -1460,7 +1460,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Refleja version y runtime dinamicos desde estadoSistema cuando existe, sin reintroducir pildoras en .editor-header
       app.estadoSistema = {
         nombreAplicacion: 'union-pdf',
-        version: '0.5.1',
+        version: '0.5.2',
         entorno: 'produccion',
         plataforma: 'windows',
         runtime: 'tauri-v1.5',
@@ -1468,7 +1468,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Igual que en produccion (app.component.ts tras obtenerEstadoSistema): el estado se asigna y se marca para chequeo
       fixture.componentRef.injector.get(ChangeDetectorRef).markForCheck();
       fixture.detectChanges();
-      expect(dialogEl?.textContent || '').toContain('v0.5.1');
+      expect(dialogEl?.textContent || '').toContain('v0.5.2');
       expect(dialogEl?.textContent || '').toContain('tauri-v1.5');
       expect(hostEl.querySelector('.header-pill')).toBeNull();
       expect(hostEl.querySelector('.header-pill--desktop')).toBeNull();
