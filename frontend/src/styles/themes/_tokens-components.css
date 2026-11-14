@@ -209,18 +209,56 @@
    --button-shadow: var(--button-shadow-inset), var(--button-shadow-outer);
 
    /* === BADGES === */
-   --badge-primary-bg: var(--primary-color);
-   --badge-primary-text: var(--text-color-on-primary);
-   --badge-secondary-bg: var(--gray-200);
-   --badge-secondary-text: var(--gray-700);
-   --badge-success-bg: var(--success-color-light);
-   --badge-success-text: var(--success-color-text);
-   --badge-warning-bg: var(--warning-color-light);
-   --badge-warning-text: var(--warning-color-text);
-   --badge-danger-bg: var(--danger-color-light);
-   --badge-danger-text: var(--danger-color-text);
-   --badge-info-bg: var(--info-color-light);
-   --badge-info-text: var(--info-color-text);
+   --badge-default-bg: var(--gray-200);
+   --badge-default-text: var(--gray-900);
+   --badge-default-border: var(--gray-400);
+   --badge-primary-bg: var(--brand-primary-700);
+   --badge-primary-text: var(--gray-0);
+   --badge-primary-border: var(--brand-primary-800);
+   --badge-secondary-bg: var(--brand-secondary-700);
+   --badge-secondary-text: var(--gray-0);
+   --badge-secondary-border: var(--brand-secondary-800);
+   --badge-success-bg: var(--green-700);
+   --badge-success-text: var(--gray-0);
+   --badge-success-border: var(--green-800);
+   --badge-warning-bg: var(--orange-700);
+   --badge-warning-text: var(--gray-0);
+   --badge-warning-border: var(--orange-800);
+   --badge-danger-bg: var(--red-700);
+   --badge-danger-text: var(--gray-0);
+   --badge-danger-border: var(--red-800);
+   --badge-info-bg: var(--blue-700);
+   --badge-info-text: var(--gray-0);
+   --badge-info-border: var(--blue-800);
+   --badge-outline-bg: transparent;
+   --badge-outline-text: var(--gray-800);
+   --badge-outline-border: var(--gray-400);
+
+   /* === CHIPS === */
+   --chip-default-bg: var(--gray-100);
+   --chip-default-text: var(--gray-800);
+   --chip-default-border: var(--gray-300);
+   --chip-primary-bg: var(--brand-primary-100);
+   --chip-primary-text: var(--brand-primary-900);
+   --chip-primary-border: var(--brand-primary-300);
+   --chip-secondary-bg: var(--brand-secondary-100);
+   --chip-secondary-text: var(--brand-secondary-900);
+   --chip-secondary-border: var(--brand-secondary-300);
+   --chip-success-bg: var(--green-100);
+   --chip-success-text: var(--green-900);
+   --chip-success-border: var(--green-300);
+   --chip-warning-bg: var(--orange-100);
+   --chip-warning-text: var(--orange-900);
+   --chip-warning-border: var(--orange-300);
+   --chip-error-bg: var(--red-100);
+   --chip-error-text: var(--red-900);
+   --chip-error-border: var(--red-300);
+   --chip-info-bg: var(--blue-100);
+   --chip-info-text: var(--blue-900);
+   --chip-info-border: var(--blue-300);
+   --chip-outline-bg: transparent;
+   --chip-outline-text: var(--gray-800);
+   --chip-outline-border: var(--gray-400);
 
    /* === TOOLTIPS === */
    --tooltip-bg: var(--gray-900);
@@ -379,8 +417,8 @@
    🌙 TEMA OSCURO - Componentes
    ───────────────────────────────────────────────────────────────────────────── */
 [data-theme="dark"],
-.theme-dark,
-html.dark {
+.theme-dark:not([data-theme="brand-dark"]),
+html.dark:not([data-theme="brand-dark"]) {
 
   /* === CHAPA DE ENTORNO (atoms/version) ===
      QA y STAGING no tienen tono en la paleta semantica, y con razon: exito,
@@ -516,18 +554,56 @@ html.dark {
    --button-shadow: var(--button-shadow-inset), var(--button-shadow-outer);
 
    /* === BADGES === */
-   --badge-primary-bg: var(--brand-primary-500);
+   --badge-default-bg: var(--surface-elevated);
+   --badge-default-text: var(--gray-100);
+   --badge-default-border: var(--gray-600);
+   --badge-primary-bg: var(--brand-primary-700);
    --badge-primary-text: var(--gray-0);
-   --badge-secondary-bg: var(--surface-section);
-   --badge-secondary-text: var(--text-color-secondary);
-   --badge-success-bg: var(--success-color-light);
-   --badge-success-text: var(--success-color-text);
-   --badge-warning-bg: var(--warning-color-light);
-   --badge-warning-text: var(--warning-color-text);
-   --badge-danger-bg: var(--danger-color-light);
-   --badge-danger-text: var(--danger-color-text);
-   --badge-info-bg: var(--info-color-light);
-   --badge-info-text: var(--info-color-text);
+   --badge-primary-border: var(--brand-primary-500);
+   --badge-secondary-bg: var(--brand-secondary-700);
+   --badge-secondary-text: var(--gray-0);
+   --badge-secondary-border: var(--brand-secondary-500);
+   --badge-success-bg: var(--green-700);
+   --badge-success-text: var(--gray-0);
+   --badge-success-border: var(--green-500);
+   --badge-warning-bg: var(--orange-700);
+   --badge-warning-text: var(--gray-0);
+   --badge-warning-border: var(--orange-500);
+   --badge-danger-bg: var(--red-700);
+   --badge-danger-text: var(--gray-0);
+   --badge-danger-border: var(--red-500);
+   --badge-info-bg: var(--blue-700);
+   --badge-info-text: var(--gray-0);
+   --badge-info-border: var(--blue-500);
+   --badge-outline-bg: transparent;
+   --badge-outline-text: var(--gray-100);
+   --badge-outline-border: var(--gray-500);
+
+   /* === CHIPS === */
+   --chip-default-bg: var(--surface-elevated);
+   --chip-default-text: var(--gray-100);
+   --chip-default-border: var(--gray-600);
+   --chip-primary-bg: var(--brand-primary-900);
+   --chip-primary-text: var(--brand-primary-100);
+   --chip-primary-border: var(--brand-primary-600);
+   --chip-secondary-bg: var(--brand-secondary-900);
+   --chip-secondary-text: var(--brand-secondary-100);
+   --chip-secondary-border: var(--brand-secondary-600);
+   --chip-success-bg: var(--green-900);
+   --chip-success-text: var(--green-100);
+   --chip-success-border: var(--green-600);
+   --chip-warning-bg: var(--orange-900);
+   --chip-warning-text: var(--orange-100);
+   --chip-warning-border: var(--orange-600);
+   --chip-error-bg: var(--red-900);
+   --chip-error-text: var(--red-100);
+   --chip-error-border: var(--red-600);
+   --chip-info-bg: var(--blue-900);
+   --chip-info-text: var(--blue-100);
+   --chip-info-border: var(--blue-600);
+   --chip-outline-bg: transparent;
+   --chip-outline-text: var(--gray-100);
+   --chip-outline-border: var(--gray-500);
 
    /* === TOOLTIPS === */
    --tooltip-bg: var(--surface-section);
@@ -731,7 +807,7 @@ html.dark {
    --input-border-focus: var(--info-color);
    --input-placeholder: var(--text-color-placeholder);
    --field-label-color: var(--text-color);
-   --field-label-color-floated: var(--info-color-text);
+   --field-label-color-floated: var(--blue-400);
    --field-label-color-error: var(--danger-color-text);
    --input-text: var(--text-color);
    --input-shadow: 0 0 0 1px rgba(188, 154, 187, 0.18), 0 2px 6px rgba(0, 0, 0, 0.50);
@@ -773,18 +849,56 @@ html.dark {
    --button-shadow: var(--button-shadow-inset), var(--button-shadow-outer);
 
    /* === BADGES === */
-   --badge-primary-bg: var(--brand-primary-500);
+   --badge-default-bg: var(--surface-elevated);
+   --badge-default-text: var(--gray-100);
+   --badge-default-border: var(--gray-600);
+   --badge-primary-bg: var(--brand-primary-700);
    --badge-primary-text: var(--gray-0);
-   --badge-secondary-bg: var(--surface-section);
-   --badge-secondary-text: var(--text-color-secondary);
-   --badge-success-bg: var(--success-color-light);
-   --badge-success-text: var(--success-color-text);
-   --badge-warning-bg: var(--warning-color-light);
-   --badge-warning-text: var(--warning-color-text);
-   --badge-danger-bg: var(--danger-color-light);
-   --badge-danger-text: var(--danger-color-text);
-   --badge-info-bg: var(--info-color-light);
-   --badge-info-text: var(--info-color-text);
+   --badge-primary-border: var(--brand-primary-500);
+   --badge-secondary-bg: var(--brand-secondary-700);
+   --badge-secondary-text: var(--gray-0);
+   --badge-secondary-border: var(--brand-secondary-500);
+   --badge-success-bg: var(--green-700);
+   --badge-success-text: var(--gray-0);
+   --badge-success-border: var(--green-500);
+   --badge-warning-bg: var(--orange-700);
+   --badge-warning-text: var(--gray-0);
+   --badge-warning-border: var(--orange-500);
+   --badge-danger-bg: var(--red-700);
+   --badge-danger-text: var(--gray-0);
+   --badge-danger-border: var(--red-500);
+   --badge-info-bg: var(--blue-700);
+   --badge-info-text: var(--gray-0);
+   --badge-info-border: var(--blue-500);
+   --badge-outline-bg: transparent;
+   --badge-outline-text: var(--gray-100);
+   --badge-outline-border: var(--gray-500);
+
+   /* === CHIPS === */
+   --chip-default-bg: var(--surface-elevated);
+   --chip-default-text: var(--gray-100);
+   --chip-default-border: var(--gray-600);
+   --chip-primary-bg: var(--brand-primary-900);
+   --chip-primary-text: var(--brand-primary-100);
+   --chip-primary-border: var(--brand-primary-600);
+   --chip-secondary-bg: var(--brand-secondary-900);
+   --chip-secondary-text: var(--brand-secondary-100);
+   --chip-secondary-border: var(--brand-secondary-600);
+   --chip-success-bg: var(--green-900);
+   --chip-success-text: var(--green-100);
+   --chip-success-border: var(--green-600);
+   --chip-warning-bg: var(--orange-900);
+   --chip-warning-text: var(--orange-100);
+   --chip-warning-border: var(--orange-600);
+   --chip-error-bg: var(--red-900);
+   --chip-error-text: var(--red-100);
+   --chip-error-border: var(--red-600);
+   --chip-info-bg: var(--blue-900);
+   --chip-info-text: var(--blue-100);
+   --chip-info-border: var(--blue-600);
+   --chip-outline-bg: transparent;
+   --chip-outline-text: var(--gray-100);
+   --chip-outline-border: var(--gray-500);
 
    /* === TOOLTIPS === */
    --tooltip-bg: var(--surface-section);

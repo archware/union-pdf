@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "policyVersion": "1.2.3",
-  "changeId": "ATOMIC-5-22-0-SYNC-20260823",
+  "changeId": "ATOMIC-20261114-001",
   "atomicRepository": "../../-Atomic-UI",
   "atomicRemote": "archware/-Atomic-UI",
   "atomicRef": "b76f432976d6c1e47de57ee4b4be5821a5195dd8",
@@ -64,7 +64,7 @@
       "local": "src/app/shared/ui/atoms/badge",
       "atomic": "src/app/shared/ui/atoms/badge",
       "mode": "adapted",
-      "justification": "Línea base auditada: conservación de versión previa hasta su migración funcional (ADR-017).",
+      "justification": "Línea base auditada con adopción sincronizada de tokens semánticos WCAG AA (--badge-*) para alto contraste manteniendo el envoltorio de estilos inline hasta su migración funcional (ADR-017).",
       "decisionRecord": "docs/decisions/ADR-017-sincronizacion-previa-atomic-5-22-0.md",
       "adaptationSnapshot": [
         {
@@ -79,7 +79,7 @@
         },
         {
           "file": "badge.component.ts",
-          "localSha256": "da1adf13bcc6f8e9ecfcf54c2d4c25e9158ef13494d803d5f1a4c2f8c0beedc4",
+          "localSha256": "da562325adbe412e37a9021bc0d6765950660df2e7064ebdbfde20d245ccc20d",
           "atomicSha256": "85a96f8322e7ac8389956ca246355e6d1c93155c824c778d4d392d022516c82c"
         }
       ]
@@ -170,7 +170,7 @@
       "local": "src/app/shared/ui/atoms/chip",
       "atomic": "src/app/shared/ui/atoms/chip",
       "mode": "adapted",
-      "justification": "Línea base auditada: 2 diferencia(s) de tipo content-divergence, missing-in-consumer. La adaptación se conserva hasta su migración funcional.",
+      "justification": "Línea base auditada con adopción sincronizada de tokens semánticos WCAG AA (--chip-* y --badge-primary-*) para alto contraste manteniendo la API y estilos inline adaptados hasta su migración funcional (ADR-017).",
       "decisionRecord": "docs/decisions/ADR-017-sincronizacion-previa-atomic-5-22-0.md",
       "adaptationSnapshot": [
         {
@@ -190,7 +190,7 @@
         },
         {
           "file": "chip.component.ts",
-          "localSha256": "d80757fe806518a4f83ae752439693c2143e6accb1c0ff660041a09a2eb683f3",
+          "localSha256": "53901453443ee327b48d3d7a5442efdc5efa7c6c74d8b94ebeefdf3c95d6dbbb",
           "atomicSha256": "c18abf6cb2d5211e2f2e6c82e2a2752c1f37297bbb1950862fe8c0eb40f61fd9"
         }
       ]
@@ -1007,7 +1007,7 @@
         },
         {
           "file": "card.component.ts",
-          "localSha256": "efbf90cc761bec5e5c427021339532b9633b3abf46e64bf89cd4f87d6d46e72b",
+          "localSha256": "928762e24cc752b298a22837f7f6e7d6158c61b6650d0c30dcd9811b7c6b4a59",
           "atomicSha256": "99c1209283fdbb90fd9f864e270dc54e1a455b7da4a4a5c4acfbf9b4437e86f0"
         }
       ]
@@ -1180,7 +1180,7 @@
         },
         {
           "file": "modal-container.component.ts",
-          "localSha256": "8aa3377e9a3dfd7a9d4861bf711406aa1ee441abff04c52ba847d0f6e8e6eef5",
+          "localSha256": "079976991bf64b012b4bbe08a4bcc3c7e92b7085a038d4e7bd9d1e1f012b6686",
           "atomicSha256": "1afb5c8e80d3d4a238146393066f62325bf7f904af3cc800efc992bbe5caf165"
         },
         {
@@ -1195,7 +1195,7 @@
         },
         {
           "file": "modal.component.ts",
-          "localSha256": "262e1b3db0e75d233e24fffadf08dfa72be526a0c892ac761a3298c20ad6fb9d",
+          "localSha256": "385072debda3088067a77658beb77f7a3f41cca8e08bd991e70d2806751d93b9",
           "atomicSha256": "aa41d8150ab06b846b571ab0563bdf28bd974def1019839faf1a4ab962888249"
         }
       ]
@@ -1243,7 +1243,7 @@
         },
         {
           "file": "popup-container.component.ts",
-          "localSha256": "6d961b3a9a50f63d55b3792e68324a9d5dc153ee9d246dd9aa99597b385e9875",
+          "localSha256": "df98cfca996cc68a27ade031db309636a2504308575a4e27e00ac90d124dc132",
           "atomicSha256": "f77cc321a523975f3522887a16fbd99214ecdc602b8a9ef6095d7a51cba0ec3e"
         }
       ]
@@ -1416,17 +1416,17 @@
       "adaptationSnapshot": [
         {
           "file": "about-dialog.component.css",
-          "localSha256": "d809683a687029be5ddedbe15e4e7580b8d8279378e1018440aa607441bcb853",
+          "localSha256": "d21c5b9d1c6312ca66f3e41b0f88e79fb772017a644a1e5a1219e0f0345f5a4c",
           "atomicSha256": "fb31d8d4502b254bfb89b545f9ad11a5f3ddbeafb97f571eac30759324a9dcdc"
         },
         {
           "file": "about-dialog.component.html",
-          "localSha256": "ceb7b5172bda277a5800fc253bb1c93c5ac779f01240c7b189fce5fc4834cc13",
+          "localSha256": "b91354f1899502d6f62e41de4f6bc68cfb1df8053599615b84347312e7a17243",
           "atomicSha256": "2d46671ac2d0ec96b6774a47d965b0986b6f5f07b45218b3d4fc46e4d99a9207"
         },
         {
           "file": "about-dialog.component.spec.ts",
-          "localSha256": "711dfefc5ff62d1fa327cdd0ecae438b6b83786ab55f5e85f3d93d1821c935bb",
+          "localSha256": "7b329d4e2d3341a5e57c8ca1dd8806c12c2777a4f6e24407512362093752b5af",
           "atomicSha256": "34bf26199938bfbe72b8c673831ddc2f50291a3dd703ec9e5412378eda8092c6"
         },
         {
@@ -1682,12 +1682,12 @@
       "adaptationSnapshot": [
         {
           "file": "sidebar.component.css",
-          "localSha256": "699d83417caf70e2b0ad9f0e91d72076747b6777eddb6eda0c4de531878e90a7",
+          "localSha256": "facdaeb27500f8cd8ed945c79c8f4f3dca50e90478de9f52458a1969e62a29e7",
           "atomicSha256": "842d49c544f5c40ac9701b4ee72d6e39e1b8ad467c8ca59dadf9275ee381c500"
         },
         {
           "file": "sidebar.component.html",
-          "localSha256": "3079eb48078b2a42a257753418227df4eeb51e513649bbf749a0cd7acca75eb5",
+          "localSha256": "6820874edc0f41be2673bd4ce3c73c5b33ab8a077a510be390e427aa5fbc445a",
           "atomicSha256": "1755a3527720c97e5dfbbaec63120d4d746ad1633daed8d236aa396999de3cb1"
         },
         {
@@ -1697,7 +1697,7 @@
         },
         {
           "file": "sidebar.component.ts",
-          "localSha256": "5a716e1ba5b7425faaa9367626ed6280176176dfae30149a2951fa52b30668be",
+          "localSha256": "75ff1e8bea3e91279536cb2a33d1cfe4111877560c919e77a361f7aa89da906b",
           "atomicSha256": "d988dc527a615faf54e4a67611fb60034809c9d99ebe6d8cc2b9838f28916c0c"
         }
       ]

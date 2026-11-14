@@ -57,15 +57,21 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
    - Seleccionar "Release Multiplataforma (Windows, macOS, Linux)"
    - Hacer clic en "Run workflow" y confirmar
 
-## 4. Verificación Post-Lanzamiento
+## 4. Verificación Post-Lanzamiento y Trazabilidad de Ejecutables
 
 1. **Verificar ejecución del workflow:**
-   - Confirmar que todos los jobs se completan exitosamente
-   - Verificar que los artefactos son publicados en GitHub Releases
+   - Confirmar que tanto el job de compuertas (`verificar-compuertas`) como las 4 matrices de compilación (`publicar-release`) terminan en verde en `https://github.com/archware/union-pdf/actions`.
+   - Verificar que los 8 artefactos (4 binarios + 4 firmas `.sha256`) están publicados en `https://github.com/archware/union-pdf/releases`.
 
-2. **Validar binarios:**
+2. **Origen y formato técnico de cada binario compilado:**
+   - **Windows (`x86_64`):** `src-tauri/target/release/union-pdf.exe` → publicado como `union-pdf-windows-x86_64.exe` (+ `.sha256`). Ejecutable nativo PE64 con extensión `.exe` y frontend Angular embebido.
+   - **macOS Apple Silicon (`arm64`):** `src-tauri/target/aarch64-apple-darwin/release/union-pdf` → publicado como `union-pdf-macos-arm64` (+ `.sha256`). Binario ejecutable nativo autónomo Mach-O 64-bit **sin extensión `.app`** (ejecutable UNIX standalone con frontend embebido; se ejecuta con `chmod +x union-pdf-macos-arm64 && ./union-pdf-macos-arm64`).
+   - **macOS Intel (`x86_64`):** `src-tauri/target/x86_64-apple-darwin/release/union-pdf` → publicado como `union-pdf-macos-x86_64` (+ `.sha256`). Binario ejecutable nativo autónomo Mach-O 64-bit **sin extensión `.app`** (`chmod +x union-pdf-macos-x86_64 && ./union-pdf-macos-x86_64`).
+   - **Linux (`x86_64`):** `src-tauri/target/release/union-pdf` → publicado como `union-pdf-linux-x86_64` (+ `.sha256`). Binario ejecutable nativo autónomo ELF 64-bit **sin extensión** (`chmod +x union-pdf-linux-x86_64 && ./union-pdf-linux-x86_64`).
+
+3. **Validar binarios locales:**
    ```bash
-   # Verificar existencia de binarios
+   # Verificar existencia de binarios compilados localmente
    ls src-tauri/target/release/
    ```
 

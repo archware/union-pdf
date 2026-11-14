@@ -55,14 +55,16 @@ export type BadgePosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: var(--font-weight-emphasis);
+      box-sizing: border-box;
+      border: var(--border-width-thin) solid transparent;
+      font-weight: var(--font-weight-title);
       line-height: 1;
       border-radius: var(--radius-full, 9999px);
       white-space: nowrap;
       font-size: var(--text-xs);
       min-width: var(--space-5);
       height: var(--space-5);
-      padding: 0 var(--space-1-5, var(--space-2));
+      padding: 0 var(--space-2);
     }
 
     /* Sizes */
@@ -70,30 +72,44 @@ export type BadgePosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-
     .badge--md { font-size: var(--text-xs); min-width: var(--space-5); height: var(--space-5); }
     .badge--lg { font-size: var(--text-sm); min-width: var(--space-5); height: var(--space-5); padding: 0 var(--space-2); }
 
-    /* Dot variant */
-    .badge--dot { min-width: var(--space-2); height: var(--space-2); padding: 0; border-radius: 50%; }
+    /* Variants */
+    .badge--default,
+    .badge--neutral   { background-color: var(--badge-default-bg); border-color: var(--badge-default-border); color: var(--badge-default-text); }
+    .badge--primary   { background-color: var(--badge-primary-bg); border-color: var(--badge-primary-border); color: var(--badge-primary-text); }
+    .badge--secondary { background-color: var(--badge-secondary-bg); border-color: var(--badge-secondary-border); color: var(--badge-secondary-text); }
+    .badge--success   { background-color: var(--badge-success-bg); border-color: var(--badge-success-border); color: var(--badge-success-text); }
+    .badge--warning   { background-color: var(--badge-warning-bg); border-color: var(--badge-warning-border); color: var(--badge-warning-text); }
+    .badge--danger,
+    .badge--error     { background-color: var(--badge-danger-bg); border-color: var(--badge-danger-border); color: var(--badge-danger-text); }
+    .badge--info      { background-color: var(--badge-info-bg); border-color: var(--badge-info-border); color: var(--badge-info-text); }
+    .badge--outline   { background-color: var(--badge-outline-bg); border-color: var(--badge-outline-border); color: var(--badge-outline-text); }
+
+    /* Dot variant (after variants to keep borderless dot sizing and vivid indicator fills) */
+    .badge--dot { min-width: var(--space-2); height: var(--space-2); padding: 0; border-width: 0; border-radius: 50%; }
     .badge--dot.badge--sm { min-width: var(--space-2); height: var(--space-2); }
     .badge--dot.badge--lg { min-width: var(--space-3); height: var(--space-3); }
+    .badge--dot.badge--default,
+    .badge--dot.badge--neutral   { background-color: var(--text-color-secondary); }
+    .badge--dot.badge--primary   { background-color: var(--primary-color); }
+    .badge--dot.badge--secondary { background-color: var(--secondary-color); }
+    .badge--dot.badge--success   { background-color: var(--success-color); }
+    .badge--dot.badge--warning   { background-color: var(--warning-color); }
+    .badge--dot.badge--danger,
+    .badge--dot.badge--error     { background-color: var(--danger-color); }
+    .badge--dot.badge--info      { background-color: var(--info-color); }
 
-    /* Overlay positioning */
+    /* Overlay positioning (after variants and dot so cutout border wins) */
     .badge--overlay {
       position: absolute;
       z-index: 1;
-      border: var(--space-1) solid var(--surface-background, white);
+      border-width: var(--space-1);
+      border-style: solid;
+      border-color: var(--surface-background);
     }
     .badge--top-right  { top: calc(-1 * var(--space-1)); right: calc(-1 * var(--space-1)); transform: translate(25%, -25%); }
     .badge--top-left   { top: calc(-1 * var(--space-1)); left: calc(-1 * var(--space-1));  transform: translate(-25%, -25%); }
     .badge--bottom-right { bottom: calc(-1 * var(--space-1)); right: calc(-1 * var(--space-1)); transform: translate(25%, 25%); }
     .badge--bottom-left  { bottom: calc(-1 * var(--space-1)); left: calc(-1 * var(--space-1));  transform: translate(-25%, 25%); }
-
-    /* Variants */
-    .badge--default   { background: var(--surface-section); color: var(--text-color-secondary); }
-    .badge--primary   { background: var(--primary-color); color: white; }
-    .badge--secondary { background: var(--secondary-color); color: white; }
-    .badge--success   { background: var(--success-color); color: white; }
-    .badge--warning   { background: var(--warning-color); color: white; }
-    .badge--danger    { background: var(--danger-color); color: white; }
-    .badge--info      { background: var(--info-color, #3b82f6); color: white; }
   `]
 })
 export class BadgeComponent {

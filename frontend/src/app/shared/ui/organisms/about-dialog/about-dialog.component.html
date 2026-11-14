@@ -96,18 +96,18 @@
         <div class="about-credits-grid" role="list">
           @for (credit of credits(); track credit.label) {
             <div class="about-credit-item" role="listitem">
-              @if (credit.imageUrl) {
-                <div class="about-box about-credit-item__icon" aria-hidden="true">
-                  <img class="about-credit-item__img" [src]="credit.imageUrl" [alt]="credit.label" />
-                </div>
-              } @else if (credit.icon) {
-                <div class="about-box about-credit-item__icon" aria-hidden="true">
-                  <i [class]="resolveIconClass(credit.icon)"></i>
-                </div>
+              @if (credit.bannerImageUrl) {
+                <img class="about-credit-item__banner" [src]="credit.bannerImageUrl" [alt]="credit.value" />
               }
-              <div class="about-col about-credit-item__body">
-                @if (credit.bannerImageUrl) {
-                  <img class="about-credit-item__banner" [src]="credit.bannerImageUrl" [alt]="credit.value" />
+              <div class="about-row about-credit-item__top">
+                @if (credit.imageUrl) {
+                  <div class="about-box about-credit-item__icon" aria-hidden="true">
+                    <img class="about-credit-item__img" [src]="credit.imageUrl" [alt]="credit.label" />
+                  </div>
+                } @else if (credit.icon) {
+                  <div class="about-box about-credit-item__icon" aria-hidden="true">
+                    <i [class]="resolveIconClass(credit.icon)"></i>
+                  </div>
                 }
                 <div class="about-between about-credit-item__header">
                   <span class="about-meta about-credit-item__label">{{ credit.label }}</span>
@@ -115,6 +115,8 @@
                     <app-chip variant="secondary" size="sm">{{ credit.badge }}</app-chip>
                   }
                 </div>
+              </div>
+              <div class="about-col about-credit-item__body">
                 <strong class="about-credit-item__value">{{ credit.value }}</strong>
                 @if (credit.subtext) {
                   <span class="about-meta about-credit-item__subtext">{{ credit.subtext }}</span>

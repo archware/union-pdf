@@ -1,4 +1,5 @@
-﻿import { Component, Input, Output, EventEmitter, inject, PLATFORM_ID } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter, inject, PLATFORM_ID, input
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AvatarComponent } from '../../atoms/avatar/avatar.component';
 
@@ -43,6 +44,10 @@ export class SidebarComponent {
 
   /** Logo icon */
   @Input() logoIcon = 'fa-solid fa-atom';
+
+  readonly logoSubtitle = input<string | null>(null);
+  readonly logoImageUrl = input<string | null>(null);
+  readonly logoBadgeImages = input<string[]>([]);
 
   /** Event emitted when a menu item is clicked */
   @Output() navigate = new EventEmitter<SidebarMenuItem>();

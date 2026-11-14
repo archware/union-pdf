@@ -1420,10 +1420,18 @@ describe('AppComponent (Unión PDF)', () => {
       expect(dialogText).toContain('Artifact Barracuda — Chasis Frontend Reactivo con Signals');
       expect(dialogText).toContain('DIY AI Lab & Co-Ingeniería IA');
       expect(dialogText).toContain('Arquitectura y Seguridad');
+      expect(dialogText).toContain('Compilación Multiplataforma CI/CD & Binarios Nativos Autónomos');
+      expect(dialogText).toContain('union-pdf-windows-x86_64.exe');
+      expect(dialogText).toContain('union-pdf-macos-arm64');
+      expect(dialogText).toContain('union-pdf-macos-x86_64');
+      expect(dialogText).toContain('union-pdf-linux-x86_64');
+      expect(dialogText).toContain('sin extensión .app');
       expect(dialogText).toContain('Sistema de Diseño');
       expect(dialogText).toContain('Tauri 1.5 + Rust');
       expect(dialogText).toContain('Angular 22 + Signals');
       expect(dialogText).toContain('Atomic UI v5.22.0');
+      expect(dialogText).toContain('Releases y Ejecutables Compilados (Unión PDF)');
+      expect(dialogText).toContain('Pipeline CI/CD Multiplataforma (GitHub Actions)');
       expect(dialogText).toContain('LinkedIn — Ing. Havel Contreras');
       expect(dialogText).toContain('Repositorio Atomic UI');
       expect(dialogText).toContain('Contacto (havel363@gmail.com)');
@@ -1433,6 +1441,13 @@ describe('AppComponent (Unión PDF)', () => {
       expect(githubLink?.getAttribute('href')).toBe('https://github.com/archware');
       expect(githubLink?.getAttribute('target')).toBe('_blank');
       expect(githubLink?.getAttribute('rel')).toBe('noopener noreferrer');
+
+      const releasesLink = Array.from(
+        dialogEl?.querySelectorAll<HTMLAnchorElement>('a.about-link-pill') || []
+      ).find((link) => (link.textContent || '').includes('Releases y Ejecutables Compilados'));
+      expect(releasesLink).toBeDefined();
+      expect(releasesLink?.getAttribute('href')).toBe('https://github.com/archware/union-pdf/releases');
+      expect(releasesLink?.getAttribute('target')).toBe('_blank');
 
       const repoLink = Array.from(
         dialogEl?.querySelectorAll<HTMLAnchorElement>('a.about-link-pill') || []

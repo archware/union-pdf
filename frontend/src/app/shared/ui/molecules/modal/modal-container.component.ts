@@ -142,21 +142,27 @@ import { ScrollOverlayComponent } from '../../organisms/scroll-overlay/scroll-ov
 
     /* Header */
     .modal-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: var(--control-height-sm) minmax(0, 1fr) var(--control-height-sm);
       align-items: center;
-      justify-content: space-between;
+      gap: var(--space-3);
       padding: var(--space-4) var(--space-5);
       border-bottom: 1px solid var(--border-color);
     }
 
     .modal-title {
+      grid-column: 2;
       margin: 0;
+      text-align: center;
+      font-family: var(--font-family-heading);
       font-size: var(--text-lg);
-      font-weight: 600;
+      font-weight: var(--font-weight-emphasis);
       color: var(--text-color);
     }
 
     .modal-close {
+      grid-column: 3;
+      justify-self: end;
       width: var(--control-height-sm);
       height: var(--control-height-sm);
       display: flex;

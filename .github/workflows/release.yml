@@ -173,15 +173,22 @@ jobs:
           tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.1' }}
           name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.1' }}"
           body: |
-            ## Unión PDF — Lanzamiento Multiplataforma (`@archware`)
+            ## Unión PDF — Lanzamiento Corporativo Multiplataforma (`COTAHA · @archware`)
 
-            Estudio nativo de alto rendimiento para combinar, reorganizar, rotar y extraer páginas de documentos PDF e imágenes con procesamiento 100% en memoria local y privacidad absoluta.
+            Aplicación corporativa de escritorio diseñada para demostrar que la integración entre el ecosistema propio de Backend (**Artifact Mangosta** — DDD, Arquitectura Hexagonal, CQRS estricto y frontera IPC determinista `DesktopFacadeService` + `RespuestaSistemaV1<T>`) y el ecosistema propio de Frontend (**Artifact Barracuda** + **Atomic UI `@atomic-ui/core v5.22.0`** sobre Angular 22 + Signals) genera software nativo de calidad empresarial, 100% en memoria local y auditado por compuertas deterministas.
 
-            ### Artefactos disponibles por sistema operativo
-            - **Windows (x86_64):** `union-pdf-windows-x86_64.exe` (+ `.sha256`)
-            - **macOS (Apple Silicon M1/M2/M3/M4):** `union-pdf-macos-arm64` (+ `.sha256`)
-            - **macOS (Intel x86_64):** `union-pdf-macos-x86_64` (+ `.sha256`)
-            - **Linux (x86_64):** `union-pdf-linux-x86_64` (+ `.sha256`)
+            ### 📦 Ejecutables Compilados por Sistema Operativo (Origen, Ubicación y Formato)
+
+            Cada binario es generado automáticamente por este pipeline CI/CD tras aprobar el job `verificar-compuertas` (candado `tauri.conf.json`, gobernanza, tipado estricto, reglas de tema/CSS, 325+ pruebas Vitest y `cargo test`), compilando primero el frontend Angular (`frontend/dist/pdf-tool/browser`) e incrustándolo dentro de un **único binario nativo autónomo** mediante `cargo build --release`:
+
+            | Plataforma / Arquitectura | Binario Publicado en este Release | Ruta de Origen del Compilador (`Cargo + Tauri`) | Formato Nativo y Ejecución |
+            | :--- | :--- | :--- | :--- |
+            | **Windows (`x86_64`)** | `union-pdf-windows-x86_64.exe` (+ `.sha256`) | `src-tauri/target/release/union-pdf.exe` | **Ejecutable PE64 (`.exe`)** con iconos multirresolución y frontend embebido. Ejecución directa. |
+            | **macOS Apple Silicon (`arm64` · M1/M2/M3/M4)** | `union-pdf-macos-arm64` (+ `.sha256`) | `src-tauri/target/aarch64-apple-darwin/release/union-pdf` | **Binario nativo autónomo Mach-O 64-bit sin extensión `.app`** (ejecutable UNIX standalone con frontend embebido). Ejecutar con `chmod +x union-pdf-macos-arm64 && ./union-pdf-macos-arm64`. |
+            | **macOS Intel (`x86_64`)** | `union-pdf-macos-x86_64` (+ `.sha256`) | `src-tauri/target/x86_64-apple-darwin/release/union-pdf` | **Binario nativo autónomo Mach-O 64-bit sin extensión `.app`** (ejecutable UNIX standalone con frontend embebido). Ejecutar con `chmod +x union-pdf-macos-x86_64 && ./union-pdf-macos-x86_64`. |
+            | **Linux (`x86_64`)** | `union-pdf-linux-x86_64` (+ `.sha256`) | `src-tauri/target/release/union-pdf` | **Binario nativo autónomo ELF 64-bit sin extensión** (ejecutable UNIX standalone enlazado a GTK3/WebKit2GTK). Ejecutar con `chmod +x union-pdf-linux-x86_64 && ./union-pdf-linux-x86_64`. |
+
+            > **Nota técnica sobre los binarios de macOS y Linux:** En entornos UNIX/POSIX (macOS y Linux), `cargo build --release` genera directamente el ejecutable nativo puro (Mach-O y ELF, sin extensión `.exe` ni contenedor `.app`), empaquetando dentro del mismo binario toda la distribución de Angular 22 + Atomic UI y acreditando la compilación multiplataforma limpia desde una única base de código.
           draft: false
           prerelease: false
           files: |

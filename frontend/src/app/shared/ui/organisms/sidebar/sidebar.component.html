@@ -1,8 +1,28 @@
 <div class="sidebar-container" [class.collapsed]="collapsed">
   <div class="sidebar-logo">
-    <i [class]="logoIcon + ' logo-icon'"></i>
+    @if (logoImageUrl()) {
+      <img class="logo-img" [src]="logoImageUrl()!" [alt]="logoText" />
+    } @else {
+      <i [class]="logoIcon + ' logo-icon'"></i>
+    }
     @if (!collapsed) {
-    <span class="logo-text">{{ logoText }}</span>
+      <div class="logo-brand">
+        <span class="logo-text">{{ logoText }}</span>
+        @if (logoSubtitle() || logoBadgeImages().length > 0) {
+          <div class="logo-subtitle-row">
+            @if (logoSubtitle()) {
+              <span class="logo-subtitle">{{ logoSubtitle() }}</span>
+            }
+            @if (logoBadgeImages().length > 0) {
+              <div class="logo-badges">
+                @for (badgeUrl of logoBadgeImages(); track badgeUrl) {
+                  <img class="logo-badge-img" [src]="badgeUrl" alt="" />
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
     }
   </div>
 

@@ -194,9 +194,10 @@
    Tokens comunes para todos los temas oscuros
    ───────────────────────────────────────────────────────────────────────────── */
 [data-theme="dark"],
+[data-theme="brand-dark"],
 .theme-dark,
-html.dark:not([data-theme="brand-dark"]),
-.dark:not([data-theme="brand-dark"]) {
+html.dark,
+.dark {
    color-scheme: dark;
 
    /* === TEXTO (Compartido) === */

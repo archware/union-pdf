@@ -145,7 +145,8 @@ import { ScrollOverlayComponent } from '../../organisms/scroll-overlay/scroll-ov
 
     /* Header */
     .popup-header {
-      display: flex;
+      display: grid;
+      grid-template-columns: var(--space-10) minmax(0, 1fr) var(--space-10);
       align-items: center;
       gap: var(--space-3);
       padding: var(--space-5);
@@ -153,6 +154,7 @@ import { ScrollOverlayComponent } from '../../organisms/scroll-overlay/scroll-ov
     }
 
     .popup-icon {
+      grid-column: 1;
       font-size: var(--text-2xl);
       display: flex;
       align-items: center;
@@ -170,14 +172,18 @@ import { ScrollOverlayComponent } from '../../organisms/scroll-overlay/scroll-ov
     .popup-icon-confirm { background: var(--primary-color-lighter); color: var(--primary-color); }
 
     .popup-title {
-      flex: 1;
+      grid-column: 2;
       margin: 0;
+      text-align: center;
+      font-family: var(--font-family-heading);
       font-size: var(--text-lg);
       font-weight: var(--font-weight-emphasis);
       color: var(--text-color);
     }
 
     .popup-close {
+      grid-column: 3;
+      justify-self: end;
       width: var(--control-height-sm);
       height: var(--control-height-sm);
       display: flex;

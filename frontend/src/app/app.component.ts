@@ -142,7 +142,7 @@ export class AppComponent implements OnInit, OnDestroy {
       label: 'Autoría Principal',
       value: 'Ing. Havel CONTRERAS TAPAHUASCO (COTAHA · @archware)',
       subtext:
-        'Arquitecto de Software | DIY AI Lab | Creador de Ecosistemas: construcción de software empresarial, aplicaciones de escritorio Multi-Runtime (Rust/Tauri, Go/Wails, Python/PyWebView) e infraestructura IA 100% local',
+        'Arquitecto de Software | DIY AI Lab | Creador de Ecosistemas: dirección técnica corporativa enfocada en demostrar que el ecosistema propio de Backend (Artifact Mangosta) y Frontend (Artifact Barracuda + Atomic UI) genera aplicaciones de escritorio Multi-Runtime (Rust/Tauri, Go/Wails, Python/PyWebView) de calidad empresarial',
       icon: 'fa-solid fa-user-shield',
       imageUrl: 'assets/doctrinas/ssit-emblem.jpg',
       bannerImageUrl: 'assets/doctrinas/merch-desk-setup.jpg',
@@ -152,7 +152,7 @@ export class AppComponent implements OnInit, OnDestroy {
       label: 'Artifact Mangosta',
       value: 'Artifact Mangosta — DDD, Arquitectura Hexagonal & CQRS Estricto',
       subtext:
-        'Artefacto de ingeniería backend para sistemas distribuidos y nativos (C#/.NET, Java, Rust), fronteras IPC/HTTP tipadas, eventos Kafka y persistencia limpia',
+        'Artefacto corporativo de ingeniería Backend (Rust/Tauri, C#/.NET, Java) que garantiza solidez empresarial: aislamiento de dominio, frontera IPC/HTTP determinista (DesktopFacadeService + RespuestaSistemaV1), motor nativo PDF (lopdf/rfd) y compilación limpia sin deuda técnica',
       icon: 'fa-solid fa-diagram-project',
       imageUrl: 'assets/doctrinas/doctrina-mangosta-icon.jpg',
       bannerImageUrl: 'assets/doctrinas/doctrina-mangosta-banner.jpg',
@@ -162,7 +162,7 @@ export class AppComponent implements OnInit, OnDestroy {
       label: 'Artifact Barracuda',
       value: 'Artifact Barracuda — Chasis Frontend Reactivo con Signals',
       subtext:
-        'Artefacto de ingeniería frontend en Angular 22 + Signals, control flow nativo, plantillas modulares, accesibilidad estricta y cero deuda visual',
+        'Artefacto corporativo de ingeniería Frontend en Angular 22 + Signals y OnPush que entrega interfaces de alta gama: control flow nativo, procesamiento gráfico en memoria (PDF.js + pdf-lib), accesibilidad estricta y calidad respaldada por más de 325 pruebas automatizadas',
       icon: 'fa-solid fa-bolt',
       imageUrl: 'assets/doctrinas/doctrina-barracuda-icon.jpg',
       bannerImageUrl: 'assets/doctrinas/doctrina-barracuda-banner.jpg',
@@ -172,7 +172,7 @@ export class AppComponent implements OnInit, OnDestroy {
       label: 'Sistema de Diseño',
       value: 'Atomic UI (@atomic-ui/core v5.22.0) — Signals & OnPush',
       subtext:
-        'Librería de autor con tokens semánticos puros, desplazamiento gobernado y fidelidad visual de grado empresarial',
+        'Sistema de diseño corporativo de autor gobernado por pin criptográfico (ADR-017): tokens semánticos puros, desplazamiento controlado (app-scroll-overlay), cero CSS ad-hoc y acabado visual institucional uniforme',
       icon: 'fa-solid fa-cubes',
       imageUrl: 'assets/doctrinas/barracuda-mangosta-duality-icon.jpg',
       bannerImageUrl: 'assets/doctrinas/merch-kit-ejecutivo.jpg',
@@ -182,17 +182,17 @@ export class AppComponent implements OnInit, OnDestroy {
       label: 'DIY AI Lab & Co-Ingeniería IA',
       value: 'Laboratorio IA Bare-Metal Local & Orquestación de Agentes',
       subtext:
-        'Servidor dedicado Ubuntu Linux con GPU NVIDIA Tesla V100 (32 GB VRAM), inferencia local (Qwen3-Coder / llama.cpp), sistemas RAG (SQLite FTS5), protocolos MCP/ACP y agentes especializados',
+        'Infraestructura corporativa privada en servidor dedicado Ubuntu Linux con GPU NVIDIA Tesla V100 (32 GB VRAM), inferencia 100% local (Qwen3-Coder / llama.cpp), sistemas RAG (SQLite FTS5), protocolos MCP/ACP y auditoría por compuertas deterministas',
       icon: 'fa-solid fa-wand-magic-sparkles',
       badge: 'DIY AI Lab',
     },
     {
       label: 'Arquitectura y Seguridad',
-      value: 'Multi-Runtime Desktop & Procesamiento 100% Local en Memoria',
+      value: 'Compilación Multiplataforma CI/CD & Binarios Nativos Autónomos',
       subtext:
-        'Frontera nativa Tauri + Rust (RespuestaSistemaV1), privacidad absoluta sin subida a servidores y ejecución multiplataforma (Windows, macOS y Linux)',
+        'Ejecutables generados por cargo build --release en src-tauri/target/release/ y publicados por GitHub Actions en GitHub Releases con firma SHA-256: binario PE64 .exe en Windows (union-pdf-windows-x86_64.exe) y binarios nativos autónomos UNIX sin extensión .app en macOS (union-pdf-macos-arm64 y union-pdf-macos-x86_64, Mach-O) y Linux (union-pdf-linux-x86_64, ELF), con el frontend embebido y privacidad 100% local',
       icon: 'fa-solid fa-shield-halved',
-      badge: 'Privacidad',
+      badge: 'Multiplataforma CI/CD',
     },
   ];
 
@@ -207,6 +207,18 @@ export class AppComponent implements OnInit, OnDestroy {
   ];
 
   readonly aboutLinks: AboutLinkItem[] = [
+    {
+      label: 'Releases y Ejecutables Compilados (Unión PDF)',
+      url: 'https://github.com/archware/union-pdf/releases',
+      icon: 'fa-solid fa-boxes-packing',
+      external: true,
+    },
+    {
+      label: 'Pipeline CI/CD Multiplataforma (GitHub Actions)',
+      url: 'https://github.com/archware/union-pdf/actions',
+      icon: 'fa-solid fa-gears',
+      external: true,
+    },
     {
       label: 'Portafolio & GitHub @archware',
       url: 'https://github.com/archware',

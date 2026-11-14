@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import {Component, Input, Output, EventEmitter, ChangeDetectionStrategy, input } from '@angular/core';
 
 
 export type CardVariant = 'default' | 'elevated' | 'outlined' | 'filled' | 'interactive';
@@ -44,7 +44,7 @@ export type CardSize = 'sm' | 'md' | 'lg';
 
       <!-- Header -->
       @if (title || subtitle || icon) {
-        <header class="card__header">
+        <header class="card__header" [class.card__header--center]="headerAlign() === 'center'">
           @if (icon) {
             <span class="card__icon"><i [class]="icon"></i></span>
           }
@@ -203,6 +203,12 @@ export type CardSize = 'sm' | 'md' | 'lg';
       gap: var(--space-3);
     }
 
+    .card__header--center {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
     .card__icon {
       font-size: var(--text-2xl);
       color: var(--primary-color);
@@ -313,6 +319,7 @@ export class CardComponent {
 
   /** Horizontal layout (image on side) */
   @Input() horizontal = false;
+  readonly headerAlign = input<'start' | 'center'>('start');
 
   /** Click event for interactive cards */
   @Output() cardClick = new EventEmitter<void>();

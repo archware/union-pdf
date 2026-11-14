@@ -22,6 +22,61 @@
   font-weight: 500;
 }
 
+.logo-img {
+  width: var(--avatar-md);
+  height: var(--avatar-md);
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xs);
+}
+
+.logo-brand {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.2;
+}
+
+.logo-text {
+  color: var(--logo-text-color, currentColor);
+}
+
+.logo-subtitle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.logo-subtitle {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-body);
+  color: var(--secondary-color-text);
+}
+
+.logo-badges {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.logo-badge-img {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  border: 1px solid var(--border-color-light);
+  box-shadow: var(--shadow-xs);
+}
+
 .logo-emoji {
   font-size: var(--text-2xl);
 }

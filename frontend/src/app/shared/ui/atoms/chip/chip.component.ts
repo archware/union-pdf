@@ -66,14 +66,15 @@ export type ChipSize = 'sm' | 'md' | 'lg';
     .chip {
       display: inline-flex;
       align-items: center;
+      box-sizing: border-box;
       gap: var(--space-1);
       padding: var(--space-1) var(--space-2);
       border-radius: var(--radius-full);
       font-size: var(--text-xs);
-      font-weight: 600;
+      font-weight: var(--font-weight-title);
       line-height: 1.1;
       transition: all 150ms ease;
-      border: 1px solid transparent;
+      border: var(--border-width-thin) solid transparent;
     }
 
     .chip-sm { padding: var(--space-1) var(--space-2); font-size: var(--text-xs); }
@@ -81,46 +82,51 @@ export type ChipSize = 'sm' | 'md' | 'lg';
     .chip-lg { padding: var(--space-1) var(--space-3); font-size: var(--text-sm); }
 
     .chip-default {
-      background: var(--surface-elevated);
-      color: var(--text-color-secondary);
+      background-color: var(--chip-default-bg);
+      border-color: var(--chip-default-border);
+      color: var(--chip-default-text);
     }
 
     .chip-primary {
-      background: var(--primary-color-lighter);
-      background: color-mix(in srgb, var(--primary-color) 12%, var(--surface-elevated, transparent));
-      border-color: color-mix(in srgb, var(--primary-color) 28%, var(--border-color, transparent));
-      color: color-mix(in srgb, var(--primary-color) 72%, var(--text-color));
+      background-color: var(--chip-primary-bg);
+      border-color: var(--chip-primary-border);
+      color: var(--chip-primary-text);
     }
 
     .chip-secondary {
-      background: var(--secondary-color-light, var(--secondary-color-lighter));
-      color: var(--secondary-color-text, var(--secondary-color));
+      background-color: var(--chip-secondary-bg);
+      border-color: var(--chip-secondary-border);
+      color: var(--chip-secondary-text);
     }
 
     .chip-success {
-      background: var(--success-color-light);
-      color: var(--success-color-text, var(--success-color));
+      background-color: var(--chip-success-bg);
+      border-color: var(--chip-success-border);
+      color: var(--chip-success-text);
     }
 
     .chip-warning {
-      background: var(--warning-color-light);
-      color: var(--warning-color-text, var(--warning-color));
+      background-color: var(--chip-warning-bg);
+      border-color: var(--chip-warning-border);
+      color: var(--chip-warning-text);
     }
 
     .chip-error {
-      background: var(--danger-color-light);
-      color: var(--danger-color-text, var(--danger-color));
+      background-color: var(--chip-error-bg);
+      border-color: var(--chip-error-border);
+      color: var(--chip-error-text);
     }
 
     .chip-info {
-      background: var(--info-color-light);
-      color: var(--info-color-text, var(--info-color));
+      background-color: var(--chip-info-bg);
+      border-color: var(--chip-info-border);
+      color: var(--chip-info-text);
     }
 
     .chip-outline {
-      background: transparent;
-      border-color: var(--border-color);
-      color: var(--text-color);
+      background-color: var(--chip-outline-bg);
+      border-color: var(--chip-outline-border);
+      color: var(--chip-outline-text);
     }
 
     .chip-interactive {
@@ -137,8 +143,9 @@ export type ChipSize = 'sm' | 'md' | 'lg';
     }
 
     .chip-selected {
-      background: var(--primary-color);
-      color: var(--gray-0);
+      background-color: var(--badge-primary-bg);
+      border-color: var(--badge-primary-border);
+      color: var(--badge-primary-text);
     }
 
     .chip-icon {

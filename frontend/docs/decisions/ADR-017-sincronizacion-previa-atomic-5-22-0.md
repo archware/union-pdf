@@ -106,3 +106,7 @@ La especificación histórica del diálogo SQL se alinea con
 ajuste no restablece la reutilización automática retirada de producción: la
 selección se invalida cuando cambia servidor, base de datos o usuario y vuelve
 a comprobarse antes de cruzar la frontera IPC.
+## Nota de actualización ATOMIC-20261114-001 (2026-11-14)
+
+- Se portaron desde `-Atomic-UI` los encabezados centrados (`modal`, `modal-container`, `popup-container`, `card` con `headerAlign`) y el soporte completo de cabecera en `sidebar` (`logoSubtitle`, `logoImageUrl`, `logoBadgeImages` sin truncamiento) utilizando `input()` de Signals y tokens `var(--font-weight-*)`.
+- Se preservó íntegramente el pin `atomicRef: b76f432976d6c1e47de57ee4b4be5821a5195dd8` (`atomicSourceTreeSha256` y `atomicSha256` intactos), actualizando únicamente `changeId` y los `localSha256` de los 7 archivos editados bajo `docs/atomic-provenance.json`.

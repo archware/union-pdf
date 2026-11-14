@@ -41,7 +41,9 @@ export function validarEstructura(texto) {
   try {
     json = JSON.parse(texto.replace(/^\uFEFF/, ''));
   } catch (e) {
-    return [`JSON invalido: ${e.message}`];
+    const mensaje = e.message.replace(/[^\x00-\x7f]/g, (caracter) =>
+      `\\u${caracter.charCodeAt(0).toString(16).padStart(4, '0')}`);
+    return [`JSON invalido: ${mensaje}`];
   }
   if (json === null || typeof json !== 'object' || Array.isArray(json)) {
     return ['la raiz no es un objeto JSON'];
@@ -50,10 +52,14 @@ export function validarEstructura(texto) {
   for (const clave of CLAVES_ESENCIALES) {
     let nodo = json;
     for (const parte of clave.split('.')) {
-      nodo = nodo !== null && typeof nodo === 'object' ? nodo[parte] : undefined;
+      nodo = nodo !== null && typeof nodo === 'object' && !Array.isArray(nodo) ? nodo[parte] : undefined;
     }
     if (nodo === undefined || nodo === null || nodo === '') {
       problemas.push(`falta la clave esencial '${clave}'`);
+    } else if (clave === 'build.distDir'
+      ? typeof nodo !== 'string' || nodo.trim() === ''
+      : typeof nodo !== 'object' || Array.isArray(nodo)) {
+      problemas.push(`tipo invalido para la clave esencial '${clave}'`);
     }
   }
   return problemas;
