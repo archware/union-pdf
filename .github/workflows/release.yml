@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_version:
-        description: 'Tag de version para publicar en GitHub Releases (ej. v0.5.2)'
+        description: 'Tag de version para publicar en GitHub Releases (ej. v0.5.3)'
         required: false
-        default: 'v0.5.2'
+        default: 'v0.5.3'
 
 permissions:
   contents: write
@@ -93,17 +93,17 @@ jobs:
             etiqueta: linux-x86_64
             args: ''
             binario_origen: src-tauri/target/release/union-pdf
-            binario_publico: union-pdf-linux-x86_64
+            binario_publico: union-pdf-linux-x86_64.tar.gz
           - os: macos-latest
             etiqueta: macos-aarch64
             args: '--target aarch64-apple-darwin'
             binario_origen: src-tauri/target/aarch64-apple-darwin/release/union-pdf
-            binario_publico: union-pdf-macos-arm64
+            binario_publico: union-pdf-macos-arm64.app.tar.gz
           - os: macos-latest
             etiqueta: macos-x86_64
             args: '--target x86_64-apple-darwin'
             binario_origen: src-tauri/target/x86_64-apple-darwin/release/union-pdf
-            binario_publico: union-pdf-macos-x86_64
+            binario_publico: union-pdf-macos-x86_64.app.tar.gz
 
     steps:
       - name: Checkout del repositorio
@@ -153,11 +153,68 @@ jobs:
         run: |
           cargo build --release --manifest-path src-tauri/Cargo.toml ${{ matrix.args }}
 
-      - name: Preparar binario portable con checksum SHA-256
+      - name: Empaquetar artefacto por plataforma (.exe, .app.tar.gz, .tar.gz) con checksum SHA-256
         shell: bash
         run: |
           mkdir -p release-portables
-          cp "${{ matrix.binario_origen }}" "release-portables/${{ matrix.binario_publico }}"
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            cp "${{ matrix.binario_origen }}" "release-portables/${{ matrix.binario_publico }}"
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            APP_DIR="build-bundle/union-pdf.app"
+            rm -rf build-bundle
+            mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
+            cp "${{ matrix.binario_origen }}" "$APP_DIR/Contents/MacOS/union-pdf"
+            chmod 755 "$APP_DIR/Contents/MacOS/union-pdf"
+            cp "src-tauri/icons/icon.icns" "$APP_DIR/Contents/Resources/icon.icns"
+            printf 'APPL????' > "$APP_DIR/Contents/PkgInfo"
+            node -e '
+              const fs = require("fs");
+              const pkg = require("./src-tauri/tauri.conf.json").package;
+              const plist = [
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+                "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">",
+                "<plist version=\"1.0\">",
+                "<dict>",
+                "  <key>CFBundleDevelopmentRegion</key>",
+                "  <string>es</string>",
+                "  <key>CFBundleDisplayName</key>",
+                "  <string>Unión PDF</string>",
+                "  <key>CFBundleExecutable</key>",
+                "  <string>union-pdf</string>",
+                "  <key>CFBundleIconFile</key>",
+                "  <string>icon.icns</string>",
+                "  <key>CFBundleIdentifier</key>",
+                "  <string>com.archware.union-pdf</string>",
+                "  <key>CFBundleInfoDictionaryVersion</key>",
+                "  <string>6.0</string>",
+                "  <key>CFBundleName</key>",
+                "  <string>union-pdf</string>",
+                "  <key>CFBundlePackageType</key>",
+                "  <string>APPL</string>",
+                "  <key>CFBundleShortVersionString</key>",
+                "  <string>" + pkg.version + "</string>",
+                "  <key>CFBundleVersion</key>",
+                "  <string>" + pkg.version + "</string>",
+                "  <key>LSMinimumSystemVersion</key>",
+                "  <string>10.13</string>",
+                "  <key>NSHighResolutionCapable</key>",
+                "  <true/>",
+                "</dict>",
+                "</plist>",
+                ""
+              ].join("\n");
+              fs.writeFileSync("build-bundle/union-pdf.app/Contents/Info.plist", plist, "utf8");
+            '
+            plutil -lint "$APP_DIR/Contents/Info.plist"
+            codesign --force --deep --sign - "$APP_DIR"
+            COPYFILE_DISABLE=1 tar -C build-bundle -czf "release-portables/${{ matrix.binario_publico }}" union-pdf.app
+          else
+            rm -rf build-bundle
+            mkdir -p build-bundle
+            cp "${{ matrix.binario_origen }}" "build-bundle/union-pdf"
+            chmod 755 "build-bundle/union-pdf"
+            tar -C build-bundle -czf "release-portables/${{ matrix.binario_publico }}" union-pdf
+          fi
           cd release-portables
           if command -v sha256sum >/dev/null 2>&1; then
             sha256sum "${{ matrix.binario_publico }}" > "${{ matrix.binario_publico }}.sha256"
@@ -170,25 +227,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.2' }}
-          name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.2' }}"
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.3' }}
+          name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.3' }}"
           body: |
             ## Unión PDF — Lanzamiento Corporativo Multiplataforma (`COTAHA · @archware`)
 
             Aplicación corporativa de escritorio diseñada para demostrar que la integración entre el ecosistema propio de Backend (**Artifact Mangosta** — DDD, Arquitectura Hexagonal, CQRS estricto y frontera IPC determinista `DesktopFacadeService` + `RespuestaSistemaV1<T>`) y el ecosistema propio de Frontend (**Artifact Barracuda** + **Atomic UI `@atomic-ui/core v5.22.0`** sobre Angular 22 + Signals) genera software nativo de calidad empresarial, 100% en memoria local y auditado por compuertas deterministas.
 
-            ### 📦 Ejecutables Compilados por Sistema Operativo (Origen, Ubicación y Formato)
+            ### 📦 Ejecutables y Paquetes Compilados por Sistema Operativo (Origen, Ubicación y Extensión)
 
-            Cada binario es generado automáticamente por este pipeline CI/CD tras aprobar el job `verificar-compuertas` (candado `tauri.conf.json`, gobernanza, tipado estricto, reglas de tema/CSS, 325+ pruebas Vitest y `cargo test`), compilando primero el frontend Angular (`frontend/dist/pdf-tool/browser`) e incrustándolo dentro de un **único binario nativo autónomo** mediante `cargo build --release`:
+            Cada artefacto es generado automáticamente por este pipeline CI/CD tras aprobar el job `verificar-compuertas` (candado `tauri.conf.json`, gobernanza, tipado estricto, reglas de tema/CSS, 325+ pruebas Vitest y `cargo test`), compilando primero el frontend Angular (`frontend/dist/pdf-tool/browser`), incrustándolo en el binario nativo mediante `cargo build --release` y empaquetándolo con la extensión estándar de cada sistema operativo:
 
-            | Plataforma / Arquitectura | Binario Publicado en este Release | Ruta de Origen del Compilador (`Cargo + Tauri`) | Formato Nativo y Ejecución |
+            | Plataforma / Arquitectura | Artefacto Publicado en este Release | Ruta de Origen del Compilador (`Cargo + Tauri`) | Formato Nativo, Extensión y Ejecución |
             | :--- | :--- | :--- | :--- |
-            | **Windows (`x86_64`)** | `union-pdf-windows-x86_64.exe` (+ `.sha256`) | `src-tauri/target/release/union-pdf.exe` | **Ejecutable PE64 (`.exe`)** con iconos multirresolución y frontend embebido. Ejecución directa. |
-            | **macOS Apple Silicon (`arm64` · M1/M2/M3/M4)** | `union-pdf-macos-arm64` (+ `.sha256`) | `src-tauri/target/aarch64-apple-darwin/release/union-pdf` | **Binario nativo autónomo Mach-O 64-bit sin extensión `.app`** (ejecutable UNIX standalone con frontend embebido). Ejecutar con `chmod +x union-pdf-macos-arm64 && ./union-pdf-macos-arm64`. |
-            | **macOS Intel (`x86_64`)** | `union-pdf-macos-x86_64` (+ `.sha256`) | `src-tauri/target/x86_64-apple-darwin/release/union-pdf` | **Binario nativo autónomo Mach-O 64-bit sin extensión `.app`** (ejecutable UNIX standalone con frontend embebido). Ejecutar con `chmod +x union-pdf-macos-x86_64 && ./union-pdf-macos-x86_64`. |
-            | **Linux (`x86_64`)** | `union-pdf-linux-x86_64` (+ `.sha256`) | `src-tauri/target/release/union-pdf` | **Binario nativo autónomo ELF 64-bit sin extensión** (ejecutable UNIX standalone enlazado a GTK3/WebKit2GTK). Ejecutar con `chmod +x union-pdf-linux-x86_64 && ./union-pdf-linux-x86_64`. |
+            | **Windows (`x86_64`)** | `union-pdf-windows-x86_64.exe` (+ `.sha256`) | `src-tauri/target/release/union-pdf.exe` | **Ejecutable nativo PE64 (`.exe`)** con iconos multirresolución y frontend embebido. Ejecución directa en Windows. |
+            | **macOS Apple Silicon (`arm64` · M1/M2/M3/M4)** | `union-pdf-macos-arm64.app.tar.gz` (+ `.sha256`) | `src-tauri/target/aarch64-apple-darwin/release/union-pdf` → `union-pdf.app` | **Application Bundle nativo de macOS (`union-pdf.app` Mach-O 64-bit) empaquetado en `.app.tar.gz`** con `Info.plist`, icono `icon.icns`, firma ad-hoc y frontend embebido. Descomprimir con doble clic (o `tar -xzf union-pdf-macos-arm64.app.tar.gz`) y abrir `union-pdf.app`. |
+            | **macOS Intel (`x86_64`)** | `union-pdf-macos-x86_64.app.tar.gz` (+ `.sha256`) | `src-tauri/target/x86_64-apple-darwin/release/union-pdf` → `union-pdf.app` | **Application Bundle nativo de macOS (`union-pdf.app` Mach-O 64-bit) empaquetado en `.app.tar.gz`** con `Info.plist`, icono `icon.icns`, firma ad-hoc y frontend embebido. Descomprimir con doble clic (o `tar -xzf union-pdf-macos-x86_64.app.tar.gz`) y abrir `union-pdf.app`. |
+            | **Linux (`x86_64`)** | `union-pdf-linux-x86_64.tar.gz` (+ `.sha256`) | `src-tauri/target/release/union-pdf` → `union-pdf` | **Archivo comprimido `.tar.gz` con el ejecutable nativo autónomo ELF 64-bit (`union-pdf`)** y permisos `+x` (`0755`) preservados, enlazado a GTK3/WebKit2GTK y con frontend embebido. Extraer y ejecutar con `tar -xzf union-pdf-linux-x86_64.tar.gz && ./union-pdf`. |
 
-            > **Nota técnica sobre los binarios de macOS y Linux:** En entornos UNIX/POSIX (macOS y Linux), `cargo build --release` genera directamente el ejecutable nativo puro (Mach-O y ELF, sin extensión `.exe` ni contenedor `.app`), empaquetando dentro del mismo binario toda la distribución de Angular 22 + Atomic UI y acreditando la compilación multiplataforma limpia desde una única base de código.
+            > **Nota técnica sobre el empaquetado multiplataforma:** En Windows se publica el binario portable PE64 con extensión `.exe`; en macOS (`arm64` y `x86_64`) el binario Mach-O compilado por Cargo se ensambla dentro del paquete de aplicación estándar `union-pdf.app` (`Contents/MacOS/union-pdf`, `Contents/Info.plist`, `Contents/Resources/icon.icns`) y se distribuye comprimido con extensión `.app.tar.gz`; y en Linux el binario ELF se distribuye empaquetado con extensión `.tar.gz` conservando los permisos de ejecución UNIX (`0755`).
           draft: false
           prerelease: false
           files: |

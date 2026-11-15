@@ -190,7 +190,7 @@ export class AppComponent implements OnInit, OnDestroy {
       label: 'Arquitectura y Seguridad',
       value: 'Compilación Multiplataforma CI/CD & Binarios Nativos Autónomos',
       subtext:
-        'Ejecutables generados por cargo build --release en src-tauri/target/release/ y publicados por GitHub Actions en GitHub Releases con firma SHA-256: binario PE64 .exe en Windows (union-pdf-windows-x86_64.exe) y binarios nativos autónomos UNIX sin extensión .app en macOS (union-pdf-macos-arm64 y union-pdf-macos-x86_64, Mach-O) y Linux (union-pdf-linux-x86_64, ELF), con el frontend embebido y privacidad 100% local',
+        'Ejecutables generados por cargo build --release en src-tauri/target/release/ y publicados por GitHub Actions en GitHub Releases con firma SHA-256: binario PE64 .exe en Windows (union-pdf-windows-x86_64.exe), Application Bundle nativo union-pdf.app empaquetado en .app.tar.gz en macOS Apple Silicon/Intel (union-pdf-macos-arm64.app.tar.gz y union-pdf-macos-x86_64.app.tar.gz, Mach-O) y binario nativo autónomo ELF empaquetado en .tar.gz en Linux (union-pdf-linux-x86_64.tar.gz), con el frontend embebido y privacidad 100% local',
       icon: 'fa-solid fa-shield-halved',
       badge: 'Multiplataforma CI/CD',
     },

@@ -1329,7 +1329,7 @@ describe('AppComponent (Unión PDF)', () => {
           correcto: true,
           datos: {
             nombreAplicacion: 'union-pdf',
-            version: '0.5.2',
+            version: '0.5.3',
             entorno: 'desarrollo',
             plataforma: 'windows',
             runtime: 'tauri-v1.5',
@@ -1346,7 +1346,7 @@ describe('AppComponent (Unión PDF)', () => {
       expect(mockDesktopFacade.estaEnModoEscritorio).toHaveBeenCalled();
       expect(mockDesktopFacade.obtenerEstadoSistema).toHaveBeenCalled();
       expect(app.estadoSistema?.runtime).toBe('tauri-v1.5');
-      expect(app.estadoSistema?.version).toBe('0.5.2');
+      expect(app.estadoSistema?.version).toBe('0.5.3');
       expect(mockCdr.markForCheck).toHaveBeenCalled();
     });
 
@@ -1422,10 +1422,10 @@ describe('AppComponent (Unión PDF)', () => {
       expect(dialogText).toContain('Arquitectura y Seguridad');
       expect(dialogText).toContain('Compilación Multiplataforma CI/CD & Binarios Nativos Autónomos');
       expect(dialogText).toContain('union-pdf-windows-x86_64.exe');
-      expect(dialogText).toContain('union-pdf-macos-arm64');
-      expect(dialogText).toContain('union-pdf-macos-x86_64');
-      expect(dialogText).toContain('union-pdf-linux-x86_64');
-      expect(dialogText).toContain('sin extensión .app');
+      expect(dialogText).toContain('union-pdf-macos-arm64.app.tar.gz');
+      expect(dialogText).toContain('union-pdf-macos-x86_64.app.tar.gz');
+      expect(dialogText).toContain('union-pdf-linux-x86_64.tar.gz');
+      expect(dialogText).toContain('union-pdf.app');
       expect(dialogText).toContain('Sistema de Diseño');
       expect(dialogText).toContain('Tauri 1.5 + Rust');
       expect(dialogText).toContain('Angular 22 + Signals');
@@ -1460,7 +1460,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Refleja version y runtime dinamicos desde estadoSistema cuando existe, sin reintroducir pildoras en .editor-header
       app.estadoSistema = {
         nombreAplicacion: 'union-pdf',
-        version: '0.5.2',
+        version: '0.5.3',
         entorno: 'produccion',
         plataforma: 'windows',
         runtime: 'tauri-v1.5',
@@ -1468,7 +1468,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Igual que en produccion (app.component.ts tras obtenerEstadoSistema): el estado se asigna y se marca para chequeo
       fixture.componentRef.injector.get(ChangeDetectorRef).markForCheck();
       fixture.detectChanges();
-      expect(dialogEl?.textContent || '').toContain('v0.5.2');
+      expect(dialogEl?.textContent || '').toContain('v0.5.3');
       expect(dialogEl?.textContent || '').toContain('tauri-v1.5');
       expect(hostEl.querySelector('.header-pill')).toBeNull();
       expect(hostEl.querySelector('.header-pill--desktop')).toBeNull();

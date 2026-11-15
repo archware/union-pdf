@@ -35,7 +35,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 
 1. **Crear tag anotado:**
    ```bash
-   git tag -a v0.5.2 -m "release: union-pdf v0.5.2"
+   git tag -a v0.5.3 -m "release: union-pdf v0.5.3"
    ```
 
 2. **Verificar tag creado:**
@@ -48,7 +48,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 1. **Subir cambios al repositorio:**
    ```bash
    git push origin main
-   git push origin v0.5.2
+   git push origin v0.5.3
    ```
 
 2. **Activar workflow manualmente en GitHub:**
@@ -61,13 +61,13 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 
 1. **Verificar ejecución del workflow:**
    - Confirmar que tanto el job de compuertas (`verificar-compuertas`) como las 4 matrices de compilación (`publicar-release`) terminan en verde en `https://github.com/archware/union-pdf/actions`.
-   - Verificar que los 8 artefactos (4 binarios + 4 firmas `.sha256`) están publicados en `https://github.com/archware/union-pdf/releases`.
+   - Verificar que los 8 artefactos (4 paquetes con extensión + 4 firmas `.sha256`) están publicados en `https://github.com/archware/union-pdf/releases`.
 
-2. **Origen y formato técnico de cada binario compilado:**
+2. **Origen y formato técnico de cada artefacto compilado:**
    - **Windows (`x86_64`):** `src-tauri/target/release/union-pdf.exe` → publicado como `union-pdf-windows-x86_64.exe` (+ `.sha256`). Ejecutable nativo PE64 con extensión `.exe` y frontend Angular embebido.
-   - **macOS Apple Silicon (`arm64`):** `src-tauri/target/aarch64-apple-darwin/release/union-pdf` → publicado como `union-pdf-macos-arm64` (+ `.sha256`). Binario ejecutable nativo autónomo Mach-O 64-bit **sin extensión `.app`** (ejecutable UNIX standalone con frontend embebido; se ejecuta con `chmod +x union-pdf-macos-arm64 && ./union-pdf-macos-arm64`).
-   - **macOS Intel (`x86_64`):** `src-tauri/target/x86_64-apple-darwin/release/union-pdf` → publicado como `union-pdf-macos-x86_64` (+ `.sha256`). Binario ejecutable nativo autónomo Mach-O 64-bit **sin extensión `.app`** (`chmod +x union-pdf-macos-x86_64 && ./union-pdf-macos-x86_64`).
-   - **Linux (`x86_64`):** `src-tauri/target/release/union-pdf` → publicado como `union-pdf-linux-x86_64` (+ `.sha256`). Binario ejecutable nativo autónomo ELF 64-bit **sin extensión** (`chmod +x union-pdf-linux-x86_64 && ./union-pdf-linux-x86_64`).
+   - **macOS Apple Silicon (`arm64`):** `src-tauri/target/aarch64-apple-darwin/release/union-pdf` → empaquetado en `union-pdf.app` y publicado como `union-pdf-macos-arm64.app.tar.gz` (+ `.sha256`). Application Bundle nativo Mach-O 64-bit con extensión `.app.tar.gz` (`Contents/Info.plist`, `Contents/MacOS/union-pdf`, `Contents/Resources/icon.icns` y firma ad-hoc; descomprimir con doble clic o `tar -xzf union-pdf-macos-arm64.app.tar.gz` y abrir `union-pdf.app`).
+   - **macOS Intel (`x86_64`):** `src-tauri/target/x86_64-apple-darwin/release/union-pdf` → empaquetado en `union-pdf.app` y publicado como `union-pdf-macos-x86_64.app.tar.gz` (+ `.sha256`). Application Bundle nativo Mach-O 64-bit con extensión `.app.tar.gz` (`tar -xzf union-pdf-macos-x86_64.app.tar.gz` y abrir `union-pdf.app`).
+   - **Linux (`x86_64`):** `src-tauri/target/release/union-pdf` → empaquetado y publicado como `union-pdf-linux-x86_64.tar.gz` (+ `.sha256`). Archivo comprimido `.tar.gz` que contiene el binario ejecutable nativo autónomo ELF 64-bit `union-pdf` con permisos `0755` (`tar -xzf union-pdf-linux-x86_64.tar.gz && ./union-pdf`).
 
 3. **Validar binarios locales:**
    ```bash
@@ -86,7 +86,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 - Usar comillas dobles para envolver la línea YAML completa
 - Ejemplo correcto:
   ```yaml
-  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.2' }}"
+  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.3' }}"
   ```
 
 ### 5.2 Compilación Fallida

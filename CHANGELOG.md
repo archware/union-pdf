@@ -5,6 +5,11 @@ Todos los cambios importantes en este proyecto se documentarán en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere al [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.3] - 2026-11-14 (ATOMIC-20261113-001)
+
+### Changed
+- **Empaquetado con extensión por sistema operativo en `.github/workflows/release.yml` e incremento de versión a `0.5.3` (`package.json`, `src-tauri/Cargo.toml`, `Cargo.lock`, `src-tauri/tauri.conf.json` con hash canónico actualizado en `.agent/tauri.conf.json.sha256`, `frontend/src/app/app.component.{ts,html,spec.ts}`, `README.md` y `docs/RELEASE_PROCESS.md`):** actualizado el pipeline de publicación en GitHub Actions para que, además del ejecutable `union-pdf-windows-x86_64.exe` en Windows, en macOS (`aarch64` Apple Silicon y `x86_64` Intel) se construya el Application Bundle estándar `union-pdf.app` (`Contents/Info.plist` validado con `plutil -lint`, `Contents/PkgInfo`, `Contents/MacOS/union-pdf` con permisos `0755`, `Contents/Resources/icon.icns` y firma ad-hoc `codesign --force --deep --sign -`) y se publique con extensión `.app.tar.gz` (`union-pdf-macos-arm64.app.tar.gz` y `union-pdf-macos-x86_64.app.tar.gz`), y en Linux (`x86_64`) el binario ELF `union-pdf` se empaquete con permisos `0755` y se publique con extensión `.tar.gz` (`union-pdf-linux-x86_64.tar.gz`), todos con su correspondiente archivo `.sha256`.
+
 ## [0.5.2] - 2026-11-14 (ATOMIC-20261113-001)
 
 ### Changed
