@@ -139,60 +139,40 @@ export class AppComponent implements OnInit, OnDestroy {
 
   readonly aboutCredits: AboutCreditItem[] = [
     {
+      label: 'SSIT Consulting',
+      value: 'SSIT Consulting · Firma Consultora Oficial',
+      bannerImageUrl: 'assets/artefactos/ssit-consulting-cert.jpg',
+      badge: 'Firma Consultora',
+    },
+    {
       label: 'Autoría Principal',
-      value: 'Ing. Havel CONTRERAS TAPAHUASCO (COTAHA · @archware)',
-      subtext:
-        'Arquitecto de Software | DIY AI Lab | Creador de Ecosistemas: dirección técnica corporativa enfocada en demostrar que el ecosistema propio de Backend (Artifact Mangosta) y Frontend (Artifact Barracuda + Atomic UI) genera aplicaciones de escritorio Multi-Runtime (Rust/Tauri, Go/Wails, Python/PyWebView) de calidad empresarial',
-      icon: 'fa-solid fa-user-shield',
-      imageUrl: 'assets/doctrinas/ssit-emblem.jpg',
-      bannerImageUrl: 'assets/doctrinas/merch-desk-setup.jpg',
-      badge: 'Marca Personal',
+      value: 'Ing. Havel Contreras T. · COTAHA (@archware)',
+      bannerImageUrl: 'assets/artefactos/archware-signature-cert.jpg',
+      badge: 'Firma de Autor',
     },
     {
       label: 'Artifact Mangosta',
-      value: 'Artifact Mangosta — DDD, Arquitectura Hexagonal & CQRS Estricto',
-      subtext:
-        'Artefacto corporativo de ingeniería Backend (Rust/Tauri, C#/.NET, Java) que garantiza solidez empresarial: aislamiento de dominio, frontera IPC/HTTP determinista (DesktopFacadeService + RespuestaSistemaV1), motor nativo PDF (lopdf/rfd) y compilación limpia sin deuda técnica',
-      icon: 'fa-solid fa-diagram-project',
-      imageUrl: 'assets/doctrinas/doctrina-mangosta-icon.jpg',
-      bannerImageUrl: 'assets/doctrinas/doctrina-mangosta-banner.jpg',
+      value: 'Arquitectura Hexagonal · DDD · CQRS',
+      bannerImageUrl: 'assets/artefactos/artifact-mangosta-cert.jpg',
       badge: 'Backend Artifact',
     },
     {
       label: 'Artifact Barracuda',
-      value: 'Artifact Barracuda — Chasis Frontend Reactivo con Signals',
-      subtext:
-        'Artefacto corporativo de ingeniería Frontend en Angular 22 + Signals y OnPush que entrega interfaces de alta gama: control flow nativo, procesamiento gráfico en memoria (PDF.js + pdf-lib), accesibilidad estricta y calidad respaldada por más de 325 pruebas automatizadas',
-      icon: 'fa-solid fa-bolt',
-      imageUrl: 'assets/doctrinas/doctrina-barracuda-icon.jpg',
-      bannerImageUrl: 'assets/doctrinas/doctrina-barracuda-banner.jpg',
+      value: 'Angular 22 · Signals · Chasis Reactivo',
+      bannerImageUrl: 'assets/artefactos/artifact-barracuda-cert.jpg',
       badge: 'Frontend Artifact',
     },
     {
-      label: 'Sistema de Diseño',
-      value: 'Atomic UI (@atomic-ui/core v5.22.0) — Signals & OnPush',
-      subtext:
-        'Sistema de diseño corporativo de autor gobernado por pin criptográfico (ADR-017): tokens semánticos puros, desplazamiento controlado (app-scroll-overlay), cero CSS ad-hoc y acabado visual institucional uniforme',
-      icon: 'fa-solid fa-cubes',
-      imageUrl: 'assets/doctrinas/barracuda-mangosta-duality-icon.jpg',
-      bannerImageUrl: 'assets/doctrinas/merch-kit-ejecutivo.jpg',
+      label: 'Atomic UI',
+      value: '@atomic-ui/core v5.22.0 · Design System',
+      bannerImageUrl: 'assets/artefactos/atomic-ui-cert.jpg',
       badge: 'ADN Visual',
     },
     {
-      label: 'DIY AI Lab & Co-Ingeniería IA',
-      value: 'Laboratorio IA Bare-Metal Local & Orquestación de Agentes',
-      subtext:
-        'Infraestructura corporativa privada en servidor dedicado Ubuntu Linux con GPU NVIDIA Tesla V100 (32 GB VRAM), inferencia 100% local (Qwen3-Coder / llama.cpp), sistemas RAG (SQLite FTS5), protocolos MCP/ACP y auditoría por compuertas deterministas',
-      icon: 'fa-solid fa-wand-magic-sparkles',
-      badge: 'DIY AI Lab',
-    },
-    {
-      label: 'Arquitectura y Seguridad',
-      value: 'Compilación Multiplataforma CI/CD & Binarios Nativos Autónomos',
-      subtext:
-        'Ejecutables generados por cargo build --release en src-tauri/target/release/ y publicados por GitHub Actions en GitHub Releases con firma SHA-256: binario PE64 .exe en Windows (union-pdf-windows-x86_64.exe), Application Bundle nativo union-pdf.app empaquetado en .app.tar.gz en macOS Apple Silicon/Intel (union-pdf-macos-arm64.app.tar.gz y union-pdf-macos-x86_64.app.tar.gz, Mach-O) y binario nativo autónomo ELF empaquetado en .tar.gz en Linux (union-pdf-linux-x86_64.tar.gz), con el frontend embebido y privacidad 100% local',
-      icon: 'fa-solid fa-shield-halved',
-      badge: 'Multiplataforma CI/CD',
+      label: 'DIY AI Lab',
+      value: 'Co-Ingeniería Bare-Metal · Multi-Runtime',
+      bannerImageUrl: 'assets/artefactos/diy-ai-lab-cert.jpg',
+      badge: 'Sello Local IA',
     },
   ];
 
@@ -202,6 +182,7 @@ export class AppComponent implements OnInit, OnDestroy {
     { label: 'Atomic UI v5.22.0', icon: 'fa-solid fa-layer-group', variant: 'info' },
     { label: 'Artifact Mangosta', icon: 'fa-solid fa-diagram-project', variant: 'primary' },
     { label: 'Artifact Barracuda', icon: 'fa-solid fa-bolt', variant: 'secondary' },
+    { label: 'SSIT Consulting', icon: 'fa-solid fa-building-shield', variant: 'info' },
     { label: 'PDF.js + pdf-lib', icon: 'fa-solid fa-file-pdf', variant: 'warning' },
     { label: 'DIY AI Lab · 100% Local', icon: 'fa-solid fa-lock', variant: 'success' },
   ];

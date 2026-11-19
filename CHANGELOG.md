@@ -5,6 +5,14 @@ Todos los cambios importantes en este proyecto se documentarán en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere al [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Sin publicar] - 2026-11-18 (ATOMIC-20261118-002 / PDFTOOL-20261018-001)
+
+### Changed
+- **Rediseño de artefactos y SSIT Consulting como certificados y firmas profesionales en «Acerca de Unión PDF» (`frontend/src/assets/artefactos/*.jpg`, `frontend/src/app/shared/ui/organisms/about-dialog/*`, `frontend/docs/atomic-provenance.json`, `frontend/src/app/app.component.{ts,html,spec.ts}`):**
+  - Sincronizada desde `-Atomic-UI` (`ATOMIC-20261118-002`) la nueva colección de 9 imágenes de firmas y sellos de marca sin rúbrica manuscrita y con identidad cromática diferenciada por artefacto (`ssit-consulting-emblem.jpg` y `ssit-consulting-cert.jpg` en Azul Zafiro, `archware-signature-cert.jpg` en Índigo Arquitectónico, `artifact-mangosta-cert.jpg` y `artifact-mangosta-seal.jpg` en Verde Esmeralda, `artifact-barracuda-cert.jpg` y `artifact-barracuda-seal.jpg` en Cian Oceánico, `atomic-ui-cert.jpg` en Púrpura Amatista y `diy-ai-lab-cert.jpg` en Carmesí Corporativo) bajo `frontend/src/assets/artefactos/`.
+  - Sincronizada la evolución aditiva de `AboutDialogComponent` (`creditsTitle` configurable con valor por defecto `'Créditos del Sistema'` y variante `.about-credit-item--seal` para placas de certificados/firmas sin `subtext`, manteniendo el CSS compilado por debajo del presupuesto `6.00 kB`) y actualizadas sus huellas `localSha256` en `frontend/docs/atomic-provenance.json`.
+  - Simplificado `<app-about-dialog>` en `AppComponent` (`app.component.{ts,html,spec.ts}`) eliminando los párrafos descriptivos extensos (`appDescription` y `subtext`) a favor de 6 placas concisas de certificados y firmas (`SSIT Consulting`, `Autoría Principal`, `Artifact Mangosta`, `Artifact Barracuda`, `Atomic UI` y `DIY AI Lab`) con emblema e identidad de **SSIT Consulting**.
+
 ## [0.5.3] - 2026-11-14 (ATOMIC-20261113-001)
 
 ### Changed

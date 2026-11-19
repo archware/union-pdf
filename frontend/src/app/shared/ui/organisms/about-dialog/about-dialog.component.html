@@ -2,7 +2,7 @@
   <div class="about-surface">
     <!-- Cabecera de identidad de la aplicacion -->
     <header class="about-hero">
-      <div class="about-box about-hero__emblem" aria-hidden="true">
+      <div class="about-box about-emblem" aria-hidden="true">
         @if (logoImageUrl()) {
           <img class="about-hero__logo-img" [src]="logoImageUrl()" [alt]="appName()" />
         } @else {
@@ -12,7 +12,7 @@
 
       <div class="about-col about-hero__identity">
         <div class="about-between about-hero__title-row">
-          <h4 class="about-hero__app-name">{{ appName() }}</h4>
+          <h4 class="about-heading about-title">{{ appName() }}</h4>
           <div class="about-row about-hero__badges">
             @if (version()) {
               <app-chip variant="primary" size="sm">{{ version() }}</app-chip>
@@ -27,11 +27,11 @@
         </div>
 
         @if (appSubtitle()) {
-          <p class="about-hero__subtitle">{{ appSubtitle() }}</p>
+          <p class="about-sub">{{ appSubtitle() }}</p>
         }
 
         @if (appDescription()) {
-          <p class="about-hero__description">{{ appDescription() }}</p>
+          <p class="about-desc">{{ appDescription() }}</p>
         }
       </div>
     </header>
@@ -39,7 +39,7 @@
     <!-- Bloque destacado de autoria principal y co-ingenieria IA -->
     <section class="about-author-card" aria-label="Autoría y arquitectura del software">
       <div class="about-row about-author-card__main">
-        <div class="about-box about-author-card__avatar" aria-hidden="true">
+        <div class="about-box about-avatar" aria-hidden="true">
           <i class="fa-solid fa-user-tie"></i>
         </div>
 
@@ -76,28 +76,32 @@
       </div>
 
       @if (aiDisclosure()) {
-        <div class="about-ai-banner" role="note" aria-label="Declaración de co-ingeniería con IA">
-          <div class="about-ai-banner__icon" aria-hidden="true">
+        <div class="about-ai" role="note" aria-label="Declaración de co-ingeniería con IA">
+          <div class="about-ai__ico" aria-hidden="true">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
           </div>
-          <p class="about-ai-banner__text">{{ aiDisclosure() }}</p>
+          <p class="about-ai__txt">{{ aiDisclosure() }}</p>
         </div>
       }
     </section>
 
-    <!-- Lista estructurada de creditos -->
+    <!-- Lista estructurada de creditos / certificados y firmas -->
     @if (credits().length > 0) {
-      <section class="about-section" aria-label="Créditos y reconocimientos">
+      <section class="about-section" [attr.aria-label]="creditsTitle()">
         <h5 class="about-eyebrow about-section__title">
           <i class="fa-solid fa-award" aria-hidden="true"></i>
-          <span>Créditos del Sistema</span>
+          <span>{{ creditsTitle() }}</span>
         </h5>
 
         <div class="about-credits-grid" role="list">
           @for (credit of credits(); track credit.label) {
-            <div class="about-credit-item" role="listitem">
+            <div
+              class="about-credit-item"
+              [class.about-credit-item--seal]="!!credit.bannerImageUrl && !credit.subtext"
+              role="listitem"
+            >
               @if (credit.bannerImageUrl) {
-                <img class="about-credit-item__banner" [src]="credit.bannerImageUrl" [alt]="credit.value" />
+                <img class="about-credit-item__banner" [src]="credit.bannerImageUrl" [alt]="credit.value || credit.label" />
               }
               <div class="about-row about-credit-item__top">
                 @if (credit.imageUrl) {
@@ -116,12 +120,16 @@
                   }
                 </div>
               </div>
-              <div class="about-col about-credit-item__body">
-                <strong class="about-credit-item__value">{{ credit.value }}</strong>
-                @if (credit.subtext) {
-                  <span class="about-meta about-credit-item__subtext">{{ credit.subtext }}</span>
-                }
-              </div>
+              @if (credit.value || credit.subtext) {
+                <div class="about-col about-credit-item__body">
+                  @if (credit.value) {
+                    <strong class="about-credit-item__value">{{ credit.value }}</strong>
+                  }
+                  @if (credit.subtext) {
+                    <span class="about-meta about-credit-item__subtext">{{ credit.subtext }}</span>
+                  }
+                </div>
+              }
             </div>
           }
         </div>
@@ -141,7 +149,7 @@
             <div class="about-tech-list__item" role="listitem">
               <app-chip [variant]="resolveChipVariant(tech.variant)" size="sm">
                 @if (tech.icon) {
-                  <i [class]="resolveIconClass(tech.icon)" class="about-tech-chip__icon" aria-hidden="true"></i>
+                  <i [class]="resolveIconClass(tech.icon)" class="about-chip-ico" aria-hidden="true"></i>
                 }
                 <span>{{ tech.label }}</span>
               </app-chip>
@@ -179,10 +187,10 @@
     }
 
     <!-- Pie de derechos de autor -->
-    @if (copyrightText()) {
-      <footer class="about-copyright">
+    @if (normalizedCopyrightText) {
+      <footer class="about-row about-copyright">
         <i class="fa-regular fa-copyright" aria-hidden="true"></i>
-        <span>{{ copyrightText() }}</span>
+        <span>{{ normalizedCopyrightText }}</span>
       </footer>
     }
   </div>
@@ -192,19 +200,19 @@
   @case ('card') {
     <article
       class="about-card-surface"
-      [class.about-card-surface--sm]="size() === 'sm'"
-      [class.about-card-surface--md]="size() === 'md'"
-      [class.about-card-surface--lg]="size() === 'lg'"
+      [class.about-sz-sm]="size() === 'sm'"
+      [class.about-sz-md]="size() === 'md'"
+      [class.about-sz-lg]="size() === 'lg'"
       [attr.aria-label]="dialogTitle()"
     >
       <header class="about-card-surface__header">
         <div class="about-row about-card-surface__title-group">
-          <i class="fa-solid fa-circle-info about-card-surface__icon" aria-hidden="true"></i>
+          <i class="fa-solid fa-circle-info about-hdr-ico" aria-hidden="true"></i>
           <h3 class="about-heading about-card-surface__title">{{ dialogTitle() }}</h3>
         </div>
         <app-chip variant="outline" size="sm">Vista en línea</app-chip>
       </header>
-      <div class="about-card-surface__body">
+      <div class="about-body">
         <ng-container [ngTemplateOutlet]="aboutBody" />
       </div>
     </article>
@@ -212,13 +220,13 @@
 
   @case ('popup') {
     @if (open()) {
-      <div class="about-popup-overlay" (pointerdown)="onBackdropPointerDown($event)">
+      <div class="about-overlay" (pointerdown)="onBackdropPointerDown($event)">
         <div
           #popupDialog
           class="about-card-surface about-popup"
-          [class.about-card-surface--sm]="size() === 'sm'"
-          [class.about-card-surface--md]="size() === 'md'"
-          [class.about-card-surface--lg]="size() === 'lg'"
+          [class.about-sz-sm]="size() === 'sm'"
+          [class.about-sz-md]="size() === 'md'"
+          [class.about-sz-lg]="size() === 'lg'"
           role="dialog"
           aria-modal="true"
           tabindex="-1"
@@ -235,7 +243,7 @@
             (clicked)="onClose()"
           />
 
-          <header class="about-card-surface__header">
+          <header class="about-card-surface__header about-popup__hdr">
             <h3 class="about-heading about-card-surface__title" [id]="popupTitleId">{{ dialogTitle() }}</h3>
           </header>
 
@@ -244,7 +252,7 @@
             [skipTableDetection]="true"
             [disableHorizontal]="true"
           >
-            <div class="about-card-surface__body">
+            <div class="about-body">
               <ng-container [ngTemplateOutlet]="aboutBody" />
             </div>
           </app-scroll-overlay>

@@ -1404,38 +1404,54 @@ describe('AppComponent (Unión PDF)', () => {
       const dialogEl = hostEl.querySelector('app-about-dialog [role="dialog"]') as HTMLElement | null;
       expect(dialogEl).not.toBeNull();
 
+      /* Actualizado por ATOMIC-20261118-002: por instrucción expresa del dueño se eliminan las descripciones extensas
+         (appDescription y subtext) del diálogo Acerca de, presentando los artefactos y SSIT Consulting como placas
+         de certificados y firmas concisas (.about-credit-item--seal) con normalizedCopyrightText sin duplicar "©". */
       const dialogText = dialogEl?.textContent || '';
       expect(dialogText).toContain('Unión PDF');
       expect(dialogText).toContain('Ing. Havel CONTRERAS TAPAHUASCO');
       expect(dialogText).toContain('@archware');
       expect(dialogText).toContain('COTAHA');
+      expect(dialogText).toContain('SSIT Consulting');
       expect(dialogText).toContain('DIY AI Lab');
       expect(dialogText).toContain('Creador de Ecosistemas');
       expect(dialogText).toContain('Desarrollado en co-ingeniería con IA Agéntica');
+      expect(dialogText).toContain('Certificados y Firmas de Artefactos');
+      expect(dialogText).toContain('Firma Consultora');
       expect(dialogText).toContain('Autoría Principal');
-      expect(dialogText).toContain('Marca Personal');
+      expect(dialogText).toContain('Firma de Autor');
       expect(dialogText).toContain('Artifact Mangosta');
-      expect(dialogText).toContain('Artifact Mangosta — DDD, Arquitectura Hexagonal & CQRS Estricto');
       expect(dialogText).toContain('Artifact Barracuda');
-      expect(dialogText).toContain('Artifact Barracuda — Chasis Frontend Reactivo con Signals');
-      expect(dialogText).toContain('DIY AI Lab & Co-Ingeniería IA');
-      expect(dialogText).toContain('Arquitectura y Seguridad');
-      expect(dialogText).toContain('Compilación Multiplataforma CI/CD & Binarios Nativos Autónomos');
-      expect(dialogText).toContain('union-pdf-windows-x86_64.exe');
-      expect(dialogText).toContain('union-pdf-macos-arm64.app.tar.gz');
-      expect(dialogText).toContain('union-pdf-macos-x86_64.app.tar.gz');
-      expect(dialogText).toContain('union-pdf-linux-x86_64.tar.gz');
-      expect(dialogText).toContain('union-pdf.app');
-      expect(dialogText).toContain('Sistema de Diseño');
+      expect(dialogText).toContain('Atomic UI');
       expect(dialogText).toContain('Tauri 1.5 + Rust');
       expect(dialogText).toContain('Angular 22 + Signals');
       expect(dialogText).toContain('Atomic UI v5.22.0');
+      expect(dialogText).toContain('PDF.js + pdf-lib');
       expect(dialogText).toContain('Releases y Ejecutables Compilados (Unión PDF)');
       expect(dialogText).toContain('Pipeline CI/CD Multiplataforma (GitHub Actions)');
       expect(dialogText).toContain('LinkedIn — Ing. Havel Contreras');
       expect(dialogText).toContain('Repositorio Atomic UI');
       expect(dialogText).toContain('Contacto (havel363@gmail.com)');
-      expect(dialogText).toContain('© 2026 Ing. Havel CONTRERAS TAPAHUASCO (COTAHA · @archware)');
+      expect(dialogText).toContain('2026 Ing. Havel CONTRERAS TAPAHUASCO (COTAHA · @archware) · SSIT Consulting');
+
+      // Sin párrafos descriptivos extensos: presentación limpia tipo certificados/firmas
+      expect(dialogEl?.querySelector('.about-desc')).toBeNull();
+      expect(dialogEl?.querySelectorAll('.about-credit-item__subtext').length).toBe(0);
+      expect(dialogEl?.querySelectorAll('.about-credit-item--seal').length).toBe(6);
+      expect(dialogEl?.querySelector('.about-hero__logo-img')?.getAttribute('src')).toBe(
+        'assets/artefactos/ssit-consulting-emblem.jpg'
+      );
+      const sealBanners = Array.from(
+        dialogEl?.querySelectorAll<HTMLImageElement>('.about-credit-item__banner') || []
+      ).map((img) => img.getAttribute('src'));
+      expect(sealBanners).toEqual([
+        'assets/artefactos/ssit-consulting-cert.jpg',
+        'assets/artefactos/archware-signature-cert.jpg',
+        'assets/artefactos/artifact-mangosta-cert.jpg',
+        'assets/artefactos/artifact-barracuda-cert.jpg',
+        'assets/artefactos/atomic-ui-cert.jpg',
+        'assets/artefactos/diy-ai-lab-cert.jpg',
+      ]);
 
       const githubLink = dialogEl?.querySelector('a.about-github-pill') as HTMLAnchorElement | null;
       expect(githubLink?.getAttribute('href')).toBe('https://github.com/archware');

@@ -140,7 +140,10 @@ export class AboutDialogComponent implements OnDestroy {
     'Desarrollado en co-ingeniería con IA Agéntica bajo arquitectura gobernada Atomic UI.'
   );
 
-  /** Lista estructurada de créditos, autorías y reconocimientos técnicos. */
+  /** Título de la sección de créditos, certificados o firmas de artefactos. */
+  readonly creditsTitle = input<string>('Créditos del Sistema');
+
+  /** Lista estructurada de créditos, certificados, firmas y reconocimientos técnicos. */
   readonly credits = input<AboutCreditItem[]>([]);
 
   /** Colección de insignias del stack tecnológico del producto. */
@@ -188,6 +191,10 @@ export class AboutDialogComponent implements OnDestroy {
 
   get resolvedLogoIcon(): string {
     return normalizeFontAwesomeIconClass(this.logoIcon() || 'fa-solid fa-layer-group');
+  }
+
+  get normalizedCopyrightText(): string {
+    return this.copyrightText().trim().replace(/^(?:©|\(c\))\s*/i, '');
   }
 
   resolveIconClass(icon?: string, fallback = 'fa-solid fa-circle-check'): string {

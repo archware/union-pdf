@@ -37,7 +37,7 @@ describe('AboutDialogComponent', () => {
     },
     {
       label: 'Sistema de Diseño',
-      value: 'Atomic UI (@atomic-ui/core v5.22.0) — Signals & OnPush',
+      value: 'Atomic UI (@atomic-ui/core v5.23.1) — Signals & OnPush',
       subtext:
         'Librería de autor con tokens semánticos puros, desplazamiento gobernado y fidelidad visual de grado empresarial',
       icon: 'fa-solid fa-cubes',
@@ -64,7 +64,7 @@ describe('AboutDialogComponent', () => {
   const sampleTechStack: AboutTechBadge[] = [
     { label: 'Tauri 1.5 + Rust', icon: 'fa-solid fa-gears', variant: 'primary' },
     { label: 'Angular 22 + Signals', icon: 'fa-brands fa-angular', variant: 'secondary' },
-    { label: 'Atomic UI v5.22.0', icon: 'fa-solid fa-layer-group', variant: 'info' },
+    { label: 'Atomic UI v5.23.1', icon: 'fa-solid fa-layer-group', variant: 'info' },
     { label: 'Artifact Mangosta', icon: 'fa-solid fa-diagram-project', variant: 'primary' },
     { label: 'Artifact Barracuda', icon: 'fa-solid fa-bolt', variant: 'secondary' },
     { label: 'PDF.js + pdf-lib', icon: 'fa-solid fa-file-pdf', variant: 'warning' },
@@ -133,7 +133,7 @@ describe('AboutDialogComponent', () => {
     expect(host.textContent).toContain('Artifact Barracuda');
     expect(host.textContent).toContain('Tauri 1.5 + Rust');
     expect(host.textContent).toContain('Angular 22 + Signals');
-    expect(host.textContent).toContain('Atomic UI v5.22.0');
+    expect(host.textContent).toContain('Atomic UI v5.23.1');
     expect(host.textContent).toContain('Repositorio Atomic UI');
 
     const githubLink = host.querySelector<HTMLAnchorElement>('a.about-github-pill');
@@ -486,5 +486,163 @@ describe('AboutDialogComponent', () => {
     expect(scrollStyle.flexDirection).toBe('column');
     expect(scrollStyle.overflow === 'hidden' || scrollStyle.overflowY === 'hidden').toBe(true);
     expect(getComputedStyle(popupFooter!).flexShrink).toBe('0');
+  });
+
+  it('debe normalizar el prefijo de copyright para evitar duplicar el símbolo y centrar el encabezado del popup', () => {
+    const host = fixture.nativeElement as HTMLElement;
+
+    fixture.componentRef.setInput('variant', 'card');
+    fixture.componentRef.setInput('copyrightText', '© 2026 Ing. Havel CONTRERAS TAPAHUASCO (@archware)');
+    fixture.detectChanges();
+
+    const copyrightSpan = host.querySelector<HTMLElement>('.about-copyright span');
+    expect(copyrightSpan?.textContent?.trim()).toBe(
+      '2026 Ing. Havel CONTRERAS TAPAHUASCO (@archware)'
+    );
+
+    fixture.componentRef.setInput('copyrightText', '(c) 2026 SSIT CONSULTING E.I.R.L.');
+    fixture.detectChanges();
+    expect(host.querySelector<HTMLElement>('.about-copyright span')?.textContent?.trim()).toBe(
+      '2026 SSIT CONSULTING E.I.R.L.'
+    );
+
+    fixture.componentRef.setInput('variant', 'popup');
+    fixture.componentRef.setInput('open', true);
+    fixture.detectChanges();
+
+    const popupHeader = host.querySelector<HTMLElement>('.about-popup .about-card-surface__header');
+    expect(popupHeader).not.toBeNull();
+    expect(getComputedStyle(popupHeader!).justifyContent).toBe('center');
+  });
+
+  it('debe presentar certificados y firmas de artefactos (incluido SSIT Consulting) con creditsTitle personalizado y acabado .about-credit-item--seal sin descripciones subtext en temas light, dark y brand-dark', () => {
+    const previousTheme = document.documentElement.getAttribute('data-theme');
+    const host = fixture.nativeElement as HTMLElement;
+    const certificateSeals: AboutCreditItem[] = [
+      {
+        label: 'SSIT Consulting',
+        value: 'SSIT Consulting · Firma Consultora Oficial',
+        bannerImageUrl: 'assets/artefactos/ssit-consulting-cert.jpg',
+        badge: 'Firma Consultora',
+      },
+      {
+        label: 'Autoría Principal',
+        value: 'Ing. Havel Contreras T. · COTAHA (@archware)',
+        bannerImageUrl: 'assets/artefactos/archware-signature-cert.jpg',
+        badge: 'Firma de Autor',
+      },
+      {
+        label: 'Artifact Mangosta',
+        value: 'Arquitectura Hexagonal · DDD · CQRS',
+        bannerImageUrl: 'assets/artefactos/artifact-mangosta-cert.jpg',
+        badge: 'Backend Artifact',
+      },
+      {
+        label: 'Artifact Barracuda',
+        value: 'Angular 22 · Signals · Chasis Reactivo',
+        bannerImageUrl: 'assets/artefactos/artifact-barracuda-cert.jpg',
+        badge: 'Frontend Artifact',
+      },
+      {
+        label: 'Atomic UI',
+        value: '@atomic-ui/core · Design System',
+        bannerImageUrl: 'assets/artefactos/atomic-ui-cert.jpg',
+        badge: 'ADN Visual',
+      },
+      {
+        label: 'DIY AI Lab',
+        value: 'Co-Ingeniería Bare-Metal · Multi-Runtime',
+        bannerImageUrl: 'assets/artefactos/diy-ai-lab-cert.jpg',
+        badge: 'Sello Local IA',
+      },
+    ];
+
+    try {
+      fixture.componentRef.setInput('variant', 'card');
+      fixture.componentRef.setInput('size', 'lg');
+      fixture.componentRef.setInput('logoImageUrl', 'assets/artefactos/ssit-consulting-emblem.jpg');
+      fixture.componentRef.setInput('appDescription', '');
+      fixture.componentRef.setInput('creditsTitle', 'Certificados y Firmas de Artefactos');
+      fixture.componentRef.setInput('credits', certificateSeals);
+      fixture.detectChanges();
+
+      expect(host.querySelector('.about-desc')).toBeNull();
+      expect(host.querySelector('.about-section__title span')?.textContent?.trim()).toBe(
+        'Certificados y Firmas de Artefactos'
+      );
+      expect(host.querySelector('.about-hero__logo-img')?.getAttribute('src')).toBe(
+        'assets/artefactos/ssit-consulting-emblem.jpg'
+      );
+
+      for (const theme of ['light', 'dark', 'brand-dark'] as const) {
+        document.documentElement.setAttribute('data-theme', theme);
+
+        for (const [widthPx, sizeMode] of [
+          [832, 'lg'],
+          [640, 'md'],
+          [360, 'sm'],
+        ] as const) {
+          host.style.width = `${widthPx}px`;
+          fixture.componentRef.setInput('size', sizeMode);
+          fixture.detectChanges();
+
+          const cardSurface = host.querySelector<HTMLElement>('.about-card-surface')!;
+          const surfaceRect = cardSurface.getBoundingClientRect();
+          const items = Array.from(host.querySelectorAll<HTMLElement>('.about-credit-item--seal'));
+          expect(items.length).toBe(6);
+
+          for (const item of items) {
+            const itemRect = item.getBoundingClientRect();
+            const bannerEl = item.querySelector<HTMLImageElement>('.about-credit-item__banner')!;
+            const bannerRect = bannerEl.getBoundingClientRect();
+            expect(itemRect.right).toBeLessThanOrEqual(surfaceRect.right + 1);
+            expect(bannerRect.right).toBeLessThanOrEqual(itemRect.right + 1);
+            expect(item.scrollWidth).toBeLessThanOrEqual(item.clientWidth + 1);
+
+            const sealStyle = getComputedStyle(item);
+            expect(
+              sealStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' ||
+                sealStyle.getPropertyValue('background').includes('--surface-elevated')
+            ).toBe(true);
+          }
+
+          if (widthPx === 832) {
+            expect(Math.abs(items[0].getBoundingClientRect().top - items[1].getBoundingClientRect().top)).toBeLessThanOrEqual(2);
+            expect(Math.abs(items[1].getBoundingClientRect().top - items[2].getBoundingClientRect().top)).toBeLessThanOrEqual(2);
+            expect(Math.abs(items[3].getBoundingClientRect().top - items[4].getBoundingClientRect().top)).toBeLessThanOrEqual(2);
+            expect(Math.abs(items[4].getBoundingClientRect().top - items[5].getBoundingClientRect().top)).toBeLessThanOrEqual(2);
+          } else if (widthPx === 640) {
+            expect(Math.abs(items[0].getBoundingClientRect().top - items[1].getBoundingClientRect().top)).toBeLessThanOrEqual(2);
+            expect(Math.abs(items[2].getBoundingClientRect().top - items[3].getBoundingClientRect().top)).toBeLessThanOrEqual(2);
+            expect(Math.abs(items[4].getBoundingClientRect().top - items[5].getBoundingClientRect().top)).toBeLessThanOrEqual(2);
+          }
+        }
+      }
+
+      expect(host.querySelectorAll('.about-credit-item__subtext').length).toBe(0);
+      expect(host.querySelectorAll('.about-credit-item__icon').length).toBe(0);
+      expect(host.textContent).toContain('SSIT Consulting');
+
+      // Si un ítem incluye subtext descriptivo, conserva el modo tarjeta estándar (sin --seal)
+      fixture.componentRef.setInput('credits', [
+        ...certificateSeals.slice(0, 1),
+        {
+          label: 'Nota con descripción',
+          value: 'Ítem descriptivo',
+          subtext: 'Texto adicional opcional',
+          bannerImageUrl: 'assets/artefactos/atomic-ui-cert.jpg',
+        },
+      ]);
+      fixture.detectChanges();
+      expect(host.querySelectorAll('.about-credit-item--seal').length).toBe(1);
+      expect(host.querySelectorAll('.about-credit-item__subtext').length).toBe(1);
+    } finally {
+      host.style.width = '';
+      if (previousTheme === null) {
+        document.documentElement.removeAttribute('data-theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', previousTheme);
+      }
+    }
   });
 });

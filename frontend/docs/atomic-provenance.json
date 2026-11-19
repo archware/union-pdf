@@ -1411,27 +1411,27 @@
       "local": "src/app/shared/ui/organisms/about-dialog",
       "atomic": "src/app/shared/ui/organisms/about-dialog",
       "mode": "adapted",
-      "justification": "Adopción sincronizada de soporte para iconos e ilustraciones de doctrina (imageUrl y bannerImageUrl en AboutCreditItem) y cobertura del emblema hero.",
+      "justification": "Adopción sincronizada de soporte para placas de certificados/firmas (creditsTitle, .about-credit-item--seal, bannerImageUrl e imageUrl) y cobertura del emblema hero.",
       "decisionRecord": "docs/decisions/ADR-017-sincronizacion-previa-atomic-5-22-0.md",
       "adaptationSnapshot": [
         {
           "file": "about-dialog.component.css",
-          "localSha256": "d21c5b9d1c6312ca66f3e41b0f88e79fb772017a644a1e5a1219e0f0345f5a4c",
+          "localSha256": "40f955fbbeb048eb9428257c6260ce667e4e563bf414d9062af4b0b9d0776dab",
           "atomicSha256": "fb31d8d4502b254bfb89b545f9ad11a5f3ddbeafb97f571eac30759324a9dcdc"
         },
         {
           "file": "about-dialog.component.html",
-          "localSha256": "b91354f1899502d6f62e41de4f6bc68cfb1df8053599615b84347312e7a17243",
+          "localSha256": "aad76dca59c4b47787fca8ee5833d3dfd60653af4f28793be54833bc4956ea96",
           "atomicSha256": "2d46671ac2d0ec96b6774a47d965b0986b6f5f07b45218b3d4fc46e4d99a9207"
         },
         {
           "file": "about-dialog.component.spec.ts",
-          "localSha256": "7b329d4e2d3341a5e57c8ca1dd8806c12c2777a4f6e24407512362093752b5af",
+          "localSha256": "89754568d43f71f87814f385b76f9d8e434a88cfa13b802a5f2f787286c8f407",
           "atomicSha256": "34bf26199938bfbe72b8c673831ddc2f50291a3dd703ec9e5412378eda8092c6"
         },
         {
           "file": "about-dialog.component.ts",
-          "localSha256": "72ba072a652c7d1339c52b888c5274932be89e9995e0121a32738a23f87e023f",
+          "localSha256": "c05585b50fc955c10ac994e2236255eeb0d31ebad9fc8407d5e5c7415a797cf1",
           "atomicSha256": "11fc0dd576baf42ea87b418d23584c25ce33aa4191ae6f9b81c49d1cae8af07e"
         }
       ]
