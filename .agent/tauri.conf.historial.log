@@ -2,3 +2,4 @@
 2026-11-09T16:51:10.123Z | 2ea9f7e23107b42f670c8d2bd0e6a8898e59616388357368e55725a0e91c3068 | Renombrado oficial autorizado por el usuario a Union PDF (union-pdf) e iconos multiplataforma Windows/macOS/Linux
 2026-11-14T23:26:30.814Z | a09c7202c2d3c81abdfe0c46154a3a642309688fd03d55bf0d775ba984f93807 | Incrementar version a 0.5.2 para release multiplataforma
 2026-11-15T02:24:56.609Z | f1da2a4765b19d0fa5d0c3314e575f73da2220718464ebc5cd1267969ab388ba | Incrementar version a 0.5.3 para empaquetado .app.tar.gz y .tar.gz en release multiplataforma
+2026-11-20T03:31:50.854Z | e0abfe5bd52a0ab946adf439c70a8340fcb241ad4484c85c288b8dcfddf85dfd | Incrementar version a 0.5.4 para release minimalista y correccion de binario Linux

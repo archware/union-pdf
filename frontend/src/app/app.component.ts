@@ -140,13 +140,13 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly aboutCredits: AboutCreditItem[] = [
     {
       label: 'SSIT Consulting',
-      value: 'SSIT Consulting · Firma Consultora Oficial',
+      value: 'Consultoría & Arquitectura de Software',
       bannerImageUrl: 'assets/artefactos/ssit-consulting-cert.jpg',
       badge: 'Firma Consultora',
     },
     {
       label: 'Autoría Principal',
-      value: 'Ing. Havel Contreras T. · COTAHA (@archware)',
+      value: 'Ing. Havel Contreras · COTAHA (@archware)',
       bannerImageUrl: 'assets/artefactos/archware-signature-cert.jpg',
       badge: 'Firma de Autor',
     },
@@ -164,13 +164,13 @@ export class AppComponent implements OnInit, OnDestroy {
     },
     {
       label: 'Atomic UI',
-      value: '@atomic-ui/core v5.22.0 · Design System',
+      value: '@atomic-ui/core · Design System',
       bannerImageUrl: 'assets/artefactos/atomic-ui-cert.jpg',
       badge: 'ADN Visual',
     },
     {
       label: 'DIY AI Lab',
-      value: 'Co-Ingeniería Bare-Metal · Multi-Runtime',
+      value: 'Co-Ingeniería IA · Multi-Runtime',
       bannerImageUrl: 'assets/artefactos/diy-ai-lab-cert.jpg',
       badge: 'Sello Local IA',
     },

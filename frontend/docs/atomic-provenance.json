@@ -1416,7 +1416,7 @@
       "adaptationSnapshot": [
         {
           "file": "about-dialog.component.css",
-          "localSha256": "40f955fbbeb048eb9428257c6260ce667e4e563bf414d9062af4b0b9d0776dab",
+          "localSha256": "feed504d808d8253d1d212327c1f7dfdff03015d5ec03ec4800c8cdaa8802c20",
           "atomicSha256": "fb31d8d4502b254bfb89b545f9ad11a5f3ddbeafb97f571eac30759324a9dcdc"
         },
         {
@@ -1426,12 +1426,12 @@
         },
         {
           "file": "about-dialog.component.spec.ts",
-          "localSha256": "89754568d43f71f87814f385b76f9d8e434a88cfa13b802a5f2f787286c8f407",
+          "localSha256": "4539685caf6ce84499b909538e84ba9f4ce30dcf349dfbc0eb8fe0788ad8affb",
           "atomicSha256": "34bf26199938bfbe72b8c673831ddc2f50291a3dd703ec9e5412378eda8092c6"
         },
         {
           "file": "about-dialog.component.ts",
-          "localSha256": "c05585b50fc955c10ac994e2236255eeb0d31ebad9fc8407d5e5c7415a797cf1",
+          "localSha256": "4291695689745ff86b43c4178ded19dd1c247fa217bf8e0ce5c25de5d40a15a4",
           "atomicSha256": "11fc0dd576baf42ea87b418d23584c25ce33aa4191ae6f9b81c49d1cae8af07e"
         }
       ]

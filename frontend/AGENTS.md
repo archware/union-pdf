@@ -47,7 +47,7 @@ mantendrán como alias N-1 documentados y probados. Ningún componente importar�
 ## Ciclo y compuertas
 
 Cada cambio registrará rama, OID y estado Git, abrirá primero un roadmap en
-`.agents/roadmaps/`, actualizará `CHANGELOG.md`, `LESSONS_LEARNED.md` y los
+`.agent/roadmaps/`, actualizará `CHANGELOG.md`, `LESSONS_LEARNED.md` y los
 manuales afectados, y cerrará el roadmap con evidencia y reversión. Se
 ejecutarán `npm run check`, las compuertas `cargo fmt`, `cargo check`,
 `cargo clippy` y `cargo test` declaradas en `docs/CONTINUIDAD_AGENTES.md`,

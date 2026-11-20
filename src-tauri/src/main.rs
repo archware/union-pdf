@@ -667,7 +667,67 @@ fn seleccionar_archivos_pdf() -> RespuestaSistemaV1<Vec<String>> {
     }
 }
 
+/// Determina el valor efectivo de `WEBKIT_DISABLE_DMABUF_RENDERER` en Linux para evitar
+/// ventanas en blanco o fallos EGL/GBM (`AcceleratedSurfaceDMABuf`) en WebKit2GTK 2.42+
+/// sobre drivers NVIDIA, Wayland o servidores X11 sin DRI3. Respeta `"0"` / `"false"`
+/// definido explicitamente por el usuario y aplica `"1"` por defecto.
+fn resolver_valor_dmabuf_linux(actual: Option<&str>) -> &'static str {
+    match actual.map(str::trim) {
+        Some("0") | Some("false") | Some("FALSE") => "0",
+        _ => "1",
+    }
+}
+
+/// Determina como restaurar `LD_LIBRARY_PATH` tras la carga inicial del binario en Linux cuando
+/// el lanzador auto-contenido activo el puente de compatibilidad `libwebkit2gtk-4.1` -> `4.0`
+/// (`UNION_PDF_SHIM_LD=1`), evitando que procesos hijos lanzados por `xdg-open` o portales de
+/// escritorio hereden el directorio de shims (`libsoup-2.4.so.1` -> `libsoup-3.0.so.0`).
+/// Devuelve:
+/// - `None` si el puente no fue activado por el lanzador (`shim_activo != Some("1")`).
+/// - `Some(Some(valor))` si habia un `LD_LIBRARY_PATH` previo no vacio que debe restaurarse.
+/// - `Some(None)` si `LD_LIBRARY_PATH` no existia antes del lanzador y debe limpiarse.
+fn resolver_restauracion_ld_library_path_linux(
+    shim_activo: Option<&str>,
+    ld_original: Option<&str>,
+) -> Option<Option<String>> {
+    if shim_activo != Some("1") {
+        return None;
+    }
+    match ld_original {
+        Some(v) if !v.is_empty() => Some(Some(v.to_string())),
+        _ => Some(None),
+    }
+}
+
+#[cfg(target_os = "linux")]
+fn configurar_entorno_webkit_linux() {
+    let actual = std::env::var("WEBKIT_DISABLE_DMABUF_RENDERER").ok();
+    let efectivo = resolver_valor_dmabuf_linux(actual.as_deref());
+    std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", efectivo);
+
+    let shim_activo = std::env::var("UNION_PDF_SHIM_LD").ok();
+    let ld_original = std::env::var("UNION_PDF_ORIG_LD_LIBRARY_PATH").ok();
+    if let Some(restaurar) = resolver_restauracion_ld_library_path_linux(
+        shim_activo.as_deref(),
+        ld_original.as_deref(),
+    ) {
+        match restaurar {
+            Some(valor) => std::env::set_var("LD_LIBRARY_PATH", valor),
+            None => std::env::remove_var("LD_LIBRARY_PATH"),
+        }
+        std::env::remove_var("UNION_PDF_SHIM_LD");
+        std::env::remove_var("UNION_PDF_ORIG_LD_LIBRARY_PATH");
+    }
+}
+
+#[cfg(not(target_os = "linux"))]
+fn configurar_entorno_webkit_linux() {
+    let _ = resolver_valor_dmabuf_linux(None);
+    let _ = resolver_restauracion_ld_library_path_linux(None, None);
+}
+
 fn main() {
+    configurar_entorno_webkit_linux();
     desactivar_panel_vista_previa_dialogo_windows();
     tauri::Builder::default()
         .on_window_event(|event| match event.event() {
@@ -1008,5 +1068,43 @@ mod tests {
         // Si un proceso previo termino con TerminateProcess dejando 48x48 en sesion, restaura a 4x4:
         assert_eq!(calcular_umbral_arrastre_inicial(48, 48, 48), (4, 4));
         assert_eq!(calcular_umbral_arrastre_inicial(0, -1, 48), (4, 4));
+    }
+
+    #[test]
+    fn test_resolver_valor_dmabuf_linux_desactiva_dmabuf_por_defecto() {
+        configurar_entorno_webkit_linux();
+        assert_eq!(resolver_valor_dmabuf_linux(None), "1");
+        assert_eq!(resolver_valor_dmabuf_linux(Some("")), "1");
+        assert_eq!(resolver_valor_dmabuf_linux(Some("1")), "1");
+        assert_eq!(resolver_valor_dmabuf_linux(Some("0")), "0");
+        assert_eq!(resolver_valor_dmabuf_linux(Some(" 0 ")), "0");
+        assert_eq!(resolver_valor_dmabuf_linux(Some("false")), "0");
+        assert_eq!(resolver_valor_dmabuf_linux(Some("FALSE")), "0");
+    }
+
+    #[test]
+    fn test_resolver_restauracion_ld_library_path_linux_evita_fuga_shim_a_subprocesos() {
+        // Si el lanzador no activo el shim (ej. ejecucion nativa en Ubuntu 22.04), no toca LD_LIBRARY_PATH:
+        assert_eq!(resolver_restauracion_ld_library_path_linux(None, None), None);
+        assert_eq!(
+            resolver_restauracion_ld_library_path_linux(Some("0"), Some("/opt/lib")),
+            None
+        );
+
+        // Si el lanzador activo el shim sin LD_LIBRARY_PATH previo, indica limpiar la variable:
+        assert_eq!(
+            resolver_restauracion_ld_library_path_linux(Some("1"), None),
+            Some(None)
+        );
+        assert_eq!(
+            resolver_restauracion_ld_library_path_linux(Some("1"), Some("")),
+            Some(None)
+        );
+
+        // Si el lanzador activo el shim y existia un LD_LIBRARY_PATH previo del usuario, lo restaura:
+        assert_eq!(
+            resolver_restauracion_ld_library_path_linux(Some("1"), Some("/opt/custom/lib:/usr/local/lib")),
+            Some(Some("/opt/custom/lib:/usr/local/lib".to_string()))
+        );
     }
 }

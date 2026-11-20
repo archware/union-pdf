@@ -492,6 +492,13 @@ describe('AboutDialogComponent', () => {
     const host = fixture.nativeElement as HTMLElement;
 
     fixture.componentRef.setInput('variant', 'card');
+    fixture.detectChanges();
+
+    const defaultCopyrightSpan = host.querySelector<HTMLElement>('.about-copyright span');
+    expect(defaultCopyrightSpan?.textContent?.trim()).toBe(
+      '2026 · @archware · SSIT Consulting. Todos los derechos reservados.'
+    );
+
     fixture.componentRef.setInput('copyrightText', '© 2026 Ing. Havel CONTRERAS TAPAHUASCO (@archware)');
     fixture.detectChanges();
 

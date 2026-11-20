@@ -1329,7 +1329,7 @@ describe('AppComponent (Unión PDF)', () => {
           correcto: true,
           datos: {
             nombreAplicacion: 'union-pdf',
-            version: '0.5.3',
+            version: '0.5.4',
             entorno: 'desarrollo',
             plataforma: 'windows',
             runtime: 'tauri-v1.5',
@@ -1346,7 +1346,7 @@ describe('AppComponent (Unión PDF)', () => {
       expect(mockDesktopFacade.estaEnModoEscritorio).toHaveBeenCalled();
       expect(mockDesktopFacade.obtenerEstadoSistema).toHaveBeenCalled();
       expect(app.estadoSistema?.runtime).toBe('tauri-v1.5');
-      expect(app.estadoSistema?.version).toBe('0.5.3');
+      expect(app.estadoSistema?.version).toBe('0.5.4');
       expect(mockCdr.markForCheck).toHaveBeenCalled();
     });
 
@@ -1432,7 +1432,7 @@ describe('AppComponent (Unión PDF)', () => {
       expect(dialogText).toContain('LinkedIn — Ing. Havel Contreras');
       expect(dialogText).toContain('Repositorio Atomic UI');
       expect(dialogText).toContain('Contacto (havel363@gmail.com)');
-      expect(dialogText).toContain('2026 Ing. Havel CONTRERAS TAPAHUASCO (COTAHA · @archware) · SSIT Consulting');
+      expect(dialogText).toContain('2026 · @archware · SSIT Consulting. Todos los derechos reservados.');
 
       // Sin párrafos descriptivos extensos: presentación limpia tipo certificados/firmas
       expect(dialogEl?.querySelector('.about-desc')).toBeNull();
@@ -1476,7 +1476,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Refleja version y runtime dinamicos desde estadoSistema cuando existe, sin reintroducir pildoras en .editor-header
       app.estadoSistema = {
         nombreAplicacion: 'union-pdf',
-        version: '0.5.3',
+        version: '0.5.4',
         entorno: 'produccion',
         plataforma: 'windows',
         runtime: 'tauri-v1.5',
@@ -1484,7 +1484,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Igual que en produccion (app.component.ts tras obtenerEstadoSistema): el estado se asigna y se marca para chequeo
       fixture.componentRef.injector.get(ChangeDetectorRef).markForCheck();
       fixture.detectChanges();
-      expect(dialogEl?.textContent || '').toContain('v0.5.3');
+      expect(dialogEl?.textContent || '').toContain('v0.5.4');
       expect(dialogEl?.textContent || '').toContain('tauri-v1.5');
       expect(hostEl.querySelector('.header-pill')).toBeNull();
       expect(hostEl.querySelector('.header-pill--desktop')).toBeNull();

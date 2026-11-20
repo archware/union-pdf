@@ -35,7 +35,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 
 1. **Crear tag anotado:**
    ```bash
-   git tag -a v0.5.3 -m "release: union-pdf v0.5.3"
+   git tag -a v0.5.4 -m "release: union-pdf v0.5.4"
    ```
 
 2. **Verificar tag creado:**
@@ -48,7 +48,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 1. **Subir cambios al repositorio:**
    ```bash
    git push origin main
-   git push origin v0.5.3
+   git push origin v0.5.4
    ```
 
 2. **Activar workflow manualmente en GitHub:**
@@ -67,7 +67,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
    - **Windows (`x86_64`):** `src-tauri/target/release/union-pdf.exe` → publicado como `union-pdf-windows-x86_64.exe` (+ `.sha256`). Ejecutable nativo PE64 con extensión `.exe` y frontend Angular embebido.
    - **macOS Apple Silicon (`arm64`):** `src-tauri/target/aarch64-apple-darwin/release/union-pdf` → empaquetado en `union-pdf.app` y publicado como `union-pdf-macos-arm64.app.tar.gz` (+ `.sha256`). Application Bundle nativo Mach-O 64-bit con extensión `.app.tar.gz` (`Contents/Info.plist`, `Contents/MacOS/union-pdf`, `Contents/Resources/icon.icns` y firma ad-hoc; descomprimir con doble clic o `tar -xzf union-pdf-macos-arm64.app.tar.gz` y abrir `union-pdf.app`).
    - **macOS Intel (`x86_64`):** `src-tauri/target/x86_64-apple-darwin/release/union-pdf` → empaquetado en `union-pdf.app` y publicado como `union-pdf-macos-x86_64.app.tar.gz` (+ `.sha256`). Application Bundle nativo Mach-O 64-bit con extensión `.app.tar.gz` (`tar -xzf union-pdf-macos-x86_64.app.tar.gz` y abrir `union-pdf.app`).
-   - **Linux (`x86_64`):** `src-tauri/target/release/union-pdf` → empaquetado y publicado como `union-pdf-linux-x86_64.tar.gz` (+ `.sha256`). Archivo comprimido `.tar.gz` que contiene el binario ejecutable nativo autónomo ELF 64-bit `union-pdf` con permisos `0755` (`tar -xzf union-pdf-linux-x86_64.tar.gz && ./union-pdf`).
+   - **Linux (`x86_64`):** `src-tauri/target/release/union-pdf` → empaquetado como ejecutable autónomo ELF `ET_EXEC` (`-no-pie`) y publicado como `union-pdf-linux-x86_64.tar.gz` (+ `.sha256`). Archivo comprimido `.tar.gz` que contiene el binario ejecutable nativo autónomo ELF 64-bit `union-pdf` con permisos `0755`, puente automático `libwebkit2gtk-4.1.so.0` → `libwebkit2gtk-4.0.so.37` (`libjavascriptcoregtk-4.1.so.0` → `4.0.so.18`, `libsoup-3.0.so.0` → `2.4.so.1`) para Ubuntu 22.04/24.04+ y `WEBKIT_DISABLE_DMABUF_RENDERER=1` (`tar -xzf union-pdf-linux-x86_64.tar.gz && ./union-pdf`).
 
 3. **Validar binarios locales:**
    ```bash
@@ -86,7 +86,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 - Usar comillas dobles para envolver la línea YAML completa
 - Ejemplo correcto:
   ```yaml
-  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.3' }}"
+  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.4' }}"
   ```
 
 ### 5.2 Compilación Fallida

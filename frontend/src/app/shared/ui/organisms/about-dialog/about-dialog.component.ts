@@ -154,7 +154,7 @@ export class AboutDialogComponent implements OnDestroy {
 
   /** Leyenda legal de derechos de autor al pie del componente. */
   readonly copyrightText = input<string>(
-    '© 2026 Ing. Havel CONTRERAS TAPAHUASCO (@archware). Todos los derechos reservados.'
+    '© 2026 · @archware · SSIT Consulting. Todos los derechos reservados.'
   );
 
   /** Texto del botón de cierre en el pie del diálogo. */
