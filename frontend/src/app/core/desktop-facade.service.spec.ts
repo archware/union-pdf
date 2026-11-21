@@ -8,6 +8,7 @@ import {
 import type {
   EstadoSistemaDto,
   MetadatosArchivoPdfDto,
+  PeticionGuardarPdfDto,
   PeticionUnirPdfsDto,
   RespuestaSistemaV1,
 } from '../../../contracts/generated/typescript/contracts';
@@ -150,6 +151,26 @@ describe('DesktopFacadeService', () => {
     await service.seleccionarArchivosPdf();
 
     expect(mockInvocador).toHaveBeenCalledWith('seleccionar_archivos_pdf');
+  });
+
+  it('guarda un archivo PDF invocando guardar_archivo_pdf con la peticion', async () => {
+    const service = TestBed.inject(DesktopFacadeService);
+    const peticion: PeticionGuardarPdfDto = {
+      nombreSugerido: 'resultado_final.pdf',
+      contenidoBase64: 'JVBERi0xLjU=',
+    };
+    await service.guardarArchivoPdf(peticion);
+
+    expect(mockInvocador).toHaveBeenCalledWith('guardar_archivo_pdf', { peticion });
+  });
+
+  it('abre un archivo PDF invocando abrir_archivo_pdf con rutaArchivo', async () => {
+    const service = TestBed.inject(DesktopFacadeService);
+    await service.abrirArchivoPdf('C:/documentos/resultado_final.pdf');
+
+    expect(mockInvocador).toHaveBeenCalledWith('abrir_archivo_pdf', {
+      rutaArchivo: 'C:/documentos/resultado_final.pdf',
+    });
   });
 
   it('detecta correctamente si esta o no en modo escritorio', () => {

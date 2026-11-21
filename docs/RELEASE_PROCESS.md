@@ -35,7 +35,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 
 1. **Crear tag anotado:**
    ```bash
-   git tag -a v0.5.4 -m "release: union-pdf v0.5.4"
+   git tag -a v1.0.0 -m "release: union-pdf v1.0.0"
    ```
 
 2. **Verificar tag creado:**
@@ -48,7 +48,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 1. **Subir cambios al repositorio:**
    ```bash
    git push origin main
-   git push origin v0.5.4
+   git push origin v1.0.0
    ```
 
 2. **Activar workflow manualmente en GitHub:**
@@ -86,7 +86,7 @@ Este documento detalla el proceso completo para realizar lanzamientos del proyec
 - Usar comillas dobles para envolver la línea YAML completa
 - Ejemplo correcto:
   ```yaml
-  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.4' }}"
+  name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v1.0.0' }}"
   ```
 
 ### 5.2 Compilación Fallida

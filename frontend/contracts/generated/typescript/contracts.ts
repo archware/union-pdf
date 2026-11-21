@@ -3,7 +3,13 @@
 
 export interface ErrorSistemaV1 {
   readonly codigo: string;
-  readonly categoria: 'administracion' | 'sistema' | 'archivo' | 'validacion' | 'entornoEjecucion';
+  readonly categoria:
+    | 'administracion'
+    | 'sistema'
+    | 'archivo'
+    | 'validacion'
+    | 'procesamiento'
+    | 'entornoEjecucion';
   readonly reintentable: boolean;
   readonly claveMensaje: string;
   readonly parametrosMensaje: Readonly<Record<string, unknown>>;
@@ -63,6 +69,17 @@ export interface PeticionUnirPdfsDto {
 export interface ResultadoUnirPdfsDto {
   readonly rutaDestino: string;
   readonly totalPaginas: number;
+  readonly tamanoBytes: number;
+}
+
+export interface PeticionGuardarPdfDto {
+  readonly nombreSugerido: string;
+  readonly contenidoBase64: string;
+}
+
+export interface ResultadoGuardarPdfDto {
+  readonly guardado: boolean;
+  readonly rutaDestino: string | null;
   readonly tamanoBytes: number;
 }
 

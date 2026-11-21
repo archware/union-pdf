@@ -107,14 +107,20 @@ export class AppComponent implements OnInit, OnDestroy {
   static readonly MAX_RASTER_SIDE_PX = 4096;
   static readonly ACCEPTED_FILE_EXTENSIONS =
     '.pdf,application/pdf,image/*,.png,.jpg,.jpeg,.jfif,.pjpeg,.pjp,.webp,.gif,.bmp,.dib,.svg,.avif,.ico,.tif,.tiff';
+  static readonly THEME_STORAGE_KEY = 'app-theme';
 
   isDragging = false;
   isFileDialogOpen = false;
+  isDarkMode = false;
   uploadedFiles: ArchivoCargado[] = [];
   globalPageOrder: string[] = [];
   selectedPageId: string | null = null;
+  draggingPageId: string | null = null;
+  dragOverPageId: string | null = null;
+  dragDropPosition: 'before' | 'after' | null = null;
   previewZoom = 1;
   outputFileName = '';
+  lastSavedPdfPath: string | null = null;
   
   statusMessage = '';
   statusType: 'loading' | 'success' | 'error' | '' = '';
@@ -133,6 +139,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private windowFocusListener: (() => void) | null = null;
   private fileDialogFocusCloseTimer: ReturnType<typeof setTimeout> | null = null;
   private hasCustomOutputFileName = false;
+  private colorSchemeMediaQuery: MediaQueryList | null = null;
+  private colorSchemeChangeListener: (() => void) | null = null;
 
   estadoSistema: EstadoSistemaDto | null = null;
   isAboutDialogOpen = false;
@@ -234,7 +242,12 @@ export class AppComponent implements OnInit, OnDestroy {
     @Optional() private desktopFacade?: DesktopFacadeService,
   ) {}
 
+  get isDesktopMode(): boolean {
+    return Boolean(this.desktopFacade?.estaEnModoEscritorio());
+  }
+
   ngOnInit() {
+    this.initTheme();
     if (typeof pdfjsLib !== 'undefined') {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'assets/js/vendor/pdf.worker.min.js';
     }
@@ -250,9 +263,86 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.cleanupColorSchemeListener();
     this.cleanupWindowDialogListeners();
     this.removeFileInputElement();
     this.cancelActivePreviewRender();
+  }
+
+  initTheme(): void {
+    let stored: string | null = null;
+    if (typeof localStorage !== 'undefined') {
+      try {
+        stored = localStorage.getItem(AppComponent.THEME_STORAGE_KEY);
+      } catch {
+        stored = null;
+      }
+    }
+
+    this.cleanupColorSchemeListener();
+
+    if (stored === 'dark' || stored === 'brand-dark') {
+      this.applyThemePreference('dark', false);
+      return;
+    }
+    if (stored === 'light') {
+      this.applyThemePreference('light', false);
+      return;
+    }
+
+    const prefersDark =
+      typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+        ? Boolean(window.matchMedia('(prefers-color-scheme: dark)')?.matches)
+        : false;
+    this.applyThemePreference(prefersDark ? 'dark' : 'light', false);
+
+    if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq && typeof mq.addEventListener === 'function') {
+        this.colorSchemeMediaQuery = mq;
+        this.colorSchemeChangeListener = () => {
+          let currentStored: string | null = null;
+          try {
+            currentStored = localStorage.getItem(AppComponent.THEME_STORAGE_KEY);
+          } catch {
+            currentStored = null;
+          }
+          if (!currentStored || currentStored === 'system') {
+            this.applyThemePreference(mq.matches ? 'dark' : 'light', false);
+            this.syncView();
+          }
+        };
+        mq.addEventListener('change', this.colorSchemeChangeListener);
+      }
+    }
+  }
+
+  private cleanupColorSchemeListener(): void {
+    if (this.colorSchemeMediaQuery && this.colorSchemeChangeListener) {
+      this.colorSchemeMediaQuery.removeEventListener?.('change', this.colorSchemeChangeListener);
+    }
+    this.colorSchemeMediaQuery = null;
+    this.colorSchemeChangeListener = null;
+  }
+
+  applyThemePreference(mode: 'light' | 'dark', persist = true): void {
+    this.isDarkMode = mode === 'dark';
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.setAttribute('data-theme', mode);
+      document.documentElement.classList.toggle('dark', this.isDarkMode);
+    }
+    if (persist && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(AppComponent.THEME_STORAGE_KEY, mode);
+      } catch {
+        // Ignorar si el almacenamiento local esta restringido
+      }
+    }
+  }
+
+  toggleTheme(): void {
+    this.applyThemePreference(this.isDarkMode ? 'light' : 'dark', true);
+    this.syncView();
   }
 
   private ensureFileInputElement(): HTMLInputElement | null {
@@ -344,6 +434,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onDragOver(event: DragEvent) {
+    if (this.draggingPageId !== null) {
+      return;
+    }
     event.preventDefault();
     event.stopPropagation?.();
     if (this.isFileDialogActive()) {
@@ -383,6 +476,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onDrop(event: DragEvent) {
+    if (this.draggingPageId !== null) {
+      return;
+    }
     event.preventDefault();
     event.stopPropagation?.();
     this.isDragging = false;
@@ -1008,8 +1104,12 @@ export class AppComponent implements OnInit, OnDestroy {
     this.uploadedFiles = [];
     this.globalPageOrder = [];
     this.selectedPageId = null;
+    this.draggingPageId = null;
+    this.dragOverPageId = null;
+    this.dragDropPosition = null;
     this.previewZoom = 1;
     this.outputFileName = '';
+    this.lastSavedPdfPath = null;
     this.hasCustomOutputFileName = false;
     this.previewRenderToken++;
     this.pdfPreviewCache.clear();
@@ -1151,6 +1251,226 @@ export class AppComponent implements OnInit, OnDestroy {
     this.globalPageOrder[currentIndex] = swapPageId;
     
     this.cdr.detectChanges();
+  }
+
+  movePageToTarget(
+    draggedPageId: string,
+    targetPageId: string,
+    position: 'before' | 'after' = 'after',
+  ): boolean {
+    if (!draggedPageId || !targetPageId || draggedPageId === targetPageId) {
+      return false;
+    }
+    const sourceIndex = this.globalPageOrder.indexOf(draggedPageId);
+    const initialTargetIndex = this.globalPageOrder.indexOf(targetPageId);
+    if (sourceIndex < 0 || initialTargetIndex < 0) {
+      return false;
+    }
+
+    const updatedOrder = this.globalPageOrder.filter((id) => id !== draggedPageId);
+    const adjustedTargetIndex = updatedOrder.indexOf(targetPageId);
+    if (adjustedTargetIndex < 0) {
+      return false;
+    }
+
+    const insertIndex = position === 'before' ? adjustedTargetIndex : adjustedTargetIndex + 1;
+    updatedOrder.splice(insertIndex, 0, draggedPageId);
+    this.globalPageOrder = updatedOrder;
+    this.syncView();
+    return true;
+  }
+
+  private resolveThumbnailDropPosition(
+    event: DragEvent,
+    sourcePageId: string,
+    targetPageId: string,
+  ): 'before' | 'after' {
+    const targetEl = event.currentTarget as HTMLElement | null;
+    const rect = targetEl?.getBoundingClientRect?.();
+    if (rect && rect.height > 0 && Number.isFinite(event.clientY)) {
+      return event.clientY < rect.top + rect.height / 2 ? 'before' : 'after';
+    }
+    const fromIdx = this.globalPageOrder.indexOf(sourcePageId);
+    const toIdx = this.globalPageOrder.indexOf(targetPageId);
+    return fromIdx >= 0 && toIdx >= 0 && fromIdx > toIdx ? 'before' : 'after';
+  }
+
+  onThumbnailDragStart(event: DragEvent, pageId: string): void {
+    event.stopPropagation?.();
+    this.draggingPageId = pageId;
+    this.dragOverPageId = null;
+    this.dragDropPosition = null;
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move';
+      try {
+        event.dataTransfer.setData('text/plain', pageId);
+      } catch {
+        // Ignorar en entornos de prueba sin DataTransfer completo
+      }
+    }
+    this.cdr.markForCheck();
+  }
+
+  onThumbnailDragOver(event: DragEvent, targetPageId: string): void {
+    if (!this.draggingPageId) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation?.();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+    if (targetPageId === this.draggingPageId) {
+      this.dragOverPageId = null;
+      this.dragDropPosition = null;
+      this.cdr.markForCheck();
+      return;
+    }
+    this.dragOverPageId = targetPageId;
+    this.dragDropPosition = this.resolveThumbnailDropPosition(
+      event,
+      this.draggingPageId,
+      targetPageId,
+    );
+    this.cdr.markForCheck();
+  }
+
+  onThumbnailDragLeave(event: DragEvent, targetPageId: string): void {
+    if (!this.draggingPageId) {
+      return;
+    }
+    event.stopPropagation?.();
+    const currentTarget = event.currentTarget as HTMLElement | null;
+    const relatedTarget = event.relatedTarget as Node | null;
+    if (currentTarget && relatedTarget && currentTarget.contains(relatedTarget)) {
+      return;
+    }
+    if (this.dragOverPageId === targetPageId) {
+      this.dragOverPageId = null;
+      this.dragDropPosition = null;
+      this.cdr.markForCheck();
+    }
+  }
+
+  onThumbnailDrop(event: DragEvent, targetPageId: string): void {
+    const sourcePageId =
+      this.draggingPageId || event.dataTransfer?.getData?.('text/plain') || '';
+    if (!sourcePageId || !this.globalPageOrder.includes(sourcePageId)) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation?.();
+    if (sourcePageId !== targetPageId) {
+      const position =
+        this.dragOverPageId === targetPageId && this.dragDropPosition
+          ? this.dragDropPosition
+          : this.resolveThumbnailDropPosition(event, sourcePageId, targetPageId);
+      this.movePageToTarget(sourcePageId, targetPageId, position);
+    }
+    this.onThumbnailDragEnd();
+  }
+
+  onThumbnailDragEnd(): void {
+    this.draggingPageId = null;
+    this.dragOverPageId = null;
+    this.dragDropPosition = null;
+    this.cdr.markForCheck();
+  }
+
+  isEditableShortcutTarget(target: EventTarget | null): boolean {
+    const active =
+      typeof document !== 'undefined' ? (document.activeElement as HTMLElement | null) : null;
+    const elementsToCheck = [target as HTMLElement | null, active];
+    for (const el of elementsToCheck) {
+      if (!el || typeof el !== 'object') {
+        continue;
+      }
+      const tag = (el.tagName || '').toUpperCase();
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+        return true;
+      }
+      if (el.isContentEditable || el.getAttribute?.('contenteditable') === 'true') {
+        return true;
+      }
+      if (
+        typeof el.closest === 'function' &&
+        el.closest('input, textarea, select, [contenteditable="true"]')
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  onWindowKeyDown(event: KeyboardEvent): void {
+    if (!event || event.defaultPrevented || event.isComposing) {
+      return;
+    }
+    if (this.isAboutDialogOpen || this.isFileDialogOpen) {
+      return;
+    }
+
+    const key = event.key || '';
+    if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && key.toLowerCase() === 's') {
+      event.preventDefault();
+      if (this.uploadedFiles.length > 0 && !this.isMerging) {
+        void this.mergeSelectedPDFs();
+      }
+      return;
+    }
+
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      return;
+    }
+    if (this.isEditableShortcutTarget(event.target)) {
+      return;
+    }
+    if (this.globalPageOrder.length === 0) {
+      return;
+    }
+
+    if (key === 'ArrowLeft') {
+      event.preventDefault();
+      const idx = this.selectedPageId ? this.globalPageOrder.indexOf(this.selectedPageId) : -1;
+      const targetId = idx > 0 ? this.globalPageOrder[idx - 1] : this.globalPageOrder[0];
+      if (targetId && targetId !== this.selectedPageId) {
+        this.setSelectedPage(targetId);
+        this.syncView();
+      }
+      return;
+    }
+
+    if (key === 'ArrowRight') {
+      event.preventDefault();
+      const idx = this.selectedPageId ? this.globalPageOrder.indexOf(this.selectedPageId) : -1;
+      const targetId =
+        idx < 0
+          ? this.globalPageOrder[0]
+          : idx < this.globalPageOrder.length - 1
+            ? this.globalPageOrder[idx + 1]
+            : this.selectedPageId;
+      if (targetId && targetId !== this.selectedPageId) {
+        this.setSelectedPage(targetId);
+        this.syncView();
+      }
+      return;
+    }
+
+    if ((key === 'r' || key === 'R') && !event.shiftKey) {
+      if (this.selectedPageId) {
+        event.preventDefault();
+        void this.rotateSelectedPage(90);
+      }
+      return;
+    }
+
+    if (key === 'Delete') {
+      if (this.selectedPageId) {
+        event.preventDefault();
+        this.togglePageActive(this.selectedPageId);
+      }
+    }
   }
 
   normalizeRotationAngle(angle: number): number {
@@ -1477,6 +1797,29 @@ export class AppComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  uint8ArrayToBase64(bytes: Uint8Array): string {
+    const chunkSize = 0x8000;
+    const chunks: string[] = [];
+    for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+      const slice = bytes.subarray(offset, offset + chunkSize);
+      chunks.push(String.fromCharCode(...slice));
+    }
+    return btoa(chunks.join(''));
+  }
+
+  async openLastSavedPdf(): Promise<void> {
+    if (!this.lastSavedPdfPath || !this.desktopFacade?.estaEnModoEscritorio()) {
+      return;
+    }
+    const respuesta = await this.desktopFacade.abrirArchivoPdf(this.lastSavedPdfPath);
+    if (!respuesta.correcto) {
+      this.showStatus(
+        `No se pudo abrir el PDF: ${respuesta.error?.claveMensaje || 'visor no disponible'}`,
+        'error',
+      );
+    }
+  }
+
   async mergeSelectedPDFs() {
     if (this.uploadedFiles.length === 0) {
       this.showStatus('Por favor, anade al menos 1 archivo PDF.', 'error');
@@ -1484,6 +1827,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     try {
+      this.lastSavedPdfPath = null;
       this.showStatus('Procesando y generando archivo final... Por favor espera.', 'loading');
       this.isMerging = true;
 
@@ -1534,10 +1878,38 @@ export class AppComponent implements OnInit, OnDestroy {
       }
 
       const mergedPdfBytes = await mergedPdf.save();
+      const finalFileName = this.resolveOutputFileName();
+
+      if (this.desktopFacade?.estaEnModoEscritorio()) {
+        const contenidoBase64 = this.uint8ArrayToBase64(mergedPdfBytes);
+        const respuesta = await this.desktopFacade.guardarArchivoPdf({
+          nombreSugerido: finalFileName,
+          contenidoBase64,
+        });
+
+        if (respuesta.correcto && respuesta.datos) {
+          if (!respuesta.datos.guardado || !respuesta.datos.rutaDestino) {
+            this.hideStatus();
+            return;
+          }
+          this.lastSavedPdfPath = respuesta.datos.rutaDestino;
+          this.showStatus(
+            `PDF guardado correctamente en "${respuesta.datos.rutaDestino}".`,
+            'success',
+          );
+          return;
+        }
+
+        if (respuesta.error?.codigo !== 'ENTORNO_EJECUCION_NO_DISPONIBLE') {
+          throw new Error(
+            respuesta.error?.claveMensaje || 'No se pudo guardar el archivo PDF en disco.',
+          );
+        }
+      }
+
       const blob = new Blob([mergedPdfBytes], { type: 'application/pdf' });
       const downloadUrl = URL.createObjectURL(blob);
 
-      const finalFileName = this.resolveOutputFileName();
       const link = document.createElement('a');
       link.href = downloadUrl;
       link.download = finalFileName;

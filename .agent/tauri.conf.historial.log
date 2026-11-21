@@ -3,3 +3,4 @@
 2026-11-14T23:26:30.814Z | a09c7202c2d3c81abdfe0c46154a3a642309688fd03d55bf0d775ba984f93807 | Incrementar version a 0.5.2 para release multiplataforma
 2026-11-15T02:24:56.609Z | f1da2a4765b19d0fa5d0c3314e575f73da2220718464ebc5cd1267969ab388ba | Incrementar version a 0.5.3 para empaquetado .app.tar.gz y .tar.gz en release multiplataforma
 2026-11-20T03:31:50.854Z | e0abfe5bd52a0ab946adf439c70a8340fcb241ad4484c85c288b8dcfddf85dfd | Incrementar version a 0.5.4 para release minimalista y correccion de binario Linux
+2026-11-21T02:56:33.036Z | 1b8d377e29445be1b464401a388693e15969c6598aa1817612b94b8be312862d | Release v1.0.0: ventana inicial 1280x820 centrada (min 960x640), CSP explicita Tauri v1.5 y version 1.0.0

@@ -119,3 +119,18 @@ pub struct ResultadoUnirPdfsDto {
     pub total_paginas: u32,
     pub tamano_bytes: u64,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct PeticionGuardarPdfDto {
+    pub nombre_sugerido: String,
+    pub contenido_base64: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ResultadoGuardarPdfDto {
+    pub guardado: bool,
+    pub ruta_destino: Option<String>,
+    pub tamano_bytes: u64,
+}

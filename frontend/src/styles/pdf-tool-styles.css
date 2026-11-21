@@ -599,13 +599,22 @@ app-scroll-overlay.so-root.file-list-scroll-overlay > .so-scroll-area {
   border-radius: var(--border-radius-md);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-2);
   font-size: var(--font-size-sm);
   font-weight: 500;
   border: 1px solid transparent;
 }
 
-.status-message { flex: 1; }
+.status-message {
+  flex: 1 1 12rem;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.open-saved-pdf-btn {
+  flex-shrink: 0;
+}
 
 .status-container--error {
   background: var(--danger-color-lighter);
@@ -725,13 +734,17 @@ app-scroll-overlay.so-root.thumbnail-scroll-overlay > .so-scroll-area {
   border: 2px solid transparent;
   border-radius: var(--border-radius-md);
   padding: 3px;
-  cursor: pointer;
+  cursor: grab;
   position: relative;
   background: var(--surface-section);
   box-shadow: var(--shadow-xs);
   transition: all var(--transition-fast);
   user-select: none;
   -webkit-user-select: none;
+}
+
+.thumbnail-item > * {
+  pointer-events: none;
 }
 
 .thumbnail-item:hover {
@@ -742,6 +755,21 @@ app-scroll-overlay.so-root.thumbnail-scroll-overlay > .so-scroll-area {
 .thumbnail-item--selected {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(var(--brand-primary-500-rgb), 0.2);
+}
+
+.thumbnail-item--dragging {
+  opacity: 0.45;
+  cursor: grabbing;
+  border-style: dashed;
+  border-color: var(--primary-color);
+}
+
+.thumbnail-item--drop-before {
+  box-shadow: inset 0 3px 0 0 var(--primary-color), var(--shadow-sm);
+}
+
+.thumbnail-item--drop-after {
+  box-shadow: inset 0 -3px 0 0 var(--primary-color), var(--shadow-sm);
 }
 
 .thumbnail-item--discarded {
@@ -757,7 +785,7 @@ app-scroll-overlay.so-root.thumbnail-scroll-overlay > .so-scroll-area {
   display: block;
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--border-color-light);
-  background: var(--surface-background);
+  background: var(--gray-0);
   -webkit-user-drag: none;
 }
 
@@ -766,7 +794,7 @@ app-scroll-overlay.so-root.thumbnail-scroll-overlay > .so-scroll-area {
   bottom: 5px;
   left: 5px;
   background: var(--surface-overlay);
-  color: var(--text-color-inverse, var(--gray-0));
+  color: var(--text-color-on-primary, var(--gray-0));
   font-size: var(--font-size-xs);
   font-weight: 600;
   padding: 1px 4px;
@@ -781,7 +809,7 @@ app-scroll-overlay.so-root.thumbnail-scroll-overlay > .so-scroll-area {
   bottom: 5px;
   right: 5px;
   background: rgba(var(--brand-primary-500-rgb), 0.9);
-  color: var(--text-color-inverse, var(--gray-0));
+  color: var(--text-color-on-primary, var(--gray-0));
   font-size: var(--font-size-xs);
   font-weight: 600;
   padding: 1px 5px;
@@ -796,7 +824,7 @@ app-scroll-overlay.so-root.thumbnail-scroll-overlay > .so-scroll-area {
   top: 5px;
   right: 5px;
   background: var(--danger-color);
-  color: var(--text-color-inverse, var(--gray-0));
+  color: var(--text-color-on-primary, var(--gray-0));
   font-size: var(--font-size-xs);
   font-weight: 700;
   padding: 1px 4px;
@@ -963,7 +991,7 @@ app-scroll-overlay.so-root.preview-stage-scroll-overlay > .so-scroll-area {
   flex-shrink: 0;
   box-shadow: var(--shadow-lg);
   border-radius: var(--border-radius-sm);
-  background: var(--surface-background);
+  background: var(--gray-0);
 }
 
 .preview-canvas-element--zoomed {
@@ -981,7 +1009,7 @@ app-scroll-overlay.so-root.preview-stage-scroll-overlay > .so-scroll-area {
 
 .watermark-pill {
   background: var(--surface-overlay);
-  color: var(--text-color-inverse, var(--gray-0));
+  color: var(--text-color-on-primary, var(--gray-0));
   padding: var(--space-2) var(--space-3);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-sm);

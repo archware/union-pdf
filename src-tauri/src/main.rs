@@ -5,12 +5,12 @@
 mod contracts;
 
 use contracts::{
-    EstadoSistemaDto, MetadatosArchivoPdfDto, PeticionUnirPdfsDto, RespuestaSistemaV1,
-    ResultadoUnirPdfsDto,
+    EstadoSistemaDto, MetadatosArchivoPdfDto, PeticionGuardarPdfDto, PeticionUnirPdfsDto,
+    RespuestaSistemaV1, ResultadoGuardarPdfDto, ResultadoUnirPdfsDto,
 };
 use lopdf::{Dictionary, Document, Object, ObjectId};
 use std::collections::BTreeMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::Instant;
 use uuid::Uuid;
 
@@ -628,7 +628,7 @@ fn seleccionar_archivos_pdf() -> RespuestaSistemaV1<Vec<String>> {
             let paths: Vec<String> = paths_env.split(';').map(|s| s.to_string()).collect();
             return RespuestaSistemaV1::exito(paths, id_solicitud, inicio.elapsed().as_millis() as u64);
         }
-        return RespuestaSistemaV1::exito(Vec::new(), id_solicitud, inicio.elapsed().as_millis() as u64);
+        RespuestaSistemaV1::exito(Vec::new(), id_solicitud, inicio.elapsed().as_millis() as u64)
     }
 
     #[cfg(not(test))]
@@ -664,6 +664,423 @@ fn seleccionar_archivos_pdf() -> RespuestaSistemaV1<Vec<String>> {
                 RespuestaSistemaV1::exito(Vec::new(), id_solicitud, inicio.elapsed().as_millis() as u64)
             }
         }
+    }
+}
+
+/// Decodifica una cadena Base64 estandar (RFC 4648) ignorando espacios en blanco ASCII
+/// y un prefijo `data:...;base64,` opcional.
+fn decodificar_base64(entrada: &str) -> Result<Vec<u8>, String> {
+    let sin_prefijo = match entrada.find(";base64,") {
+        Some(pos) if entrada[..pos].starts_with("data:") => &entrada[pos + 8..],
+        _ => entrada,
+    };
+
+    let limpio: Vec<u8> = sin_prefijo
+        .bytes()
+        .filter(|b| !b.is_ascii_whitespace())
+        .collect();
+
+    if limpio.is_empty() {
+        return Err("La carga Base64 esta vacia".to_string());
+    }
+    if (limpio.len() & 3) != 0 {
+        return Err("Longitud Base64 invalida (no es multiplo de 4)".to_string());
+    }
+
+    fn valor_sexteto(b: u8) -> Option<u8> {
+        match b {
+            b'A'..=b'Z' => Some(b - b'A'),
+            b'a'..=b'z' => Some(b - b'a' + 26),
+            b'0'..=b'9' => Some(b - b'0' + 52),
+            b'+' | b'-' => Some(62),
+            b'/' | b'_' => Some(63),
+            _ => None,
+        }
+    }
+
+    let mut salida = Vec::with_capacity((limpio.len() / 4) * 3);
+    let total_bloques = limpio.len() / 4;
+
+    for (indice, bloque) in limpio.chunks_exact(4).enumerate() {
+        let es_ultimo = indice + 1 == total_bloques;
+        let pad = if bloque[2] == b'=' && bloque[3] == b'=' {
+            2
+        } else if bloque[3] == b'=' {
+            1
+        } else {
+            0
+        };
+
+        if pad > 0 && !es_ultimo {
+            return Err("Relleno '=' fuera del bloque final Base64".to_string());
+        }
+        if bloque[0] == b'=' || bloque[1] == b'=' || (bloque[2] == b'=' && bloque[3] != b'=') {
+            return Err("Secuencia de relleno Base64 mal formada".to_string());
+        }
+
+        let v0 = valor_sexteto(bloque[0])
+            .ok_or_else(|| "Caracter invalido en Base64".to_string())?;
+        let v1 = valor_sexteto(bloque[1])
+            .ok_or_else(|| "Caracter invalido en Base64".to_string())?;
+        let v2 = if pad == 2 {
+            0
+        } else {
+            valor_sexteto(bloque[2]).ok_or_else(|| "Caracter invalido en Base64".to_string())?
+        };
+        let v3 = if pad >= 1 {
+            0
+        } else {
+            valor_sexteto(bloque[3]).ok_or_else(|| "Caracter invalido en Base64".to_string())?
+        };
+
+        salida.push((v0 << 2) | (v1 >> 4));
+        if pad < 2 {
+            salida.push((v1 << 4) | (v2 >> 2));
+        }
+        if pad < 1 {
+            salida.push((v2 << 6) | v3);
+        }
+    }
+
+    Ok(salida)
+}
+
+/// Limpia el nombre sugerido para el dialogo nativo «Guardar como...» garantizando extension `.pdf`.
+fn normalizar_nombre_pdf_sugerido(nombre: &str) -> String {
+    let ultimo_segmento = nombre
+        .rsplit(['/', '\\'])
+        .next()
+        .unwrap_or("")
+        .trim();
+
+    let sin_ext = if ultimo_segmento.len() >= 4
+        && ultimo_segmento[ultimo_segmento.len() - 4..].eq_ignore_ascii_case(".pdf")
+    {
+        ultimo_segmento[..ultimo_segmento.len() - 4].trim()
+    } else {
+        ultimo_segmento
+    };
+
+    let mut base: String = sin_ext
+        .chars()
+        .map(|c| {
+            if c.is_control() || matches!(c, '<' | '>' | ':' | '"' | '/' | '\\' | '|' | '?' | '*') {
+                '_'
+            } else {
+                c
+            }
+        })
+        .collect();
+
+    base = base.trim_matches(['.', ' ']).to_string();
+    if base.is_empty() || base.chars().all(|c| c == '_') {
+        "documento_final.pdf".to_string()
+    } else {
+        format!("{base}.pdf")
+    }
+}
+
+/// Asegura que la ruta elegida termine en `.pdf` sin truncar nombres con puntos (ej. `informe_v1.0` -> `informe_v1.0.pdf`).
+fn asegurar_extension_pdf(ruta: PathBuf) -> PathBuf {
+    let tiene_pdf = ruta
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|e| e.eq_ignore_ascii_case("pdf"))
+        .unwrap_or(false);
+    if tiene_pdf {
+        ruta
+    } else {
+        let mut os = ruta.into_os_string();
+        os.push(".pdf");
+        PathBuf::from(os)
+    }
+}
+
+fn guardar_bytes_pdf_en_destino(
+    bytes: &[u8],
+    destino_elegido: Option<PathBuf>,
+) -> Result<ResultadoGuardarPdfDto, Box<contracts::ErrorSistemaV1>> {
+    let Some(ruta_bruta) = destino_elegido else {
+        return Ok(ResultadoGuardarPdfDto {
+            guardado: false,
+            ruta_destino: None,
+            tamano_bytes: 0,
+        });
+    };
+
+    let ruta_final = asegurar_extension_pdf(ruta_bruta);
+
+    if let Some(parent) = ruta_final.parent() {
+        if !parent.as_os_str().is_empty() && !parent.exists() {
+            std::fs::create_dir_all(parent).map_err(|e| {
+                Box::new(contracts::ErrorSistemaV1 {
+                    codigo: "ERROR_CREACION_DIRECTORIO".to_string(),
+                    categoria: "archivo".to_string(),
+                    reintentable: true,
+                    clave_mensaje: format!("No se pudo crear el directorio destino: {e}"),
+                    parametros_mensaje: serde_json::json!({
+                        "rutaDestino": ruta_final.to_string_lossy().to_string()
+                    }),
+                    etapa: "guardar_archivo_pdf".to_string(),
+                })
+            })?;
+        }
+    }
+
+    std::fs::write(&ruta_final, bytes).map_err(|e| {
+        Box::new(contracts::ErrorSistemaV1 {
+            codigo: "ERROR_ESCRITURA_ARCHIVO".to_string(),
+            categoria: "archivo".to_string(),
+            reintentable: true,
+            clave_mensaje: format!("No se pudo escribir el archivo PDF en disco: {e}"),
+            parametros_mensaje: serde_json::json!({
+                "rutaDestino": ruta_final.to_string_lossy().to_string()
+            }),
+            etapa: "guardar_archivo_pdf".to_string(),
+        })
+    })?;
+
+    let meta = std::fs::metadata(&ruta_final).map_err(|e| {
+        Box::new(contracts::ErrorSistemaV1 {
+            codigo: "ERROR_METADATOS_ARCHIVO".to_string(),
+            categoria: "archivo".to_string(),
+            reintentable: true,
+            clave_mensaje: format!("No se pudieron verificar los metadatos del PDF guardado: {e}"),
+            parametros_mensaje: serde_json::json!({
+                "rutaDestino": ruta_final.to_string_lossy().to_string()
+            }),
+            etapa: "guardar_archivo_pdf".to_string(),
+        })
+    })?;
+
+    Ok(ResultadoGuardarPdfDto {
+        guardado: true,
+        ruta_destino: Some(ruta_final.to_string_lossy().to_string()),
+        tamano_bytes: meta.len(),
+    })
+}
+
+#[tauri::command]
+fn guardar_archivo_pdf(peticion: PeticionGuardarPdfDto) -> RespuestaSistemaV1<ResultadoGuardarPdfDto> {
+    let inicio = Instant::now();
+    let id_solicitud = Uuid::new_v4().to_string();
+
+    if peticion.contenido_base64.trim().is_empty() {
+        return RespuestaSistemaV1::fallo(
+            contracts::ErrorSistemaV1 {
+                codigo: "VALIDACION_CONTENIDO_VACIO".to_string(),
+                categoria: "validacion".to_string(),
+                reintentable: false,
+                clave_mensaje: "El contenido binario del documento PDF no puede estar vacio"
+                    .to_string(),
+                parametros_mensaje: serde_json::json!({}),
+                etapa: "guardar_archivo_pdf".to_string(),
+            },
+            id_solicitud,
+            inicio.elapsed().as_millis() as u64,
+        );
+    }
+
+    let bytes = match decodificar_base64(&peticion.contenido_base64) {
+        Ok(b) => b,
+        Err(motivo) => {
+            return RespuestaSistemaV1::fallo(
+                contracts::ErrorSistemaV1 {
+                    codigo: "VALIDACION_BASE64_INVALIDO".to_string(),
+                    categoria: "validacion".to_string(),
+                    reintentable: false,
+                    clave_mensaje: motivo,
+                    parametros_mensaje: serde_json::json!({}),
+                    etapa: "guardar_archivo_pdf".to_string(),
+                },
+                id_solicitud,
+                inicio.elapsed().as_millis() as u64,
+            );
+        }
+    };
+
+    if bytes.len() < 4 || &bytes[0..4] != b"%PDF" {
+        return RespuestaSistemaV1::fallo(
+            contracts::ErrorSistemaV1 {
+                codigo: "FORMATO_PDF_INVALIDO".to_string(),
+                categoria: "validacion".to_string(),
+                reintentable: false,
+                clave_mensaje: "Los bytes recibidos no contienen una cabecera PDF valida"
+                    .to_string(),
+                parametros_mensaje: serde_json::json!({}),
+                etapa: "guardar_archivo_pdf".to_string(),
+            },
+            id_solicitud,
+            inicio.elapsed().as_millis() as u64,
+        );
+    }
+
+    let nombre_limpio = normalizar_nombre_pdf_sugerido(&peticion.nombre_sugerido);
+
+    #[cfg(test)]
+    let destino_elegido: Option<PathBuf> = {
+        let _ = &nombre_limpio;
+        None
+    };
+
+    #[cfg(not(test))]
+    let destino_elegido: Option<PathBuf> = {
+        desactivar_panel_vista_previa_dialogo_windows();
+        rfd::FileDialog::new()
+            .set_title("Guardar documento PDF")
+            .set_file_name(&nombre_limpio)
+            .add_filter("Documento PDF (*.pdf)", &["pdf"])
+            .save_file()
+    };
+
+    match guardar_bytes_pdf_en_destino(&bytes, destino_elegido) {
+        Ok(resultado) => {
+            RespuestaSistemaV1::exito(resultado, id_solicitud, inicio.elapsed().as_millis() as u64)
+        }
+        Err(error) => {
+            RespuestaSistemaV1::fallo(*error, id_solicitud, inicio.elapsed().as_millis() as u64)
+        }
+    }
+}
+
+#[cfg(not(test))]
+fn lanzar_visor_pdf_sistema(ruta: &Path) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    let mut cmd = {
+        let mut c = std::process::Command::new("rundll32.exe");
+        c.arg("url.dll,FileProtocolHandler").arg(ruta);
+        c
+    };
+
+    #[cfg(target_os = "macos")]
+    let mut cmd = {
+        let mut c = std::process::Command::new("open");
+        c.arg(ruta);
+        c
+    };
+
+    #[cfg(all(not(target_os = "windows"), not(target_os = "macos")))]
+    let mut cmd = {
+        let mut c = std::process::Command::new("xdg-open");
+        c.arg(ruta);
+        c
+    };
+
+    cmd.spawn()
+        .map(|_| ())
+        .map_err(|e| format!("No se pudo abrir el archivo con el visor predeterminado: {e}"))
+}
+
+#[cfg(test)]
+fn lanzar_visor_pdf_sistema(ruta: &Path) -> Result<(), String> {
+    let _ = ruta;
+    Ok(())
+}
+
+#[tauri::command]
+fn abrir_archivo_pdf(ruta_archivo: String) -> RespuestaSistemaV1<bool> {
+    let inicio = Instant::now();
+    let id_solicitud = Uuid::new_v4().to_string();
+    let ruta_limpia = ruta_archivo.trim();
+
+    if ruta_limpia.is_empty() {
+        return RespuestaSistemaV1::fallo(
+            contracts::ErrorSistemaV1 {
+                codigo: "VALIDACION_RUTA_ARCHIVO_VACIA".to_string(),
+                categoria: "validacion".to_string(),
+                reintentable: false,
+                clave_mensaje: "La ruta del archivo PDF a abrir no puede estar vacia".to_string(),
+                parametros_mensaje: serde_json::json!({}),
+                etapa: "abrir_archivo_pdf".to_string(),
+            },
+            id_solicitud,
+            inicio.elapsed().as_millis() as u64,
+        );
+    }
+
+    let path = Path::new(ruta_limpia);
+    if !path.exists() {
+        return RespuestaSistemaV1::fallo(
+            contracts::ErrorSistemaV1 {
+                codigo: "ARCHIVO_NO_ENCONTRADO".to_string(),
+                categoria: "archivo".to_string(),
+                reintentable: false,
+                clave_mensaje: "El archivo PDF especificado no existe en el sistema".to_string(),
+                parametros_mensaje: serde_json::json!({ "ruta": ruta_limpia }),
+                etapa: "abrir_archivo_pdf".to_string(),
+            },
+            id_solicitud,
+            inicio.elapsed().as_millis() as u64,
+        );
+    }
+
+    if !path.is_file() {
+        return RespuestaSistemaV1::fallo(
+            contracts::ErrorSistemaV1 {
+                codigo: "NO_ES_UN_ARCHIVO".to_string(),
+                categoria: "archivo".to_string(),
+                reintentable: false,
+                clave_mensaje: "La ruta especificada no corresponde a un archivo regular".to_string(),
+                parametros_mensaje: serde_json::json!({ "ruta": ruta_limpia }),
+                etapa: "abrir_archivo_pdf".to_string(),
+            },
+            id_solicitud,
+            inicio.elapsed().as_millis() as u64,
+        );
+    }
+
+    let mut cabecera = [0u8; 4];
+    let es_pdf = match std::fs::File::open(path) {
+        Ok(mut f) => {
+            use std::io::Read;
+            f.read_exact(&mut cabecera).is_ok() && &cabecera == b"%PDF"
+        }
+        Err(e) => {
+            return RespuestaSistemaV1::fallo(
+                contracts::ErrorSistemaV1 {
+                    codigo: "ERROR_ACCESO_ARCHIVO".to_string(),
+                    categoria: "archivo".to_string(),
+                    reintentable: true,
+                    clave_mensaje: e.to_string(),
+                    parametros_mensaje: serde_json::json!({ "ruta": ruta_limpia }),
+                    etapa: "abrir_archivo_pdf".to_string(),
+                },
+                id_solicitud,
+                inicio.elapsed().as_millis() as u64,
+            );
+        }
+    };
+
+    if !es_pdf {
+        return RespuestaSistemaV1::fallo(
+            contracts::ErrorSistemaV1 {
+                codigo: "FORMATO_PDF_INVALIDO".to_string(),
+                categoria: "archivo".to_string(),
+                reintentable: false,
+                clave_mensaje: "Por seguridad solo se permite abrir archivos con cabecera PDF valida"
+                    .to_string(),
+                parametros_mensaje: serde_json::json!({ "ruta": ruta_limpia }),
+                etapa: "abrir_archivo_pdf".to_string(),
+            },
+            id_solicitud,
+            inicio.elapsed().as_millis() as u64,
+        );
+    }
+
+    match lanzar_visor_pdf_sistema(path) {
+        Ok(()) => RespuestaSistemaV1::exito(true, id_solicitud, inicio.elapsed().as_millis() as u64),
+        Err(motivo) => RespuestaSistemaV1::fallo(
+            contracts::ErrorSistemaV1 {
+                codigo: "ERROR_APERTURA_ARCHIVO".to_string(),
+                categoria: "sistema".to_string(),
+                reintentable: true,
+                clave_mensaje: motivo,
+                parametros_mensaje: serde_json::json!({ "ruta": ruta_limpia }),
+                etapa: "abrir_archivo_pdf".to_string(),
+            },
+            id_solicitud,
+            inicio.elapsed().as_millis() as u64,
+        ),
     }
 }
 
@@ -744,6 +1161,8 @@ fn main() {
             inspeccionar_archivo_pdf,
             unir_archivos_pdf,
             seleccionar_archivos_pdf,
+            guardar_archivo_pdf,
+            abrir_archivo_pdf,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -1106,5 +1525,174 @@ mod tests {
             resolver_restauracion_ld_library_path_linux(Some("1"), Some("/opt/custom/lib:/usr/local/lib")),
             Some(Some("/opt/custom/lib:/usr/local/lib".to_string()))
         );
+    }
+
+    #[test]
+    fn test_decodificar_base64_casos_validos_e_invalidos() {
+        // "%PDF-1.5" en Base64 es "JVBERi0xLjU="
+        assert_eq!(
+            decodificar_base64("JVBERi0xLjU=").expect("base64 valido"),
+            b"%PDF-1.5"
+        );
+        // Con prefijo data URL y saltos de linea
+        assert_eq!(
+            decodificar_base64("data:application/pdf;base64,JVBE\nRi0x\r\nLjU=")
+                .expect("data url base64"),
+            b"%PDF-1.5"
+        );
+        // Sin padding ("JVBERg==" = "%PDF" -> 4 bytes con ==; "%PDF-1" = 6 bytes -> "JVBERi0x")
+        assert_eq!(
+            decodificar_base64("JVBERg==").expect("base64 doble igual"),
+            b"%PDF"
+        );
+        assert_eq!(
+            decodificar_base64("JVBERi0x").expect("base64 sin igual"),
+            b"%PDF-1"
+        );
+
+        assert!(decodificar_base64("").is_err());
+        assert!(decodificar_base64("   ").is_err());
+        assert!(decodificar_base64("JVBER").is_err());
+        assert!(decodificar_base64("JVBE====").is_err());
+        assert!(decodificar_base64("JV$ERi0x").is_err());
+    }
+
+    #[test]
+    fn test_normalizar_nombre_pdf_y_extension_con_puntos() {
+        assert_eq!(
+            normalizar_nombre_pdf_sugerido("expediente_final.pdf"),
+            "expediente_final.pdf"
+        );
+        assert_eq!(
+            normalizar_nombre_pdf_sugerido("informe_v1.0"),
+            "informe_v1.0.pdf"
+        );
+        assert_eq!(
+            normalizar_nombre_pdf_sugerido("C:\\temp\\reporte:2026*?.PDF"),
+            "reporte_2026__.pdf"
+        );
+        assert_eq!(normalizar_nombre_pdf_sugerido("   "), "documento_final.pdf");
+        assert_eq!(normalizar_nombre_pdf_sugerido("***"), "documento_final.pdf");
+
+        let ruta_sin_ext = PathBuf::from("C:/salida/union_v1.0");
+        assert_eq!(
+            asegurar_extension_pdf(ruta_sin_ext),
+            PathBuf::from("C:/salida/union_v1.0.pdf")
+        );
+        let ruta_con_ext = PathBuf::from("C:/salida/union_v1.0.PDF");
+        assert_eq!(
+            asegurar_extension_pdf(ruta_con_ext.clone()),
+            ruta_con_ext
+        );
+    }
+
+    #[test]
+    fn test_guardar_archivo_pdf_validaciones_y_cancelacion() {
+        let vacio = guardar_archivo_pdf(PeticionGuardarPdfDto {
+            nombre_sugerido: "salida.pdf".to_string(),
+            contenido_base64: "   ".to_string(),
+        });
+        assert!(!vacio.correcto);
+        assert_eq!(
+            vacio.error.expect("error").codigo,
+            "VALIDACION_CONTENIDO_VACIO"
+        );
+
+        let b64_invalido = guardar_archivo_pdf(PeticionGuardarPdfDto {
+            nombre_sugerido: "salida.pdf".to_string(),
+            contenido_base64: "no-es-base64!!!".to_string(),
+        });
+        assert!(!b64_invalido.correcto);
+        assert_eq!(
+            b64_invalido.error.expect("error").codigo,
+            "VALIDACION_BASE64_INVALIDO"
+        );
+
+        // "SG9sYSBNdW5kbw==" = "Hola Mundo" (no empieza con %PDF)
+        let no_pdf = guardar_archivo_pdf(PeticionGuardarPdfDto {
+            nombre_sugerido: "salida.pdf".to_string(),
+            contenido_base64: "SG9sYSBNdW5kbw==".to_string(),
+        });
+        assert!(!no_pdf.correcto);
+        assert_eq!(no_pdf.error.expect("error").codigo, "FORMATO_PDF_INVALIDO");
+
+        // En #[cfg(test)], el dialogo devuelve None simulando cancelacion limpia del usuario
+        let cancelado = guardar_archivo_pdf(PeticionGuardarPdfDto {
+            nombre_sugerido: "salida.pdf".to_string(),
+            contenido_base64: "JVBERi0xLjU=".to_string(),
+        });
+        assert!(cancelado.correcto);
+        let datos = cancelado.datos.expect("datos");
+        assert!(!datos.guardado);
+        assert!(datos.ruta_destino.is_none());
+        assert_eq!(datos.tamano_bytes, 0);
+    }
+
+    #[test]
+    fn test_guardar_bytes_pdf_en_destino_escribe_y_agrega_extension() {
+        let temp_dir = std::env::temp_dir().join(format!("union_pdf_save_{}", Uuid::new_v4()));
+        let destino_sin_ext = temp_dir.join("entrega_v1.0");
+        let bytes_pdf = b"%PDF-1.5\n1 0 obj\n<<>>\nendobj\n%%EOF";
+
+        let resultado = guardar_bytes_pdf_en_destino(bytes_pdf, Some(destino_sin_ext))
+            .expect("debe escribir el PDF en disco");
+        assert!(resultado.guardado);
+        assert_eq!(resultado.tamano_bytes, bytes_pdf.len() as u64);
+
+        let ruta_esperada = temp_dir.join("entrega_v1.0.pdf");
+        assert_eq!(
+            resultado.ruta_destino.as_deref(),
+            Some(ruta_esperada.to_string_lossy().as_ref())
+        );
+        assert_eq!(
+            std::fs::read(&ruta_esperada).expect("leer archivo escrito"),
+            bytes_pdf
+        );
+
+        let _ = std::fs::remove_dir_all(temp_dir);
+    }
+
+    #[test]
+    fn test_abrir_archivo_pdf_seguridad_y_validaciones() {
+        let vacia = abrir_archivo_pdf("   ".to_string());
+        assert!(!vacia.correcto);
+        assert_eq!(
+            vacia.error.expect("error").codigo,
+            "VALIDACION_RUTA_ARCHIVO_VACIA"
+        );
+
+        let inexistente = abrir_archivo_pdf("C:/ruta/inexistente/no_existe_999.pdf".to_string());
+        assert!(!inexistente.correcto);
+        assert_eq!(
+            inexistente.error.expect("error").codigo,
+            "ARCHIVO_NO_ENCONTRADO"
+        );
+
+        let temp_dir = std::env::temp_dir();
+        let directorio = abrir_archivo_pdf(temp_dir.to_string_lossy().to_string());
+        assert!(!directorio.correcto);
+        assert_eq!(
+            directorio.error.expect("error").codigo,
+            "NO_ES_UN_ARCHIVO"
+        );
+
+        // Rechaza abrir archivos que no tengan cabecera %PDF (ej. scripts/ejecutables renombrados)
+        let falso_pdf = temp_dir.join(format!("falso_{}.pdf", Uuid::new_v4()));
+        std::fs::write(&falso_pdf, b"MZ\x90\x00no_soy_pdf").unwrap();
+        let resp_falso = abrir_archivo_pdf(falso_pdf.to_string_lossy().to_string());
+        let _ = std::fs::remove_file(&falso_pdf);
+        assert!(!resp_falso.correcto);
+        assert_eq!(
+            resp_falso.error.expect("error").codigo,
+            "FORMATO_PDF_INVALIDO"
+        );
+
+        // Acepta un archivo PDF real
+        let pdf_real = temp_dir.join(format!("valido_{}.pdf", Uuid::new_v4()));
+        crear_pdf_prueba(&pdf_real);
+        let resp_ok = abrir_archivo_pdf(pdf_real.to_string_lossy().to_string());
+        let _ = std::fs::remove_file(&pdf_real);
+        assert!(resp_ok.correcto);
+        assert_eq!(resp_ok.datos, Some(true));
     }
 }

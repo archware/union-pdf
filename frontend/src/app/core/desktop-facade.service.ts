@@ -2,7 +2,9 @@ import { Inject, Injectable, InjectionToken } from '@angular/core';
 import type {
   EstadoSistemaDto,
   MetadatosArchivoPdfDto,
+  PeticionGuardarPdfDto,
   PeticionUnirPdfsDto,
+  ResultadoGuardarPdfDto,
   ResultadoUnirPdfsDto,
   RespuestaSistemaV1,
 } from '../../../contracts/generated/typescript/contracts';
@@ -11,7 +13,9 @@ import { desenvolverRespuestaSistema } from '../../../contracts/generated/typesc
 export type {
   EstadoSistemaDto,
   MetadatosArchivoPdfDto,
+  PeticionGuardarPdfDto,
   PeticionUnirPdfsDto,
+  ResultadoGuardarPdfDto,
   ResultadoUnirPdfsDto,
   RespuestaSistemaV1,
 };
@@ -109,6 +113,20 @@ export class DesktopFacadeService {
 
   async seleccionarArchivosPdf(): Promise<RespuestaSistemaV1<string[]>> {
     return this.invocador<RespuestaSistemaV1<string[]>>('seleccionar_archivos_pdf');
+  }
+
+  async guardarArchivoPdf(
+    peticion: PeticionGuardarPdfDto,
+  ): Promise<RespuestaSistemaV1<ResultadoGuardarPdfDto>> {
+    return this.invocador<RespuestaSistemaV1<ResultadoGuardarPdfDto>>('guardar_archivo_pdf', {
+      peticion,
+    });
+  }
+
+  async abrirArchivoPdf(rutaArchivo: string): Promise<RespuestaSistemaV1<boolean>> {
+    return this.invocador<RespuestaSistemaV1<boolean>>('abrir_archivo_pdf', {
+      rutaArchivo,
+    });
   }
 
   desenvolver<T>(respuesta: RespuestaSistemaV1<T>): T {

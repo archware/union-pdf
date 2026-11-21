@@ -1,7 +1,8 @@
 [package]
 name = "union-pdf"
-version = "0.5.4"
+version = "1.0.0"
 edition = "2021"
+license = "MIT"
 
 [dependencies]
 tauri = { version = "1.5", features = ["shell-open"] }

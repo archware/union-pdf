@@ -1329,7 +1329,7 @@ describe('AppComponent (Unión PDF)', () => {
           correcto: true,
           datos: {
             nombreAplicacion: 'union-pdf',
-            version: '0.5.4',
+            version: '1.0.0',
             entorno: 'desarrollo',
             plataforma: 'windows',
             runtime: 'tauri-v1.5',
@@ -1346,7 +1346,7 @@ describe('AppComponent (Unión PDF)', () => {
       expect(mockDesktopFacade.estaEnModoEscritorio).toHaveBeenCalled();
       expect(mockDesktopFacade.obtenerEstadoSistema).toHaveBeenCalled();
       expect(app.estadoSistema?.runtime).toBe('tauri-v1.5');
-      expect(app.estadoSistema?.version).toBe('0.5.4');
+      expect(app.estadoSistema?.version).toBe('1.0.0');
       expect(mockCdr.markForCheck).toHaveBeenCalled();
     });
 
@@ -1409,6 +1409,7 @@ describe('AppComponent (Unión PDF)', () => {
          de certificados y firmas concisas (.about-credit-item--seal) con normalizedCopyrightText sin duplicar "©". */
       const dialogText = dialogEl?.textContent || '';
       expect(dialogText).toContain('Unión PDF');
+      expect(dialogText).toContain('v1.0.0');
       expect(dialogText).toContain('Ing. Havel CONTRERAS TAPAHUASCO');
       expect(dialogText).toContain('@archware');
       expect(dialogText).toContain('COTAHA');
@@ -1476,7 +1477,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Refleja version y runtime dinamicos desde estadoSistema cuando existe, sin reintroducir pildoras en .editor-header
       app.estadoSistema = {
         nombreAplicacion: 'union-pdf',
-        version: '0.5.4',
+        version: '1.0.0',
         entorno: 'produccion',
         plataforma: 'windows',
         runtime: 'tauri-v1.5',
@@ -1484,7 +1485,7 @@ describe('AppComponent (Unión PDF)', () => {
       // Igual que en produccion (app.component.ts tras obtenerEstadoSistema): el estado se asigna y se marca para chequeo
       fixture.componentRef.injector.get(ChangeDetectorRef).markForCheck();
       fixture.detectChanges();
-      expect(dialogEl?.textContent || '').toContain('v0.5.4');
+      expect(dialogEl?.textContent || '').toContain('v1.0.0');
       expect(dialogEl?.textContent || '').toContain('tauri-v1.5');
       expect(hostEl.querySelector('.header-pill')).toBeNull();
       expect(hostEl.querySelector('.header-pill--desktop')).toBeNull();
@@ -1854,6 +1855,323 @@ describe('AppComponent (Unión PDF)', () => {
       expect(hostEl.querySelector('.viewer-subtitle')).toBeNull();
 
       convertSpy.mockRestore();
+    });
+  });
+
+  describe('Experiencia de Escritorio Nativo v1.0.0 (Guardado IPC, Drag & Drop, Atajos y Tema)', () => {
+    it('usa DesktopFacadeService.guardarArchivoPdf en modo escritorio, permite abrir el PDF guardado y maneja cancelacion limpia', async () => {
+      const savedBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x35]);
+      (globalThis as any).PDFLib = {
+        degrees: (angle: number) => ({ type: 'degrees', angle }),
+        PDFDocument: {
+          load: vi.fn().mockResolvedValue({ getPageCount: () => 1 }),
+          create: vi.fn().mockResolvedValue({
+            copyPages: vi.fn().mockResolvedValue([{}]),
+            addPage: vi.fn(),
+            save: vi.fn().mockResolvedValue(savedBytes),
+          }),
+        },
+      };
+
+      const guardarMock = vi.fn().mockResolvedValueOnce({
+        versionContrato: 'hra.desktop.respuesta-sistema.v1',
+        identificadorSolicitud: 'save-1',
+        correcto: true,
+        datos: {
+          guardado: true,
+          rutaDestino: 'C:/Usuarios/cotaha/Documentos/expediente_final.pdf',
+          tamanoBytes: savedBytes.byteLength,
+        },
+        error: null,
+        metadatos: { duracionMs: 12, etapaOperacion: 'completado' },
+      });
+      const abrirMock = vi.fn().mockResolvedValue({
+        versionContrato: 'hra.desktop.respuesta-sistema.v1',
+        identificadorSolicitud: 'open-1',
+        correcto: true,
+        datos: true,
+        error: null,
+        metadatos: { duracionMs: 5, etapaOperacion: 'completado' },
+      });
+
+      const mockDesktopFacade = {
+        estaEnModoEscritorio: vi.fn().mockReturnValue(true),
+        obtenerEstadoSistema: vi.fn().mockResolvedValue({
+          versionContrato: 'hra.desktop.respuesta-sistema.v1',
+          identificadorSolicitud: 'sys-1',
+          correcto: true,
+          datos: {
+            nombreAplicacion: 'union-pdf',
+            version: '1.0.0',
+            entorno: 'produccion',
+            plataforma: 'windows',
+            runtime: 'tauri-v1.5',
+          },
+          error: null,
+          metadatos: { duracionMs: 1, etapaOperacion: 'completado' },
+        }),
+        guardarArchivoPdf: guardarMock,
+        abrirArchivoPdf: abrirMock,
+      } as any;
+
+      const app = new AppComponent(mockCdr, mockDesktopFacade);
+      const mockFile = {
+        id: 'f1',
+        fileObject: {
+          name: 'contrato.pdf',
+          size: 1024,
+          type: 'application/pdf',
+          arrayBuffer: vi.fn().mockResolvedValue(savedBytes.buffer.slice(0)),
+        } as unknown as File,
+        name: 'contrato.pdf',
+        size: '1 KB',
+        pageCount: 1,
+        pagesToKeep: '1',
+        pages: [{ id: 'p1', pageNum: 1, active: true, rotation: 0 }],
+      };
+      app.uploadedFiles = [mockFile];
+      app.globalPageOrder = ['p1'];
+      app.outputFileName = 'expediente_final.pdf';
+
+      await app.mergeSelectedPDFs();
+
+      expect(guardarMock).toHaveBeenCalledTimes(1);
+      expect(guardarMock).toHaveBeenCalledWith({
+        nombreSugerido: 'expediente_final.pdf',
+        contenidoBase64: 'JVBERi0xLjU=',
+      });
+      expect(app.statusType).toBe('success');
+      expect(app.lastSavedPdfPath).toBe('C:/Usuarios/cotaha/Documentos/expediente_final.pdf');
+      expect(app.statusMessage).toContain('C:/Usuarios/cotaha/Documentos/expediente_final.pdf');
+
+      await app.openLastSavedPdf();
+      expect(abrirMock).toHaveBeenCalledWith('C:/Usuarios/cotaha/Documentos/expediente_final.pdf');
+
+      // Si el usuario cancela el dialogo nativo Guardar como..., limpia el estado sin error
+      guardarMock.mockResolvedValueOnce({
+        versionContrato: 'hra.desktop.respuesta-sistema.v1',
+        identificadorSolicitud: 'save-cancel',
+        correcto: true,
+        datos: {
+          guardado: false,
+          rutaDestino: null,
+          tamanoBytes: 0,
+        },
+        error: null,
+        metadatos: { duracionMs: 40, etapaOperacion: 'completado' },
+      });
+
+      await app.mergeSelectedPDFs();
+      expect(app.statusType).toBe('');
+      expect(app.statusMessage).toBe('');
+      expect(app.lastSavedPdfPath).toBeNull();
+    });
+
+    it('reordena miniaturas mediante drag & drop sin disparar la carga externa de archivos', () => {
+      component.uploadedFiles = [
+        {
+          id: 'f1',
+          fileObject: new File([], 'doc.pdf', { type: 'application/pdf' }),
+          name: 'doc.pdf',
+          size: '10 KB',
+          pageCount: 3,
+          pagesToKeep: '1-3',
+          pages: [
+            { id: 'p1', pageNum: 1, active: true },
+            { id: 'p2', pageNum: 2, active: true },
+            { id: 'p3', pageNum: 3, active: true },
+          ],
+        },
+      ];
+      component.globalPageOrder = ['p1', 'p2', 'p3'];
+
+      const setData = vi.fn();
+      const startEvt = {
+        stopPropagation: vi.fn(),
+        dataTransfer: { effectAllowed: 'none', setData },
+      } as unknown as DragEvent;
+
+      component.onThumbnailDragStart(startEvt, 'p1');
+      expect(component.draggingPageId).toBe('p1');
+      expect(setData).toHaveBeenCalledWith('text/plain', 'p1');
+
+      // Mientras se arrastra una miniatura, el contenedor de archivos externo ignora dragover
+      component.onDragOver({
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+        dataTransfer: { types: ['Files'], dropEffect: 'none' },
+      } as unknown as DragEvent);
+      expect(component.isDragging).toBe(false);
+
+      const overEvt = {
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+        clientY: 90,
+        currentTarget: {
+          getBoundingClientRect: () => ({ top: 0, height: 100 }),
+        },
+        dataTransfer: { dropEffect: 'none' },
+      } as unknown as DragEvent;
+
+      component.onThumbnailDragOver(overEvt, 'p3');
+      expect(component.dragOverPageId).toBe('p3');
+      expect(component.dragDropPosition).toBe('after');
+
+      component.onThumbnailDrop(overEvt, 'p3');
+      expect(component.globalPageOrder).toEqual(['p2', 'p3', 'p1']);
+      expect(component.draggingPageId).toBeNull();
+      expect(component.dragOverPageId).toBeNull();
+
+      // Mover p3 antes de p2 (mitad superior: clientY = 10 sobre height = 100)
+      component.onThumbnailDragStart(startEvt, 'p1');
+      const overBeforeEvt = {
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+        clientY: 10,
+        currentTarget: {
+          getBoundingClientRect: () => ({ top: 0, height: 100 }),
+        },
+        dataTransfer: { dropEffect: 'none', getData: () => 'p1' },
+      } as unknown as DragEvent;
+      component.onThumbnailDragOver(overBeforeEvt, 'p2');
+      expect(component.dragDropPosition).toBe('before');
+      component.onThumbnailDrop(overBeforeEvt, 'p2');
+      expect(component.globalPageOrder).toEqual(['p1', 'p2', 'p3']);
+    });
+
+    it('ejecuta atajos de teclado (flechas, R, Delete, Ctrl+S / Cmd+S) y los bloquea dentro de inputs o modales', () => {
+      component.uploadedFiles = [
+        {
+          id: 'f1',
+          fileObject: new File([], 'doc.pdf', { type: 'application/pdf' }),
+          name: 'doc.pdf',
+          size: '10 KB',
+          pageCount: 3,
+          pagesToKeep: '1-3',
+          pages: [
+            { id: 'p1', pageNum: 1, active: true, rotation: 0 },
+            { id: 'p2', pageNum: 2, active: true, rotation: 0 },
+            { id: 'p3', pageNum: 3, active: true, rotation: 0 },
+          ],
+        },
+      ];
+      component.globalPageOrder = ['p1', 'p2', 'p3'];
+      component.selectedPageId = 'p1';
+
+      const rotateSpy = vi.spyOn(component, 'rotateSelectedPage').mockResolvedValue();
+      const mergeSpy = vi.spyOn(component, 'mergeSelectedPDFs').mockResolvedValue();
+
+      // ArrowRight avanza a p2 y luego a p3 (y se detiene en el borde)
+      const rightEvt = new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true });
+      component.onWindowKeyDown(rightEvt);
+      expect(component.selectedPageId).toBe('p2');
+      expect(rightEvt.defaultPrevented).toBe(true);
+
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true }));
+      expect(component.selectedPageId).toBe('p3');
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true }));
+      expect(component.selectedPageId).toBe('p3');
+
+      // ArrowLeft retrocede a p2
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'ArrowLeft', cancelable: true }));
+      expect(component.selectedPageId).toBe('p2');
+
+      // R rota +90°, pero Ctrl+R no rota
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'r', cancelable: true }));
+      expect(rotateSpy).toHaveBeenCalledWith(90);
+      rotateSpy.mockClear();
+      component.onWindowKeyDown(
+        new KeyboardEvent('keydown', { key: 'r', ctrlKey: true, cancelable: true }),
+      );
+      expect(rotateSpy).not.toHaveBeenCalled();
+
+      // Delete excluye y vuelve a restaurar la hoja seleccionada
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'Delete', cancelable: true }));
+      expect(component.uploadedFiles[0].pages[1].active).toBe(false);
+      expect(component.uploadedFiles[0].pagesToKeep).toBe('1, 3');
+
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'Delete', cancelable: true }));
+      expect(component.uploadedFiles[0].pages[1].active).toBe(true);
+      expect(component.uploadedFiles[0].pagesToKeep).toBe('1-3');
+
+      // Foco en <input> bloquea flechas, R y Delete
+      const inputEl = document.createElement('input');
+      document.body.appendChild(inputEl);
+      inputEl.focus();
+      try {
+        const keyInInput = new KeyboardEvent('keydown', { key: 'ArrowLeft', cancelable: true });
+        Object.defineProperty(keyInInput, 'target', { value: inputEl });
+        component.onWindowKeyDown(keyInInput);
+        expect(component.selectedPageId).toBe('p2');
+
+        const delInInput = new KeyboardEvent('keydown', { key: 'Delete', cancelable: true });
+        Object.defineProperty(delInInput, 'target', { value: inputEl });
+        component.onWindowKeyDown(delInInput);
+        expect(component.uploadedFiles[0].pages[1].active).toBe(true);
+      } finally {
+        document.body.removeChild(inputEl);
+      }
+
+      // Ctrl+S y Cmd+S exportan el PDF
+      const ctrlS = new KeyboardEvent('keydown', { key: 's', ctrlKey: true, cancelable: true });
+      component.onWindowKeyDown(ctrlS);
+      expect(ctrlS.defaultPrevented).toBe(true);
+      expect(mergeSpy).toHaveBeenCalledTimes(1);
+
+      const cmdS = new KeyboardEvent('keydown', { key: 'S', metaKey: true, cancelable: true });
+      component.onWindowKeyDown(cmdS);
+      expect(cmdS.defaultPrevented).toBe(true);
+      expect(mergeSpy).toHaveBeenCalledTimes(2);
+
+      // Con modal Acerca de abierto se ignoran todos los atajos
+      component.isAboutDialogOpen = true;
+      component.onWindowKeyDown(
+        new KeyboardEvent('keydown', { key: 's', ctrlKey: true, cancelable: true }),
+      );
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'ArrowLeft', cancelable: true }));
+      expect(mergeSpy).toHaveBeenCalledTimes(2);
+      expect(component.selectedPageId).toBe('p2');
+    });
+
+    it('alterna entre modo claro y oscuro desde el encabezado, sincronizando data-theme, clase .dark y localStorage', async () => {
+      localStorage.removeItem(AppComponent.THEME_STORAGE_KEY);
+      document.documentElement.classList.remove('dark');
+      document.documentElement.removeAttribute('data-theme');
+
+      await TestBed.configureTestingModule({
+        imports: [AppComponent],
+      }).compileComponents();
+
+      const fixture = TestBed.createComponent(AppComponent);
+      const app = fixture.componentInstance;
+      fixture.detectChanges();
+
+      const hostEl = fixture.nativeElement as HTMLElement;
+      const themeBtn = hostEl.querySelector(
+        '.header-meta-actions app-icon-button.theme-toggle-btn button',
+      ) as HTMLButtonElement | null;
+      expect(themeBtn).not.toBeNull();
+      expect(app.isDarkMode).toBe(false);
+      expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+      expect(document.documentElement.classList.contains('dark')).toBe(false);
+
+      themeBtn!.click();
+      fixture.detectChanges();
+
+      expect(app.isDarkMode).toBe(true);
+      expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+      expect(localStorage.getItem(AppComponent.THEME_STORAGE_KEY)).toBe('dark');
+
+      themeBtn!.click();
+      fixture.detectChanges();
+
+      expect(app.isDarkMode).toBe(false);
+      expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+      expect(document.documentElement.classList.contains('dark')).toBe(false);
+      expect(localStorage.getItem(AppComponent.THEME_STORAGE_KEY)).toBe('light');
+
+      localStorage.removeItem(AppComponent.THEME_STORAGE_KEY);
     });
   });
 });

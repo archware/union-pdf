@@ -13,6 +13,16 @@
         <h1 class="brand-title">Unión PDF</h1>
       </div>
       <div class="header-meta-actions">
+        <app-icon-button
+          class="theme-toggle-btn"
+          variant="default"
+          size="sm"
+          animation="none"
+          [icon]="isDarkMode ? 'fa-solid fa-sun' : 'fa-solid fa-moon'"
+          [tooltip]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+          [ariaLabel]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+          (clicked)="toggleTheme()"
+        ></app-icon-button>
         <app-button
           variant="outline"
           size="sm"
@@ -135,7 +145,7 @@
               <!-- CTA Button -->
               <div class="merge-action-container">
                 <app-button variant="primary" appearance="gradient" size="lg" [fullWidth]="true" iconClass="fa-layer-group" (buttonClick)="mergeSelectedPDFs()" [loading]="isMerging">
-                  {{ uploadedFiles.length === 1 ? 'Guardar y Descargar PDF' : 'Unir, Reordenar y Descargar PDF' }}
+                  {{ isDesktopMode ? (uploadedFiles.length === 1 ? 'Guardar PDF como…' : 'Unir y Guardar PDF como…') : (uploadedFiles.length === 1 ? 'Guardar y Descargar PDF' : 'Unir, Reordenar y Descargar PDF') }}
                 </app-button>
               </div>
             </div>
@@ -150,6 +160,16 @@
                [class.status-container--loading]="statusType !== 'error' && statusType !== 'success'">
             <i [class]="'fa-solid ' + (statusType === 'error' ? 'fa-triangle-exclamation text-danger' : (statusType === 'success' ? 'fa-circle-check text-success' : 'fa-spinner fa-spin text-primary'))"></i>
             <span class="status-message">{{ statusMessage }}</span>
+            @if (statusType === 'success' && lastSavedPdfPath) {
+              <app-button
+                class="open-saved-pdf-btn"
+                variant="outline"
+                size="sm"
+                iconClass="fa-solid fa-up-right-from-square"
+                (buttonClick)="openLastSavedPdf()">
+                Abrir PDF
+              </app-button>
+            }
           </div>
         }
       </div>
@@ -193,10 +213,18 @@
                   <div class="thumbnail-list">
                     @for (entry of orderedEntries(); track entry.page.id) {
                       <div class="thumbnail-item"
+                           draggable="true"
+                           title="Arrastra para reordenar • Doble clic o Supr para excluir/restaurar"
                            [class.thumbnail-item--selected]="selectedPageId === entry.page.id"
                            [class.thumbnail-item--discarded]="!entry.page.active"
-                           (mousedown)="$event.preventDefault()"
-                           (dragstart)="$event.preventDefault()"
+                           [class.thumbnail-item--dragging]="draggingPageId === entry.page.id"
+                           [class.thumbnail-item--drop-before]="dragOverPageId === entry.page.id && dragDropPosition === 'before'"
+                           [class.thumbnail-item--drop-after]="dragOverPageId === entry.page.id && dragDropPosition === 'after'"
+                           (dragstart)="onThumbnailDragStart($event, entry.page.id)"
+                           (dragover)="onThumbnailDragOver($event, entry.page.id)"
+                           (dragleave)="onThumbnailDragLeave($event, entry.page.id)"
+                           (drop)="onThumbnailDrop($event, entry.page.id)"
+                           (dragend)="onThumbnailDragEnd()"
                            (click)="setSelectedPage(entry.page.id)"
                            (dblclick)="togglePageActive(entry.page.id)">
                         <img [src]="getThumbnailSrc(entry)" class="thumbnail-image" draggable="false" alt="Pagina {{entry.page.pageNum}}">
@@ -381,7 +409,7 @@
   dialogTitle="Acerca de Unión PDF"
   appName="Unión PDF"
   appSubtitle="Suite Corporativa de Ingeniería Documental · SSIT Consulting"
-  [version]="estadoSistema ? 'v' + estadoSistema.version : 'v0.5.4'"
+  [version]="estadoSistema ? 'v' + estadoSistema.version : 'v1.0.0'"
   environment="CORPORATIVO · LOCAL & SEGURO"
   [runtimeInfo]="estadoSistema ? estadoSistema.runtime : 'Tauri + Rust Desktop'"
   logoIcon="fa-solid fa-file-pdf"

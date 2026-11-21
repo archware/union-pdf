@@ -1,7 +1,7 @@
 {
   "package": {
     "productName": "union-pdf",
-    "version": "0.5.4"
+    "version": "1.0.0"
   },
   "tauri": {
     "allowlist": {
@@ -24,15 +24,18 @@
     "windows": [
       {
         "title": "Unión PDF",
-        "width": 800,
-        "height": 600,
+        "width": 1280,
+        "height": 820,
+        "minWidth": 960,
+        "minHeight": 640,
+        "center": true,
         "resizable": true,
         "fullscreen": false,
         "fileDropEnabled": false
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self' tauri: https://tauri.localhost; script-src 'self' blob: tauri: https://tauri.localhost; worker-src 'self' blob: tauri: https://tauri.localhost; child-src 'self' blob: tauri: https://tauri.localhost; style-src 'self' 'unsafe-inline' tauri: https://tauri.localhost; img-src 'self' data: blob: asset: https://asset.localhost tauri: https://tauri.localhost; font-src 'self' data: tauri: https://tauri.localhost; connect-src 'self' ipc: http://ipc.localhost tauri: https://tauri.localhost data: blob:; object-src 'none'; base-uri 'self'"
     }
   },
   "build": {

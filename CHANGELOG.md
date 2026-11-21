@@ -5,6 +5,27 @@ Todos los cambios importantes en este proyecto se documentarán en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere al [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-11-20 (PDFTOOL-20261018-001 — Cierre Corporativo v1.0.0)
+
+### Added
+- **Guardado nativo real («Guardar como…») y apertura de PDF resultante por IPC Rust (`contracts/generated/{rust,typescript}/contracts.*`, `frontend/contracts/generated/typescript/contracts.ts`, `src-tauri/src/main.rs`, `frontend/src/app/core/desktop-facade.service.{ts,spec.ts}`, `frontend/src/app/app.component.{ts,html,spec.ts}`):**
+  - Incorporados los contratos en ASCII y español `PeticionGuardarPdfDto` (`nombreSugerido`, `contenidoBase64`) y `ResultadoGuardarPdfDto` (`guardado`, `rutaDestino`, `tamanoBytes`) bajo el sobre canónico `RespuestaSistemaV1<T>`.
+  - Implementados en `src-tauri/src/main.rs` los comandos IPC `guardar_archivo_pdf` (con diálogo nativo `rfd::FileDialog::save_file()`, decodificador Base64 RFC 4648 autónomo, verificación de firma `%PDF`, saneamiento de nombre sugerido y anexado seguro de `.pdf` preservando nombres con puntos como `informe_v1.0.pdf`) y `abrir_archivo_pdf` (que verifica existencia, archivo regular y firma `%PDF` antes de invocar el visor del sistema sin interpolación de shell), manteniendo la descarga `<a download>` como respaldo automático fuera del entorno Tauri y exponiendo el botón `Abrir PDF` tras guardar.
+- **Reordenamiento por arrastre de miniaturas y atajos rápidos de teclado (`frontend/src/app/app.component.{ts,html,spec.ts}`, `frontend/src/styles/pdf-tool-styles.css`):**
+  - Habilitado el arrastre y soltado directo sobre `.thumbnail-item` (`onThumbnailDragStart`, `onThumbnailDragOver`, `onThumbnailDrop`, `movePageToTarget`) con indicadores visuales tokenizados (`.thumbnail-item--dragging`, `.thumbnail-item--drop-before`, `.thumbnail-item--drop-after`) aislados de la zona externa de carga de archivos.
+  - Incorporados atajos globales en `onWindowKeyDown` (`←`/`→` cambiar hoja seleccionada, `R` rotar `+90°`, `Delete` excluir/restaurar hoja seleccionada y `Ctrl+S` / `Cmd+S` exportar PDF), bloqueando atajos de tecla simple cuando el foco reside en `<input>`, `<textarea>`, `<select>` o `[contenteditable]` y desactivando todos los atajos mientras haya un diálogo modal abierto (`isAboutDialogOpen` / `isFileDialogOpen`).
+- **Conmutador minimalista Modo Claro / Oscuro en la cabecera (`frontend/src/app/app.component.{ts,html,spec.ts}`, `frontend/src/styles/pdf-tool-styles.css`):** añadido `<app-icon-button class="theme-toggle-btn" animation="none">` junto a `Acerca de` en `.header-meta-actions`, sincronizando `data-theme="light|dark"` y la clase `.dark` en `document.documentElement`, persistiendo en `localStorage` (`app-theme`), respetando `prefers-color-scheme` inicial y garantizando papel blanco (`--gray-0`) en `<canvas>`/miniaturas y contraste `--text-color-on-primary` sobre etiquetas superpuestas en tema oscuro.
+
+### Changed
+- **Ventana inicial amplia y centrada (`1280×820`) y unificación integral de versión `1.0.0` (`package.json`, `frontend/package.json`, `frontend/package-lock.json`, `src-tauri/Cargo.toml`, `Cargo.lock`, `src-tauri/tauri.conf.json`, `.agent/tauri.conf.json.sha256`, `frontend/src/app/app.component.{html,spec.ts}`, `.github/workflows/release.yml`, `docs/RELEASE_PROCESS.md`):** configurada la ventana principal en `1280×820` centrada (`minWidth: 960`, `minHeight: 640`) manteniendo estrictamente Tauri v1.5 con actualización oficial de su candado SHA-256 (`scripts/verificar-tauri-conf.mjs --actualizar`).
+- **Portada ejecutiva en `README.md` y licencia `MIT` unificada (`README.md`, `LICENSE`, `package.json`, `frontend/package.json`, `src-tauri/Cargo.toml`):** incorporados badges en vivo (GitHub Actions CI/CD, Release `v1.0.0`, plataformas, stack y licencia MIT), tabla de descarga directa por sistema operativo, guía de funcionalidades y alineación de licencia `MIT` con `@archware · SSIT Consulting` y `-Atomic-UI`.
+
+### Security
+- **Activación de `Content-Security-Policy` (`CSP`) explícita en `src-tauri/tauri.conf.json`:** sustituido `"csp": null` por una política explícita compatible con Tauri v1.5 (`tauri:`, `https://tauri.localhost`, `ipc:`, `http://ipc.localhost`), workers locales y `blob:` de `pdf.js` (`worker-src`/`child-src 'self' blob:`, aprovechando el intérprete seguro sin `'unsafe-eval'`), imágenes `data:`/`blob:`, estilos de componentes Angular y fuentes `.woff2` locales (`object-src 'none'; base-uri 'self'`).
+
+### Removed
+- **Purga de 56 archivos heredados ajenos a Unión PDF (`git rm`):** retirados los restos de plantillas previas (`frontend/database/`, `frontend/admin-recovery.product.json`, `frontend/.hra/`, los antiguos `.jpg` de `frontend/src/assets/doctrinas/` ya sustituidos por `frontend/src/assets/artefactos/`, `unir_pdfs.html`, `assets/` raíz y los scripts/locks huérfanos HRA en `frontend/scripts/` y `frontend/contracts/`), así como las entradas npm huérfanas (`admin-recovery:*`, `db:*`, `desktop:*`, `release:*`, `check:contracts`) en `frontend/package.json`.
+
 ## [0.5.4] - 2026-11-19 (ATOMIC-20261118-002 / PDFTOOL-20261018-001)
 
 ### Changed

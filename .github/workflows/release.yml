@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       tag_version:
-        description: 'Tag de version para publicar en GitHub Releases (ej. v0.5.4)'
+        description: 'Tag de version para publicar en GitHub Releases (ej. v1.0.0)'
         required: false
-        default: 'v0.5.4'
+        default: 'v1.0.0'
 
 permissions:
   contents: write
@@ -237,16 +237,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.4' }}
-          name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v0.5.4' }}"
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v1.0.0' }}
+          name: "Unión PDF ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_version || 'v1.0.0' }}"
           body: |
-            ## Unión PDF — Lanzamiento Corporativo Multiplataforma (`COTAHA · @archware`)
+            ## Unión PDF — Lanzamiento Corporativo Multiplataforma (`COTAHA · @archware · SSIT Consulting`)
 
             Aplicación corporativa de escritorio diseñada para demostrar que la integración entre el ecosistema propio de Backend (**Artifact Mangosta** — DDD, Arquitectura Hexagonal, CQRS estricto y frontera IPC determinista `DesktopFacadeService` + `RespuestaSistemaV1<T>`) y el ecosistema propio de Frontend (**Artifact Barracuda** + **Atomic UI `@atomic-ui/core v5.22.0`** sobre Angular 22 + Signals) genera software nativo de calidad empresarial, 100% en memoria local y auditado por compuertas deterministas.
 
+            ### ✨ Novedades destacadas en `v1.0.0` (Cierre de Edición Corporativa)
+            - **Guardado nativo real («Guardar como…») por IPC Rust (`rfd::FileDialog::save_file`):** elección nativa de carpeta y nombre en Windows, macOS y Linux con verificación de firma `%PDF`, anexado seguro de extensión `.pdf` y acción directa **«Abrir PDF»** sobre el documento generado.
+            - **Reordenación por arrastre de miniaturas y atajos rápidos de teclado:** arrastrar y soltar hojas en la columna de miniaturas + atajos de productividad (`←` / `→` navegar hojas, `R` rotar `+90°`, `Delete` excluir/restaurar hoja, `Ctrl+S` / `Cmd+S` exportar PDF).
+            - **Modo Claro / Oscuro nativo + Ventana amplia centrada (`1280×820`):** conmutador instantáneo de tema en la barra superior sincronizado con tokens semánticos de Atomic UI (`data-theme` + `localStorage` + `prefers-color-scheme`) y `Content-Security-Policy` explícita en Tauri v1.5.
+
             ### 📦 Ejecutables y Paquetes Compilados por Sistema Operativo (Origen, Ubicación y Extensión)
 
-            Cada artefacto es generado automáticamente por este pipeline CI/CD tras aprobar el job `verificar-compuertas` (candado `tauri.conf.json`, gobernanza, tipado estricto, reglas de tema/CSS, 325+ pruebas Vitest y `cargo test`), compilando primero el frontend Angular (`frontend/dist/pdf-tool/browser`), incrustándolo en el binario nativo mediante `cargo build --release` y empaquetándolo con la extensión estándar de cada sistema operativo:
+            Cada artefacto es generado automáticamente por este pipeline CI/CD tras aprobar el job `verificar-compuertas` (candado `tauri.conf.json`, gobernanza, tipado estricto, reglas de tema/CSS, 330+ pruebas Vitest y `cargo test`), compilando primero el frontend Angular (`frontend/dist/pdf-tool/browser`), incrustándolo en el binario nativo mediante `cargo build --release` y empaquetándolo con la extensión estándar de cada sistema operativo:
 
             | Plataforma / Arquitectura | Artefacto Publicado en este Release | Ruta de Origen del Compilador (`Cargo + Tauri`) | Formato Nativo, Extensión y Ejecución |
             | :--- | :--- | :--- | :--- |
