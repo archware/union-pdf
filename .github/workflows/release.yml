@@ -49,7 +49,7 @@ jobs:
       - name: Cache de Cargo
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: 'src-tauri -> target'
+          workspaces: '. -> src-tauri/target'
 
       - name: Verificar integridad de tauri.conf.json y gobernanza
         run: |
@@ -140,7 +140,7 @@ jobs:
       - name: Cache de Cargo
         uses: Swatinem/rust-cache@v2
         with:
-          workspaces: 'src-tauri -> target'
+          workspaces: '. -> src-tauri/target'
 
       - name: Instalar dependencias de Frontend y compilar dist/
         working-directory: frontend

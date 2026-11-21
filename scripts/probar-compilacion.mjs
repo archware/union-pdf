@@ -50,7 +50,6 @@ const ENTRADAS_FUENTE = [
   'src-tauri/src',
   'src-tauri/icons',
   'src-tauri/Cargo.toml',
-  'src-tauri/Cargo.lock',
   'src-tauri/build.rs',
   'src-tauri/tauri.conf.json',
   'Cargo.toml',

@@ -210,10 +210,13 @@
                   [disableHorizontal]="true"
                   [resetKey]="uploadedFiles.length"
                   scrollAreaAriaLabel="Miniaturas de hojas del documento">
-                  <div class="thumbnail-list">
+                  <div class="thumbnail-list"
+                       (dragover)="onThumbnailListDragOver($event)"
+                       (drop)="onThumbnailListDrop($event)">
                     @for (entry of orderedEntries(); track entry.page.id) {
                       <div class="thumbnail-item"
                            draggable="true"
+                           [attr.data-page-id]="entry.page.id"
                            title="Arrastra para reordenar • Doble clic o Supr para excluir/restaurar"
                            [class.thumbnail-item--selected]="selectedPageId === entry.page.id"
                            [class.thumbnail-item--discarded]="!entry.page.active"

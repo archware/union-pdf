@@ -28,7 +28,10 @@ interface PdfjsPagina {
 interface PdfjsDocumento { getPage(numero: number): Promise<PdfjsPagina>; }
 interface PdfjsGlobal {
   GlobalWorkerOptions: { workerSrc: string };
-  getDocument(origen: { data: ArrayBuffer }): { promise: Promise<PdfjsDocumento> };
+  getDocument(origen: {
+    data: ArrayBuffer;
+    isEvalSupported?: boolean;
+  }): { promise: Promise<PdfjsDocumento> };
 }
 
 /** Superficie minima de pdf-lib usada para fusionar, rotar e incrustar imagenes (libreria cargada como script global). */
@@ -1377,6 +1380,105 @@ export class AppComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
+  private resolveThumbnailListTarget(
+    listEl: HTMLElement | null,
+    clientY: number,
+    sourcePageId: string,
+  ): { targetPageId: string; position: 'before' | 'after' } | null {
+    if (!listEl || typeof listEl.querySelectorAll !== 'function') {
+      if (this.dragOverPageId && this.dragDropPosition && this.dragOverPageId !== sourcePageId) {
+        return { targetPageId: this.dragOverPageId, position: this.dragDropPosition };
+      }
+      const fallbackId = this.globalPageOrder[this.globalPageOrder.length - 1];
+      return fallbackId && fallbackId !== sourcePageId
+        ? { targetPageId: fallbackId, position: 'after' }
+        : null;
+    }
+
+    const items = Array.from(
+      listEl.querySelectorAll('.thumbnail-item[data-page-id]'),
+    ) as HTMLElement[];
+    if (items.length === 0) {
+      return null;
+    }
+
+    if (Number.isFinite(clientY)) {
+      for (const item of items) {
+        const pageId = item.getAttribute('data-page-id') || '';
+        const rect = item.getBoundingClientRect?.();
+        if (!pageId || !rect || rect.height <= 0) {
+          continue;
+        }
+        if (clientY < rect.top + rect.height / 2) {
+          return pageId === sourcePageId ? null : { targetPageId: pageId, position: 'before' };
+        }
+      }
+      const lastItem = items[items.length - 1];
+      const lastPageId = lastItem?.getAttribute('data-page-id') || '';
+      if (lastPageId && lastPageId !== sourcePageId) {
+        return { targetPageId: lastPageId, position: 'after' };
+      }
+      return null;
+    }
+
+    if (this.dragOverPageId && this.dragDropPosition && this.dragOverPageId !== sourcePageId) {
+      return { targetPageId: this.dragOverPageId, position: this.dragDropPosition };
+    }
+    return null;
+  }
+
+  onThumbnailListDragOver(event: DragEvent): void {
+    if (!this.draggingPageId) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation?.();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'move';
+    }
+    const listEl = event.currentTarget as HTMLElement | null;
+    const resolved = this.resolveThumbnailListTarget(
+      listEl,
+      event.clientY,
+      this.draggingPageId,
+    );
+    if (resolved) {
+      this.dragOverPageId = resolved.targetPageId;
+      this.dragDropPosition = resolved.position;
+    } else {
+      this.dragOverPageId = null;
+      this.dragDropPosition = null;
+    }
+    this.cdr.markForCheck();
+  }
+
+  onThumbnailListDrop(event: DragEvent): void {
+    const sourcePageId =
+      this.draggingPageId || event.dataTransfer?.getData?.('text/plain') || '';
+    if (!sourcePageId || !this.globalPageOrder.includes(sourcePageId)) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation?.();
+    const listEl = event.currentTarget as HTMLElement | null;
+    const resolved = this.resolveThumbnailListTarget(listEl, event.clientY, sourcePageId);
+    if (resolved && resolved.targetPageId !== sourcePageId) {
+      this.movePageToTarget(sourcePageId, resolved.targetPageId, resolved.position);
+    }
+    this.onThumbnailDragEnd();
+  }
+
+  private scrollSelectedThumbnailIntoView(pageId: string): void {
+    if (!pageId || typeof document === 'undefined' || typeof document.querySelectorAll !== 'function') {
+      return;
+    }
+    const items = Array.from(
+      document.querySelectorAll('.thumbnail-item[data-page-id]'),
+    ) as HTMLElement[];
+    const match = items.find((item) => item.getAttribute('data-page-id') === pageId);
+    match?.scrollIntoView?.({ block: 'nearest' });
+  }
+
   isEditableShortcutTarget(target: EventTarget | null): boolean {
     const active =
       typeof document !== 'undefined' ? (document.activeElement as HTMLElement | null) : null;
@@ -1407,16 +1509,22 @@ export class AppComponent implements OnInit, OnDestroy {
     if (!event || event.defaultPrevented || event.isComposing) {
       return;
     }
-    if (this.isAboutDialogOpen || this.isFileDialogOpen) {
-      return;
-    }
+    const hasOpenModalDom =
+      typeof document !== 'undefined' &&
+      Boolean(document.querySelector?.('[aria-modal="true"], dialog[open]'));
+    const isBlockedByModalOrMerge =
+      this.isAboutDialogOpen || this.isFileDialogOpen || this.isMerging || hasOpenModalDom;
 
     const key = event.key || '';
     if ((event.ctrlKey || event.metaKey) && !event.altKey && !event.shiftKey && key.toLowerCase() === 's') {
       event.preventDefault();
-      if (this.uploadedFiles.length > 0 && !this.isMerging) {
+      if (!isBlockedByModalOrMerge && this.uploadedFiles.length > 0) {
         void this.mergeSelectedPDFs();
       }
+      return;
+    }
+
+    if (isBlockedByModalOrMerge) {
       return;
     }
 
@@ -1436,6 +1544,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const targetId = idx > 0 ? this.globalPageOrder[idx - 1] : this.globalPageOrder[0];
       if (targetId && targetId !== this.selectedPageId) {
         this.setSelectedPage(targetId);
+        this.scrollSelectedThumbnailIntoView(targetId);
         this.syncView();
       }
       return;
@@ -1452,6 +1561,7 @@ export class AppComponent implements OnInit, OnDestroy {
             : this.selectedPageId;
       if (targetId && targetId !== this.selectedPageId) {
         this.setSelectedPage(targetId);
+        this.scrollSelectedThumbnailIntoView(targetId);
         this.syncView();
       }
       return;
@@ -1669,7 +1779,7 @@ export class AppComponent implements OnInit, OnDestroy {
       return this.pdfPreviewCache.get(file.id) as PdfjsDocumento;
     }
     const buffer = await this.getFilePdfBuffer(file);
-    const loadingTask = pdfjsLib.getDocument({ data: buffer });
+    const loadingTask = pdfjsLib.getDocument({ data: buffer, isEvalSupported: false });
     const pdf = await loadingTask.promise;
     this.pdfPreviewCache.set(file.id, pdf);
     return pdf;

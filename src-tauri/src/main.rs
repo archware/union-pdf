@@ -528,8 +528,24 @@ fn ejecutar_fusion_lopdf(peticion: &PeticionUnirPdfsDto) -> Result<ResultadoUnir
     })
 }
 
-#[tauri::command]
-fn unir_archivos_pdf(peticion: PeticionUnirPdfsDto) -> RespuestaSistemaV1<ResultadoUnirPdfsDto> {
+fn fallo_hilo_nativo<T>(etapa: &str, detalle: String, inicio: Instant) -> RespuestaSistemaV1<T> {
+    RespuestaSistemaV1::fallo(
+        contracts::ErrorSistemaV1 {
+            codigo: "ERROR_HILO_NATIVO".to_string(),
+            categoria: "sistema".to_string(),
+            reintentable: true,
+            clave_mensaje: format!("No se pudo completar la tarea en el pool bloqueante: {detalle}"),
+            parametros_mensaje: serde_json::json!({}),
+            etapa: etapa.to_string(),
+        },
+        Uuid::new_v4().to_string(),
+        inicio.elapsed().as_millis() as u64,
+    )
+}
+
+fn ejecutar_union_archivos_pdf(
+    peticion: PeticionUnirPdfsDto,
+) -> RespuestaSistemaV1<ResultadoUnirPdfsDto> {
     let inicio = Instant::now();
     let id_solicitud = Uuid::new_v4().to_string();
 
@@ -618,7 +634,16 @@ fn unir_archivos_pdf(peticion: PeticionUnirPdfsDto) -> RespuestaSistemaV1<Result
 }
 
 #[tauri::command]
-fn seleccionar_archivos_pdf() -> RespuestaSistemaV1<Vec<String>> {
+async fn unir_archivos_pdf(
+    peticion: PeticionUnirPdfsDto,
+) -> RespuestaSistemaV1<ResultadoUnirPdfsDto> {
+    let inicio = Instant::now();
+    tauri::async_runtime::spawn_blocking(move || ejecutar_union_archivos_pdf(peticion))
+        .await
+        .unwrap_or_else(|e| fallo_hilo_nativo("unir_archivos_pdf", e.to_string(), inicio))
+}
+
+fn ejecutar_seleccion_archivos_pdf() -> RespuestaSistemaV1<Vec<String>> {
     let inicio = Instant::now();
     let id_solicitud = Uuid::new_v4().to_string();
 
@@ -665,6 +690,14 @@ fn seleccionar_archivos_pdf() -> RespuestaSistemaV1<Vec<String>> {
             }
         }
     }
+}
+
+#[tauri::command]
+async fn seleccionar_archivos_pdf() -> RespuestaSistemaV1<Vec<String>> {
+    let inicio = Instant::now();
+    tauri::async_runtime::spawn_blocking(ejecutar_seleccion_archivos_pdf)
+        .await
+        .unwrap_or_else(|e| fallo_hilo_nativo("seleccionar_archivos_pdf", e.to_string(), inicio))
 }
 
 /// Decodifica una cadena Base64 estandar (RFC 4648) ignorando espacios en blanco ASCII
@@ -860,8 +893,9 @@ fn guardar_bytes_pdf_en_destino(
     })
 }
 
-#[tauri::command]
-fn guardar_archivo_pdf(peticion: PeticionGuardarPdfDto) -> RespuestaSistemaV1<ResultadoGuardarPdfDto> {
+fn ejecutar_guardado_archivo_pdf(
+    peticion: PeticionGuardarPdfDto,
+) -> RespuestaSistemaV1<ResultadoGuardarPdfDto> {
     let inicio = Instant::now();
     let id_solicitud = Uuid::new_v4().to_string();
 
@@ -941,6 +975,16 @@ fn guardar_archivo_pdf(peticion: PeticionGuardarPdfDto) -> RespuestaSistemaV1<Re
             RespuestaSistemaV1::fallo(*error, id_solicitud, inicio.elapsed().as_millis() as u64)
         }
     }
+}
+
+#[tauri::command]
+async fn guardar_archivo_pdf(
+    peticion: PeticionGuardarPdfDto,
+) -> RespuestaSistemaV1<ResultadoGuardarPdfDto> {
+    let inicio = Instant::now();
+    tauri::async_runtime::spawn_blocking(move || ejecutar_guardado_archivo_pdf(peticion))
+        .await
+        .unwrap_or_else(|e| fallo_hilo_nativo("guardar_archivo_pdf", e.to_string(), inicio))
 }
 
 #[cfg(not(test))]
@@ -1279,7 +1323,7 @@ mod tests {
             segmentos: vec![],
             ruta_destino: "C:/salida.pdf".to_string(),
         };
-        let resp = unir_archivos_pdf(peticion);
+        let resp = tauri::async_runtime::block_on(unir_archivos_pdf(peticion));
         assert!(!resp.correcto);
         let err = resp.error.expect("debe reportar error");
         assert_eq!(err.codigo, "VALIDACION_SEGMENTOS_VACIOS");
@@ -1295,7 +1339,7 @@ mod tests {
             }],
             ruta_destino: "   ".to_string(),
         };
-        let resp = unir_archivos_pdf(peticion);
+        let resp = tauri::async_runtime::block_on(unir_archivos_pdf(peticion));
         assert!(!resp.correcto);
         let err = resp.error.expect("debe reportar error");
         assert_eq!(err.codigo, "VALIDACION_RUTA_DESTINO_VACIA");
@@ -1311,7 +1355,7 @@ mod tests {
             }],
             ruta_destino: "C:/salida.pdf".to_string(),
         };
-        let resp = unir_archivos_pdf(peticion);
+        let resp = tauri::async_runtime::block_on(unir_archivos_pdf(peticion));
         assert!(!resp.correcto);
         let err = resp.error.expect("debe reportar error");
         assert_eq!(err.codigo, "ARCHIVO_NO_ENCONTRADO");
@@ -1319,7 +1363,7 @@ mod tests {
 
     #[test]
     fn test_seleccionar_archivos_pdf_funcional() {
-        let sel = seleccionar_archivos_pdf();
+        let sel = tauri::async_runtime::block_on(seleccionar_archivos_pdf());
         assert!(sel.correcto);
         assert_eq!(sel.version_contrato, "hra.desktop.respuesta-sistema.v1");
         assert!(sel.error.is_none());
@@ -1328,7 +1372,7 @@ mod tests {
     #[test]
     fn test_seleccionar_archivos_pdf_con_env() {
         std::env::set_var("TEST_PDF_PATHS", "C:/doc_a.pdf;C:/doc_b.pdf");
-        let sel = seleccionar_archivos_pdf();
+        let sel = ejecutar_seleccion_archivos_pdf();
         std::env::remove_var("TEST_PDF_PATHS");
         assert!(sel.correcto);
         let paths = sel.datos.expect("debe contener lista de rutas");
@@ -1355,7 +1399,7 @@ mod tests {
             ruta_destino: salida.to_string_lossy().to_string(),
         };
 
-        let resp = unir_archivos_pdf(peticion);
+        let resp = tauri::async_runtime::block_on(unir_archivos_pdf(peticion));
         assert!(!resp.correcto, "debe fallar si se solicita una pagina inexistente");
         let err = resp.error.expect("debe contener error");
         assert_eq!(err.codigo, "ERROR_FUSION_PDF");
@@ -1395,7 +1439,7 @@ mod tests {
             ruta_destino: salida.to_string_lossy().to_string(),
         };
 
-        let resp = unir_archivos_pdf(peticion);
+        let resp = tauri::async_runtime::block_on(unir_archivos_pdf(peticion));
         assert!(resp.correcto, "la fusion real con lopdf debe ser exitosa: {:?}", resp.error);
         assert!(resp.error.is_none());
 
@@ -1588,20 +1632,21 @@ mod tests {
 
     #[test]
     fn test_guardar_archivo_pdf_validaciones_y_cancelacion() {
-        let vacio = guardar_archivo_pdf(PeticionGuardarPdfDto {
+        let vacio = tauri::async_runtime::block_on(guardar_archivo_pdf(PeticionGuardarPdfDto {
             nombre_sugerido: "salida.pdf".to_string(),
             contenido_base64: "   ".to_string(),
-        });
+        }));
         assert!(!vacio.correcto);
         assert_eq!(
             vacio.error.expect("error").codigo,
             "VALIDACION_CONTENIDO_VACIO"
         );
 
-        let b64_invalido = guardar_archivo_pdf(PeticionGuardarPdfDto {
-            nombre_sugerido: "salida.pdf".to_string(),
-            contenido_base64: "no-es-base64!!!".to_string(),
-        });
+        let b64_invalido =
+            tauri::async_runtime::block_on(guardar_archivo_pdf(PeticionGuardarPdfDto {
+                nombre_sugerido: "salida.pdf".to_string(),
+                contenido_base64: "no-es-base64!!!".to_string(),
+            }));
         assert!(!b64_invalido.correcto);
         assert_eq!(
             b64_invalido.error.expect("error").codigo,
@@ -1609,23 +1654,38 @@ mod tests {
         );
 
         // "SG9sYSBNdW5kbw==" = "Hola Mundo" (no empieza con %PDF)
-        let no_pdf = guardar_archivo_pdf(PeticionGuardarPdfDto {
+        let no_pdf = tauri::async_runtime::block_on(guardar_archivo_pdf(PeticionGuardarPdfDto {
             nombre_sugerido: "salida.pdf".to_string(),
             contenido_base64: "SG9sYSBNdW5kbw==".to_string(),
-        });
+        }));
         assert!(!no_pdf.correcto);
         assert_eq!(no_pdf.error.expect("error").codigo, "FORMATO_PDF_INVALIDO");
 
         // En #[cfg(test)], el dialogo devuelve None simulando cancelacion limpia del usuario
-        let cancelado = guardar_archivo_pdf(PeticionGuardarPdfDto {
-            nombre_sugerido: "salida.pdf".to_string(),
-            contenido_base64: "JVBERi0xLjU=".to_string(),
-        });
+        let cancelado =
+            tauri::async_runtime::block_on(guardar_archivo_pdf(PeticionGuardarPdfDto {
+                nombre_sugerido: "salida.pdf".to_string(),
+                contenido_base64: "JVBERi0xLjU=".to_string(),
+            }));
         assert!(cancelado.correcto);
         let datos = cancelado.datos.expect("datos");
         assert!(!datos.guardado);
         assert!(datos.ruta_destino.is_none());
         assert_eq!(datos.tamano_bytes, 0);
+    }
+
+    #[test]
+    fn test_spawn_blocking_ejecuta_fuera_del_hilo_invocador() {
+        let hilo_invocador = std::thread::current().id();
+        let hilo_trabajo = tauri::async_runtime::block_on(async {
+            tauri::async_runtime::spawn_blocking(|| std::thread::current().id())
+                .await
+                .expect("spawn_blocking debe resolverse")
+        });
+        assert_ne!(
+            hilo_invocador, hilo_trabajo,
+            "los dialogos nativos deben correr en un hilo bloqueante separado del hilo UI"
+        );
     }
 
     #[test]

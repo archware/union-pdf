@@ -2173,5 +2173,135 @@ describe('AppComponent (Unión PDF)', () => {
 
       localStorage.removeItem(AppComponent.THEME_STORAGE_KEY);
     });
+
+    it('acepta soltar miniaturas en el espacio entre tarjetas (.thumbnail-list) y al final de la columna sin cancelar el drop', () => {
+      component.uploadedFiles = [
+        {
+          id: 'f1',
+          fileObject: new File([], 'doc.pdf', { type: 'application/pdf' }),
+          name: 'doc.pdf',
+          size: '10 KB',
+          pageCount: 3,
+          pagesToKeep: '1-3',
+          pages: [
+            { id: 'p1', pageNum: 1, active: true },
+            { id: 'p2', pageNum: 2, active: true },
+            { id: 'p3', pageNum: 3, active: true },
+          ],
+        },
+      ];
+      component.globalPageOrder = ['p1', 'p2', 'p3'];
+
+      const listEl = document.createElement('div');
+      listEl.className = 'thumbnail-list';
+      const rects: Record<string, { top: number; height: number }> = {
+        p1: { top: 0, height: 100 },
+        p2: { top: 108, height: 100 },
+        p3: { top: 216, height: 100 },
+      };
+      for (const id of ['p1', 'p2', 'p3']) {
+        const item = document.createElement('div');
+        item.className = 'thumbnail-item';
+        item.setAttribute('data-page-id', id);
+        item.getBoundingClientRect = () => rects[id] as DOMRect;
+        listEl.appendChild(item);
+      }
+
+      component.draggingPageId = 'p1';
+
+      // Cursor en el hueco de 8px entre p2 (bottom=208) y p3 (top=216): clientY = 212 < p3.mid(266) -> before p3
+      const gapDragOver = {
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+        clientY: 212,
+        currentTarget: listEl,
+        dataTransfer: { dropEffect: 'none' },
+      } as unknown as DragEvent;
+
+      component.onThumbnailListDragOver(gapDragOver);
+      expect(gapDragOver.preventDefault).toHaveBeenCalledTimes(1);
+      expect(gapDragOver.dataTransfer!.dropEffect).toBe('move');
+      expect(component.dragOverPageId).toBe('p3');
+      expect(component.dragDropPosition).toBe('before');
+
+      component.onThumbnailListDrop(gapDragOver);
+      expect(component.globalPageOrder).toEqual(['p2', 'p1', 'p3']);
+      expect(component.draggingPageId).toBeNull();
+
+      // Cursor debajo de la ultima miniatura (clientY = 350 > p3.mid) -> after p3
+      component.draggingPageId = 'p2';
+      const bottomDrop = {
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+        clientY: 350,
+        currentTarget: listEl,
+        dataTransfer: { dropEffect: 'none' },
+      } as unknown as DragEvent;
+      component.onThumbnailListDrop(bottomDrop);
+      expect(component.globalPageOrder).toEqual(['p1', 'p3', 'p2']);
+    });
+
+    it('bloquea flechas/R/Delete mientras isMerging esta activo, desplaza la miniatura activa a la vista y desactiva eval en pdf.js por CSP', async () => {
+      component.uploadedFiles = [
+        {
+          id: 'f1',
+          fileObject: new File([new Uint8Array([0x25, 0x50, 0x44, 0x46])], 'doc.pdf', {
+            type: 'application/pdf',
+          }),
+          name: 'doc.pdf',
+          size: '10 KB',
+          pageCount: 2,
+          pagesToKeep: '1-2',
+          pages: [
+            { id: 'p1', pageNum: 1, active: true, rotation: 0 },
+            { id: 'p2', pageNum: 2, active: true, rotation: 0 },
+          ],
+        },
+      ];
+      component.globalPageOrder = ['p1', 'p2'];
+      component.selectedPageId = 'p1';
+
+      // Mientras isMerging === true (p. ej. dialogo Guardar como... abierto), ningun atajo muta hojas
+      component.isMerging = true;
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true }));
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'Delete', cancelable: true }));
+      component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'r', cancelable: true }));
+      expect(component.selectedPageId).toBe('p1');
+      expect(component.uploadedFiles[0].pages[0].active).toBe(true);
+      expect(component.uploadedFiles[0].pages[0].rotation).toBe(0);
+
+      // Al navegar con ArrowRight cuando no hay bloqueo, desplaza la miniatura seleccionada a la vista
+      component.isMerging = false;
+      const thumbP2 = document.createElement('div');
+      thumbP2.className = 'thumbnail-item';
+      thumbP2.setAttribute('data-page-id', 'p2');
+      const scrollSpy = vi.fn();
+      thumbP2.scrollIntoView = scrollSpy;
+      document.body.appendChild(thumbP2);
+      try {
+        component.onWindowKeyDown(new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true }));
+        expect(component.selectedPageId).toBe('p2');
+        expect(scrollSpy).toHaveBeenCalledWith({ block: 'nearest' });
+      } finally {
+        document.body.removeChild(thumbP2);
+      }
+
+      // getPreviewDocument invoca pdfjsLib.getDocument con isEvalSupported: false para evitar violaciones CSP
+      const getDocumentSpy = vi.fn().mockReturnValue({
+        promise: Promise.resolve({ getPage: vi.fn() }),
+      });
+      const prevPdfjs = (globalThis as Record<string, unknown>)['pdfjsLib'];
+      (globalThis as Record<string, unknown>)['pdfjsLib'] = {
+        GlobalWorkerOptions: { workerSrc: '' },
+        getDocument: getDocumentSpy,
+      };
+      try {
+        await component.getPreviewDocument(component.uploadedFiles[0]);
+        expect(getDocumentSpy).toHaveBeenCalledTimes(1);
+        expect(getDocumentSpy.mock.calls[0][0].isEvalSupported).toBe(false);
+      } finally {
+        (globalThis as Record<string, unknown>)['pdfjsLib'] = prevPdfjs;
+      }
+    });
   });
 });
